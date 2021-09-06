@@ -43,20 +43,25 @@ class UserAdmin(UserAdmin):
     search_fields = ('username', 'fullname', 'email')
 
 
-@admin.register(models.NormalUser)
-class NormalUserAdmin(BaseModelAdmin):
+@admin.register(models.PortalUser)
+class PortalUserAdmin(UserAdmin):
     list_display = (
         'id',
         'email',
         'is_active',
-        'updated_at'
-    )
-    list_filter = BaseModelAdmin.list_filter + (
-        'user__is_active',
     )
 
-    def email(self, instance):
-        return instance.user.email
 
-    def is_active(self, instance):
-        return instance.user.is_active
+@admin.register(models.ConsultancyUser)
+class ConsultancyUserAdmin(PortalUserAdmin):
+    pass
+
+
+@admin.register(models.InstituteUser)
+class InstituteUserAdmin(PortalUserAdmin):
+    pass
+
+
+@admin.register(models.StudentUser)
+class StudentUserAdmin(PortalUserAdmin):
+    pass

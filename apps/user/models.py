@@ -1,22 +1,32 @@
 import uuid
 
 from django.contrib.auth.base_user import AbstractBaseUser
-from django.contrib.auth.models import AbstractUser, PermissionsMixin, UserManager
-from django.core.exceptions import ValidationError as DjangoValidationError
+from django.contrib.auth.models import PermissionsMixin, UserManager
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from apps.core.models import BaseModel
-from apps.user.utils import upload_normal_user_avatar_to
+from apps.user import managers
 from apps.user.validators import validate_username
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    USER_TYPE_CHOICES = (
+        ('portal_user', 'Portal User'),
+        ('institute_user', 'Institute User'),
+        ('consultancy_user', 'Consultancy User'),
+        ('student_user', 'Student User'),
+    )
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(
         _('email address'),
         unique=True
+    )
+    user_type = models.CharField(
+        choices=USER_TYPE_CHOICES,
+        max_length=16,
+        default='student_user'
     )
     fullname = models.CharField(_('fullname'), max_length=200, null=True)
     username = models.CharField(
@@ -70,16 +80,29 @@ class BaseUser(BaseModel):
         return self.user.username
 
 
-class NormalUser(BaseUser):
-    avatar = models.ImageField(
-        upload_to=upload_normal_user_avatar_to,
-        blank=True,
-        default='avatar/avatar_default.jpg'
-    )
+class StudentUser(User):
+    objects = managers.StudentUserManager()
 
-    def clean(self):
-        # only user allowed
-        if self.user.is_staff or self.user.is_superuser:
-            raise DjangoValidationError({
-                'user': _('User is not a normal user.')
-            })
+    class Meta:
+        proxy = True
+
+
+class InstituteUser(User):
+    objects = managers.InstituteUserManager()
+
+    class Meta:
+        proxy = True
+
+
+class PortalUser(User):
+    objects = managers.PortalUserManager()
+
+    class Meta:
+        proxy = True
+
+
+class ConsultancyUser(User):
+    objects = managers.ConsultancyUserManager()
+
+    class Meta:
+        proxy = True
