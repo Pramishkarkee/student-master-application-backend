@@ -123,16 +123,16 @@ EMAIL_SUBJECT_PREFIX = env(
 )
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
-EMAIL_HOST = env("EMAIL_HOST")
-EMAIL_USE_TLS = env("EMAIL_USE_TLS")
-EMAIL_PORT = env("EMAIL_PORT")
-EMAIL_HOST_USER = env("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+# EMAIL_HOST = env("EMAIL_HOST")
+# EMAIL_USE_TLS = env("EMAIL_USE_TLS")
+# EMAIL_PORT = env("EMAIL_PORT")
+# EMAIL_HOST_USER = env("EMAIL_HOST_USER")
+# EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 
-# EMAIL_CONFIG = env.email_url(
-#     'EMAIL_URL', default='smtp://user@:password@localhost:25')
+EMAIL_CONFIG = env.email_url(
+    'EMAIL_URL', default='smtp://user@:password@localhost:25')
 
-# vars().update(EMAIL_CONFIG)
+vars().update(EMAIL_CONFIG)
 
 # ADMIN
 # ------------------------------------------------------------------------------
