@@ -23,10 +23,17 @@ class CustomJWTAuthentication(JWTAuthentication):
             user = User.objects.get(**{api_settings.USER_ID_FIELD: user_id})
         except User.DoesNotExist:
             raise AuthenticationFailed(_('User not found'), code='user_not_found')
-        except ValueError:
-            raise InvalidToken(_('Token contained no recognizable user identification'))
 
-        if not user.is_active or user.is_archived:
+        if not user.is_active:
             raise AuthenticationFailed(_('User is inactive'), code='user_inactive')
 
+        if user.is_archived:
+            raise AuthenticationFailed(_('User not found'), code='user_not_found')
+
         return user
+
+
+def default_user_authentication_rule(user):
+    if user is not None and user.is_active and not user.is_archived:
+        return True
+    return False

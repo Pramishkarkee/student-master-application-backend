@@ -21,6 +21,18 @@ class ConsultancyUserManager(BaseUserManager):
             user_type='consultancy_user'
         )
 
+    def create(self, email, password=None, **kwargs):
+        kwargs.update({
+            'is_staff': False,
+            'is_superuser': False,
+            'user_type': 'consultancy_user',
+            'username': email,
+        })
+        user = self.model(email=email, **kwargs)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
 
 class PortalUserManager(BaseUserManager):
     def get_queryset(self):

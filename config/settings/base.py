@@ -76,6 +76,9 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "apps.user.apps.UserConfig",
     "apps.core.apps.CoreConfig",
+    "apps.student.apps.StudentsConfig",
+    "apps.college.apps.CollegesConfig",
+    "apps.consultancy.apps.ConsultancyConfig",
 
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -278,10 +281,10 @@ CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 # django-rest-framework - https://www.django-rest-framework.org/api-guide/settings/
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'apps.core.authentication.CustomJWTAuthentication',
+        'apps.auth.jwt.authentication.CustomJWTAuthentication',
     ),
     "DEFAULT_PERMISSION_CLASSES": (
-        "rest_framework.permissions.IsAuthenticated",
+        "rest_framework.permissions.AllowAny",
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 500,
