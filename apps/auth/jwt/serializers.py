@@ -125,12 +125,10 @@ class ResendOTPCodeSerializer(serializers.Serializer):
     }
 
     def validate_email(self, value):
-        print(value)
         try:
             self.user = User.objects.get(email=value)
-            print('*'*100)
         except User.DoesNotExist:
-            self.fail('invalid_email')
+            raise serializers.ValidationError(self.fail('invalid_email'))
         return value
 
 
