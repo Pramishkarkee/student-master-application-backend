@@ -32,7 +32,6 @@ class UserAdmin(UserAdmin):
                 'fullname',
                 'password1',
                 'password2',
-                'is_portal_user'
             ),
         }),
     )
