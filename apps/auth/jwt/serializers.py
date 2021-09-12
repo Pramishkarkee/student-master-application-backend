@@ -16,6 +16,7 @@ from rest_framework_simplejwt.settings import api_settings
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.auth.jwt.cache import LoginCache
+from apps.pyotp.mixins import OTPMixin
 
 User = get_user_model()
 
@@ -103,11 +104,65 @@ class NormalUserLoginSerializer(LoginSerializer):
         return data
 
 
-class ConsultancyUserLoginSerializer(LoginSerializer):
-    def validate_user(self):
-        if self.user.user_type != 'consultancy_user':
+# class ConsultancyUserLoginSerializer(LoginSerializer):
+#     def validate_user(self):
+#         if self.user.user_type != 'consultancy_user':
+#             raise serializers.ValidationError(
+#                 _('Email or Password does not matched.'),
+#             )
+
+
+class ConsultancyUserLoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = PasswordField()
+
+
+class ResendOTPCodeSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+    default_error_messages = {
+        'invalid_email': _('Invalid email.')
+    }
+
+    def validate_email(self, value):
+        print(value)
+        try:
+            self.user = User.objects.get(email=value)
+            print('*'*100)
+        except User.DoesNotExist:
+            self.fail('invalid_email')
+        return value
+
+
+class CodeSerializer(serializers.Serializer):
+    code = serializers.CharField(max_length=6)
+
+
+class VerifyConsultanyUserOTPSerializer(CodeSerializer, OTPMixin):
+    """
+    Use this to activate any user
+    """
+
+    def get_token(self, user):
+        return RefreshToken.for_user(user)
+
+    def validate(self, attrs):
+        attrs = super(VerifyConsultanyUserOTPSerializer, self).validate(attrs)
+        # get current user from views
+        user = self.context['view'].get_object()
+        # check for otp code validation
+        is_code_valid = self.verify_otp_for_user(user, attrs['code'], '2FA')
+        if is_code_valid:
+            data = super().validate(attrs)
+            refresh = self.get_token(user)
+            data['refresh_token'] = str(refresh)
+            data['token'] = str(refresh.access_token)
+            user.last_login = now()
+            user.save()
+            return data
+        else:
             raise serializers.ValidationError(
-                _('Email or Password does not matched.'),
+                {'code': _('Invalid code.')}
             )
 
 
@@ -145,3 +200,7 @@ class NormalUserLoginResponseSerializer(serializers.Serializer):
     refresh_token = serializers.CharField(read_only=True)
     token = serializers.CharField(read_only=True)
     user_detail = NormalUserLoginDetailSerializer(source='user', read_only=True)
+
+
+class ConsultancyUserLoginResponseSerializer(NormalUserLoginResponseSerializer):
+    user_detail = None

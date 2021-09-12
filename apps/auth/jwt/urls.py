@@ -19,4 +19,14 @@ urlpatterns = [
         token_verify,
         name='login-verify'
     ),
+    path(
+        'consultancy-user/<str:user_id>/2fa/verify',
+        views.ConsultancyUser2FAVerifyView.as_view(),
+        name='consultancy-user-2fa-verify'
+    ),
+    path(
+        'consultancy-user/resend-otp',
+        views.ResendOTPCodeView.as_view(),
+        name='consultancy-user-resend-otp'
+    ),
 ]

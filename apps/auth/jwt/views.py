@@ -1,11 +1,13 @@
+from django.utils.translation import gettext_lazy as _
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from apps.auth.jwt import serializers
+from apps.auth.jwt import serializers, usecases
 from apps.core import generics
 from apps.core.mixins import LoggingErrorsMixin, ResponseMixin
+from apps.user.mixins import ConsultancyUserMixin
 
 
 class NormalUserLoginView(generics.CreateAPIView, ResponseMixin):
@@ -30,11 +32,15 @@ class NormalUserLoginView(generics.CreateAPIView, ResponseMixin):
         return Response(response_serializer.data, status=status_code)
 
 
-class ConsultancyUserLoginView(NormalUserLoginView):
+class ConsultancyUserLoginView(generics.CreateWithMessageAPIView):
     """
-    Use this end-point to get access token for consultancy user
+    Use this end-point to get login for consultancy user
     """
+    message = _('Please check your email for 6 digit OTP code.')
     serializer_class = serializers.ConsultancyUserLoginSerializer
+
+    def perform_create(self, serializer):
+        usecases.ConsultancyUserLoginWithOTPUseCase(self.request, serializer=serializer).execute()
 
 
 class CustomTokenRefreshView(LoggingErrorsMixin, TokenRefreshView):
@@ -42,3 +48,34 @@ class CustomTokenRefreshView(LoggingErrorsMixin, TokenRefreshView):
 
     serializer_class = serializers.CustomTokenRefreshSerializer
 
+
+class ConsultancyUser2FAVerifyView(generics.CreateAPIView, ConsultancyUserMixin, ResponseMixin):
+    serializer_class = serializers.VerifyConsultanyUserOTPSerializer
+    print(serializer_class)
+    response_serializer_class = serializers.ConsultancyUserLoginResponseSerializer
+
+    def get_object(self):
+        return self.get_consultancy_user()
+
+    def perform_create(self, serializer):
+        pass
+
+    @swagger_auto_schema(responses={
+        200: serializers.ConsultancyUserLoginResponseSerializer()})
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+    def response(self, result, serializer, status_code):
+        response_serializer = self.get_response_serializer(serializer.validated_data)
+        return Response(response_serializer.data)
+
+
+class ResendOTPCodeView(generics.CreateWithMessageAPIView):
+    """
+    Use this end-point to resend OTP code for user
+    """
+    message = _('Please recheck your email for 6 digit OTP code.')
+    serializer_class = serializers.ResendOTPCodeSerializer
+
+    def perform_create(self, serializer):
+        return usecases.ResendOTPCodeUseCase(serializer=serializer).execute()
