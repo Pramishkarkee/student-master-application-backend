@@ -1,5 +1,6 @@
 from django.db.models import CharField
 from django.utils.translation import ugettext_lazy as _
+from rest_framework import serializers
 
 from apps.core import validators, form_fields
 
@@ -20,3 +21,12 @@ class PhoneNumberField(CharField):
             'form_class': form_fields.PhoneNumberField,
             **kwargs,
         })
+
+
+class PasswordField(serializers.CharField):
+    def __init__(self, **kwargs):
+        kwargs.setdefault('style', {})
+        kwargs['style']['input_type'] = 'password'
+        kwargs['write_only'] = True
+
+        super().__init__(**kwargs)
