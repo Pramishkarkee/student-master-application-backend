@@ -34,9 +34,9 @@ EMAIL_USE_TLS = True
 # EMAIL_PORT = 465
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
-DEFAULT_FROM_EMAIL = ''
+EMAIL_HOST_USER = 'techaeon101@gmail.com'
+EMAIL_HOST_PASSWORD = 'qwocpizndipocoea'
+DEFAULT_FROM_EMAIL = 'techaeon101@gmail.com'
 
 
 # django-debug-toolbar
