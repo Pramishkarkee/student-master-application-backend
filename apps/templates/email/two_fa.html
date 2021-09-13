@@ -16,8 +16,10 @@
 
 {% block html_body %}
 {% blocktrans %}
-<p>You're receiving this email because you need to verify your email on TripNp.</p>{% endblocktrans %}
+<p>You're receiving this email because you need to verify your email.</p>{% endblocktrans %}
 
+{% blocktrans %}
+<p>Your Otp Code is {{ code }}</p>{% endblocktrans %}
 <p>{% trans "Please go to the following page to verify your email" %}</p>
 <p>
   <a href="{{ protocol }}://{{ domain }}/{{ uuid }}/{{code}}">{{ protocol }}://{{ domain }}/{{ uuid }}/{{code}}</a>
