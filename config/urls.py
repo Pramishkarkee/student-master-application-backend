@@ -14,7 +14,7 @@ urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + [
     path('favicon.ico', RedirectView.as_view(url=staticfiles_storage.url('images/favicons/favicon.ico')))
 ]
 
-if settings.DEBUG:
+if not settings.USE_S3:
     # Static file serving when using Gunicorn + Uvicorn for local web socket development
     urlpatterns += staticfiles_urlpatterns()
 
