@@ -51,7 +51,6 @@ class CustomTokenRefreshView(LoggingErrorsMixin, TokenRefreshView):
 
 class ConsultancyUser2FAVerifyView(generics.CreateAPIView, ConsultancyUserMixin, ResponseMixin):
     serializer_class = serializers.VerifyConsultanyUserOTPSerializer
-    print(serializer_class)
     response_serializer_class = serializers.ConsultancyUserLoginResponseSerializer
 
     def get_object(self):
