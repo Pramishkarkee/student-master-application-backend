@@ -26,9 +26,7 @@ class ConsultancyUserLoginWithOTPUseCase(CreateUseCase, OTPMixin):
             'username': self._data['email'],
             'password': self._data['password']
         }
-        print(credentials)
         self._user = authenticate(self._request, **credentials)
-        print(self._user)
         if self._user is not None:
             """
             Sends email confirmation mail to the user's email
@@ -39,7 +37,6 @@ class ConsultancyUserLoginWithOTPUseCase(CreateUseCase, OTPMixin):
                 purpose='2FA',
                 interval=180
             )
-            print(code)
 
             EmailVerificationEmail(
                 context={
