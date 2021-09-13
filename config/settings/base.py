@@ -11,7 +11,7 @@ ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 APPS_DIR = ROOT_DIR / "apps"
 env = environ.Env()
 
-READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=False)
+READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=True)
 if READ_DOT_ENV_FILE:
     # OS environment variables take precedence over variables from .env
     env.read_env(str(ROOT_DIR / ".env"))
@@ -79,6 +79,7 @@ LOCAL_APPS = [
     "apps.student.apps.StudentsConfig",
     "apps.college.apps.CollegesConfig",
     "apps.consultancy.apps.ConsultancyConfig",
+    "apps.pyotp.apps.PyoptConfig",
 
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -328,3 +329,4 @@ if not DEBUG:
 CORS_ORIGIN_ALLOW_ALL = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+OTP_INTERVAL = 120

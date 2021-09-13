@@ -1,6 +1,12 @@
+from django.contrib.auth import get_user_model
+from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from apps.consultancy.models import Consultancy
+from apps.core import fields
+
+User = get_user_model()
 
 
 class ConsultancySerializer(serializers.ModelSerializer):
@@ -11,7 +17,7 @@ class ConsultancySerializer(serializers.ModelSerializer):
 
 class RegisterConsultancySerializer(ConsultancySerializer):
     email = serializers.EmailField(write_only=True)
-    password = serializers.CharField(write_only=True, style={"input_type": "password"})
+    password = fields.PasswordField()
 
     class Meta(ConsultancySerializer.Meta):
         fields = (
@@ -30,3 +36,15 @@ class RegisterConsultancySerializer(ConsultancySerializer):
             'cover_image',
             'about',
         )
+
+    default_error_messages = {
+        'duplicate_email': _('Email already exists try another one.')
+    }
+
+    def validate_email(self, value):
+        email = value.lower()
+        if User.objects.filter(email__iexact=email).exists():
+            raise serializers.ValidationError(
+                self.fail('duplicate_email')
+            )
+        return email
