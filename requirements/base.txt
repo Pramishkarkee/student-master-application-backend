@@ -17,6 +17,8 @@ drf-yasg==1.20.0   # API Documentation
 django-filter==2.4.0
 djangorestframework-simplejwt==4.8.0  # JWT
 drf-api-tracking==1.8.0                   # api tracking
+django-templated-mail==1.1.1
+pyotp==2.6.0
 
 # Database
 # --------------------------------------------------------------

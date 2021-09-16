@@ -140,7 +140,7 @@ MIDDLEWARE = [
 # https://docs.djangoproject.com/en/dev/ref/settings/#static-root
 STATIC_ROOT = str(ROOT_DIR / "staticfiles")
 # https://docs.djangoproject.com/en/dev/ref/settings/#static-url
-STATIC_URL = "/static/"
+STATIC_URL = "/staticfiles/"
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
 STATICFILES_DIRS = [str(APPS_DIR / "static")]
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#staticfiles-finders
@@ -325,7 +325,8 @@ if not DEBUG:
 
 # DJANGO-CORS-HEADERS settings
 # ---------------------------------------------------------------------------
-CORS_ORIGIN_WHITELIST = env.list('CORS_ORIGIN_WHITELIST')
+# CORS_ORIGIN_WHITELIST = env.list('CORS_ORIGIN_WHITELIST')
+CORS_ORIGIN_ALLOW_ALL = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 OTP_INTERVAL = 120
