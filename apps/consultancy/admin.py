@@ -13,3 +13,7 @@ class ConsultancyAdmin(BaseModelAdmin):
 class ConsultancyStaffAdmin(BaseModelAdmin):
     pass
 
+
+@admin.register(models.ConsultancyStaffPosition)
+class ConsultancyStaffPositionAdmin(BaseModelAdmin):
+    pass

@@ -1,4 +1,7 @@
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models
+from django.db.models import Q
+from django.utils.translation import gettext_lazy as _
 
 from apps.consultancy.utils import upload_consultancy_logo_to, upload_consultancy_cover_image_to
 from apps.core import fields
@@ -33,9 +36,25 @@ class Consultancy(BaseModel):
         return self.name
 
 
+class ConsultancyStaffPosition(BaseModel):
+    name = models.CharField(max_length=20)
+
+    def __str__(self):
+        return self.name
+
+    def clean(self):
+        if ConsultancyStaffPosition.objects.filter(Q(name='owner') | Q(name='Owner')).exists():
+            raise DjangoValidationError(
+                {
+                    'name': _('Cannot have more than one Owner.')
+                }
+            )
+
+
 class ConsultancyStaff(BaseModel):
     user = models.OneToOneField(ConsultancyUser, on_delete=models.CASCADE)
     consultancy = models.ForeignKey(Consultancy, on_delete=models.CASCADE)
+    position = models.ForeignKey(ConsultancyStaffPosition, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.user.email
