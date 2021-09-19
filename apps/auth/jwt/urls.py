@@ -9,6 +9,11 @@ urlpatterns = [
         views.ConsultancyUserLoginView.as_view(),
         name='consultancy-user-login'
     ),
+path(
+        'portal-user/login',
+        views.PortalUserLoginView.as_view(),
+        name='portal-user-login'
+    ),
     path(
         'login-refresh',
         views.CustomTokenRefreshView.as_view(),
@@ -23,6 +28,11 @@ urlpatterns = [
         'consultancy-user/<str:user_id>/2fa/verify',
         views.ConsultancyUser2FAVerifyView.as_view(),
         name='consultancy-user-2fa-verify'
+    ),
+    path(
+        'portal-user/<str:user_id>/2fa/verify',
+        views.PortalUser2FAVerifyView.as_view(),
+        name='portal-user-2fa-verify'
     ),
     path(
         'consultancy-user/resend-otp',

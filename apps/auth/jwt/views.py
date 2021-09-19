@@ -7,7 +7,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from apps.auth.jwt import serializers, usecases
 from apps.core import generics
 from apps.core.mixins import LoggingErrorsMixin, ResponseMixin
-from apps.user.mixins import ConsultancyUserMixin
+from apps.user.mixins import ConsultancyUserMixin, PortalUserMixin
 
 
 class NormalUserLoginView(generics.CreateAPIView, ResponseMixin):
@@ -43,6 +43,13 @@ class ConsultancyUserLoginView(generics.CreateWithMessageAPIView):
         usecases.ConsultancyUserLoginWithOTPUseCase(self.request, serializer=serializer).execute()
 
 
+class PortalUserLoginView(ConsultancyUserLoginView):
+    """
+    Use this end-point to get login for portal user
+    """
+    pass
+
+
 class CustomTokenRefreshView(LoggingErrorsMixin, TokenRefreshView):
     logging_methods = ['POST']
 
@@ -67,6 +74,12 @@ class ConsultancyUser2FAVerifyView(generics.CreateAPIView, ConsultancyUserMixin,
     def response(self, result, serializer, status_code):
         response_serializer = self.get_response_serializer(serializer.validated_data)
         return Response(response_serializer.data)
+
+
+class PortalUser2FAVerifyView(ConsultancyUser2FAVerifyView, PortalUserMixin):
+
+    def get_object(self):
+        return self.get_portal_user()
 
 
 class ResendOTPCodeView(generics.CreateWithMessageAPIView):
