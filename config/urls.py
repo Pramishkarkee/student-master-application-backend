@@ -11,7 +11,11 @@ from drf_yasg.views import get_schema_view
 
 urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + [
     path(settings.ADMIN_URL, admin.site.urls),
-    path('favicon.ico', RedirectView.as_view(url=staticfiles_storage.url('images/favicons/favicon.ico')))
+    path('favicon.ico', RedirectView.as_view(url=staticfiles_storage.url('images/favicons/favicon.ico'))),
+    path(
+        'notification/',
+        include('apps.notification.urls')
+    ),
 ]
 
 if not settings.USE_S3:

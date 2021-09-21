@@ -71,6 +71,7 @@ THIRD_PARTY_APPS = [
     "drf_yasg",
     "django_filters",
     "rest_framework_tracking",
+    "channels",
 ]
 
 LOCAL_APPS = [
@@ -80,6 +81,7 @@ LOCAL_APPS = [
     "apps.college.apps.CollegesConfig",
     "apps.consultancy.apps.ConsultancyConfig",
     "apps.pyotp.apps.PyoptConfig",
+    "apps.notification.apps.NotificationConfig",
 
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -330,3 +332,12 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 OTP_INTERVAL = 120
+
+ASGI_APPLICATION = 'config.asgi.application'
+
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    },
+}
