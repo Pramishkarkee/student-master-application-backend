@@ -1,10 +1,11 @@
 from apps.core.usecases import BaseUseCase
-from apps.portal.models import Portal, PortalStaff, PortalStaffPosition
+from apps.portal.models import Portal, PortalStaff
+from apps.staff.models import StaffPosition
 from apps.user.models import PortalUser
 
 
-class RegisterConsultancyUseCase(BaseUseCase):
-    def __init__(self,serializer):
+class RegisterPortalUseCase(BaseUseCase):
+    def __init__(self, serializer):
         self._serializer = serializer
         self._data = serializer.validated_data
 
@@ -22,11 +23,11 @@ class RegisterConsultancyUseCase(BaseUseCase):
             portal = Portal.objects.create(
                 **self._data
             )
-            portal_staff_position = PortalStaffPosition.objects.create(name='owner')
+            staff_position = StaffPosition.objects.get_or_create(name='owner')
 
             # 3. consultancy staff
             staff = PortalStaff.objects.create(
                 user=user,
                 portal=portal,
-                position = portal_staff_position
+                position=staff_position
             )

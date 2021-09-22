@@ -17,6 +17,6 @@ class RegisterPortalView(generics.CreateWithMessageAPIView):
     serializer_class = serializers.RegisterPortalSerializer
 
     def perform_create(self, serializer):
-        return usecases.RegisterConsultancyUseCase(
+        return usecases.RegisterPortalUseCase(
             serializer=serializer
         ).execute()

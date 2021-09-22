@@ -7,6 +7,7 @@ from apps.core import fields
 from apps.core.models import BaseModel
 from apps.core.validators import validate_image
 from apps.portal.utils import upload_portal_user_cover_image_to
+from apps.staff.models import StaffPosition
 from apps.user.models import PortalUser
 
 
@@ -29,29 +30,10 @@ class Portal(BaseModel):
         return self.name
 
 
-class PortalStaffPosition(BaseModel):
-    name = models.CharField(max_length=20)
-
-    def __str__(self):
-        return self.name
-
-    def save(self, *args, **kwargs):
-        self.name = self.name.lower()
-        super().save(*args, **kwargs)
-
-    def clean(self):
-        if PortalStaffPosition.objects.filter(name='owner').exists():
-            raise DjangoValidationError(
-                {
-                    'name': _('Cannot have more than one Owner.')
-                }
-            )
-
-
 class PortalStaff(BaseModel):
     user = models.OneToOneField(PortalUser, on_delete=models.CASCADE)
     portal = models.ForeignKey(Portal, on_delete=models.CASCADE)
-    position = models.ForeignKey(PortalStaffPosition, on_delete=models.CASCADE)
+    position = models.ForeignKey(StaffPosition, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.user.email
