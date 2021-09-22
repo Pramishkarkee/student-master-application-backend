@@ -17,5 +17,9 @@ urlpatterns = [
     path(
         'auth/',
         include('apps.auth.urls')
+    ),
+    path(
+        'staff/',
+        include('apps.staff.urls')
     )
 ]

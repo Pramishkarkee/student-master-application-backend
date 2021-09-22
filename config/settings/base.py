@@ -82,6 +82,7 @@ LOCAL_APPS = [
     "apps.consultancy.apps.ConsultancyConfig",
     "apps.pyotp.apps.PyoptConfig",
     "apps.notification.apps.NotificationConfig",
+    "apps.staff.apps.StaffConfig",
 
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
