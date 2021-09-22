@@ -8,4 +8,10 @@ urlpatterns = [
         views.RegisterConsultancyView.as_view(),
         name='register-consultancy'
     ),
+    path(
+        '<consultancy_id>/add-staff',
+        views.CreateConsultancyStaffView.as_view(),
+        name='create-consultancy-staff'
+    ),
+
 ]

@@ -7,6 +7,7 @@ from apps.consultancy.utils import upload_consultancy_logo_to, upload_consultanc
 from apps.core import fields
 from apps.core.models import BaseModel
 from apps.core.validators import validate_image
+from apps.staff.models import StaffPosition
 from apps.user.models import ConsultancyUser
 
 
@@ -36,25 +37,19 @@ class Consultancy(BaseModel):
         return self.name
 
 
-class ConsultancyStaffPosition(BaseModel):
-    name = models.CharField(max_length=20)
-
-    def __str__(self):
-        return self.name
-
-    def clean(self):
-        if ConsultancyStaffPosition.objects.filter(Q(name='owner') | Q(name='Owner')).exists():
-            raise DjangoValidationError(
-                {
-                    'name': _('Cannot have more than one Owner.')
-                }
-            )
-
-
 class ConsultancyStaff(BaseModel):
     user = models.OneToOneField(ConsultancyUser, on_delete=models.CASCADE)
     consultancy = models.ForeignKey(Consultancy, on_delete=models.CASCADE)
-    position = models.ForeignKey(ConsultancyStaffPosition, on_delete=models.CASCADE)
+    position = models.ForeignKey(StaffPosition, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.user.email
+        return 'user {}  of {} with position {}'.format(self.user.email,self.consultancy,self.position)
+
+    def clean(self):
+        if self.position.name == 'owner':
+            if StaffPosition.objects.filter(
+                    name__iexact='owner',
+            ).exists():
+                raise DjangoValidationError(
+                    {'name': _('Cannot Assign two owners.')}
+                )
