@@ -39,3 +39,15 @@ class PortalUserManager(BaseUserManager):
         return super(PortalUserManager, self).get_queryset().filter(
             user_type='portal_user'
         )
+
+    def create(self, email, password=None, **kwargs):
+        kwargs.update({
+            'is_staff': False,
+            'is_superuser': False,
+            'user_type': 'portal_user',
+            'username': email,
+        })
+        user = self.model(email=email, **kwargs)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user

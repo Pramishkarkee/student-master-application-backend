@@ -9,7 +9,7 @@ urlpatterns = [
         views.ConsultancyUserLoginView.as_view(),
         name='consultancy-user-login'
     ),
-path(
+    path(
         'portal-user/login',
         views.PortalUserLoginView.as_view(),
         name='portal-user-login'

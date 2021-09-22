@@ -24,7 +24,7 @@ class CreateConsultancyStaffView(generics.CreateWithMessageAPIView, ConsultancyM
     """
     Use this end-point to create  consultancy user
     """
-    message = 'Consultancy user created successfully'
+    message = 'Consultancy staff created successfully'
     serializer_class = serializers.CreateConsultancyStaffSerializer
     permission_classes = (AllowAny,)
 
@@ -32,7 +32,6 @@ class CreateConsultancyStaffView(generics.CreateWithMessageAPIView, ConsultancyM
         return self.get_consultancy()
 
     def perform_create(self, serializer):
-        print(self.get_object(),self.get_consultancy())
         return usecases.CreateConsultancyStaffUseCase(
             serializer=serializer,
             consultancy=self.get_object()
