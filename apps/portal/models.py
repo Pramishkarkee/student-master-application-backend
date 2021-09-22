@@ -37,3 +37,12 @@ class PortalStaff(BaseModel):
 
     def __str__(self):
         return self.user.email
+
+    def clean(self):
+        if self.position.name == 'owner':
+            if StaffPosition.objects.filter(
+                    name__iexact='owner',
+            ).exists():
+                raise DjangoValidationError(
+                    {'name': _('Cannot Assign two owners.')}
+                )
