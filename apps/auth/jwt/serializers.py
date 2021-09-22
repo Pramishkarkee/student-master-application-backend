@@ -189,6 +189,10 @@ class CustomTokenRefreshSerializer(TokenRefreshSerializer):
         return data
 
 
+class UserIdResponseSerializer(serializers.Serializer):
+    id = serializers.CharField()
+
+
 class NormalUserLoginDetailSerializer(serializers.Serializer):
     fullname = serializers.CharField()
     avatar = serializers.ImageField(source='normaluser.avatar')

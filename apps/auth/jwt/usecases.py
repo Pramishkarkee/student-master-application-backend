@@ -20,6 +20,8 @@ class ConsultancyUserLoginWithOTPUseCase(CreateUseCase, OTPMixin):
 
     def execute(self):
         self._factory()
+        # print(self._user.id)
+        return {'id':self._user.id}
 
     def _factory(self):
         credentials = {

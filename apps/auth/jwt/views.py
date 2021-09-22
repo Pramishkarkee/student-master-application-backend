@@ -32,15 +32,26 @@ class NormalUserLoginView(generics.CreateAPIView, ResponseMixin):
         return Response(response_serializer.data, status=status_code)
 
 
-class ConsultancyUserLoginView(generics.CreateWithMessageAPIView):
+class ConsultancyUserLoginView(generics.CreateAPIView,ResponseMixin):
     """
     Use this end-point to get login for consultancy user
     """
-    message = _('Please check your email for 6 digit OTP code.')
+    # message = _('Please check your email for 6 digit OTP code.')
     serializer_class = serializers.ConsultancyUserLoginSerializer
+    response_serializer_class = serializers.UserIdResponseSerializer
 
     def perform_create(self, serializer):
-        usecases.ConsultancyUserLoginWithOTPUseCase(self.request, serializer=serializer).execute()
+        return usecases.ConsultancyUserLoginWithOTPUseCase(self.request, serializer=serializer).execute()
+
+    @swagger_auto_schema(responses={
+        200: serializers.UserIdResponseSerializer()
+    })
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+    def response(self, serializer, result, status_code):
+        serializer = self.get_response_serializer(result)
+        return Response(serializer.data)
 
 
 class PortalUserLoginView(ConsultancyUserLoginView):
