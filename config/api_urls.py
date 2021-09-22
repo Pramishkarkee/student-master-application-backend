@@ -21,5 +21,9 @@ urlpatterns = [
     path(
         'staff/',
         include('apps.staff.urls')
+    ),
+    path(
+        'portal/',
+        include('apps.portal.urls')
     )
 ]

@@ -83,6 +83,7 @@ LOCAL_APPS = [
     "apps.pyotp.apps.PyoptConfig",
     "apps.notification.apps.NotificationConfig",
     "apps.staff.apps.StaffConfig",
+    "apps.portal.apps.PortalConfig",
 
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
