@@ -25,7 +25,7 @@ class RegisterPortalView(generics.CreateWithMessageAPIView):
 
 class CreatePortalStaffView(generics.CreateWithMessageAPIView, PortalMixin):
     """
-    Use this end-point to create  portal user
+    Use this end-point to create  portal staff
     """
     message = 'Portal staff created successfully'
     serializer_class = serializers.CreatePortalStaffSerializer

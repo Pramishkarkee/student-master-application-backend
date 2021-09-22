@@ -58,7 +58,7 @@ class CreatePortalStaffSerializer(PortalStaffSerializer):
     password = fields.PasswordField()
     fullname = serializers.CharField()
 
-    class Meta(PortalSerializer.Meta):
+    class Meta(PortalStaffSerializer.Meta):
         fields = (
             'email',
             'password',
