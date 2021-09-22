@@ -8,3 +8,8 @@ from apps.portal import models
 @admin.register(models.Portal)
 class PortalAdmin(BaseModelAdmin):
     pass
+
+
+@admin.register(models.PortalStaff)
+class PortalStaffAdmin(BaseModelAdmin):
+    pass
