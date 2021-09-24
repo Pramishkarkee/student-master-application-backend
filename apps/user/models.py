@@ -52,6 +52,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_archived = models.BooleanField(default=False)
 
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
+    updated_at = models.DateTimeField(_('date updated'), default=timezone.now)
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ["fullname", "email"]

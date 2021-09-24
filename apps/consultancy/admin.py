@@ -11,6 +11,8 @@ class ConsultancyAdmin(BaseModelAdmin):
 
 @admin.register(models.ConsultancyStaff)
 class ConsultancyStaffAdmin(BaseModelAdmin):
-    pass
+    list_filter = BaseModelAdmin.list_filter+(
+        'consultancy',
+    )
 
 

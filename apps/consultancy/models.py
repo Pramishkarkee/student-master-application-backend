@@ -3,7 +3,8 @@ from django.db import models
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
-from apps.consultancy.utils import upload_consultancy_logo_to, upload_consultancy_cover_image_to
+from apps.consultancy.utils import upload_consultancy_logo_to, upload_consultancy_cover_image_to, \
+    upload_consultancy_staff_image_to
 from apps.core import fields
 from apps.core.models import BaseModel
 from apps.core.validators import validate_image
@@ -40,13 +41,26 @@ class Consultancy(BaseModel):
 class ConsultancyStaff(BaseModel):
     user = models.OneToOneField(ConsultancyUser, on_delete=models.CASCADE)
     consultancy = models.ForeignKey(Consultancy, on_delete=models.CASCADE)
-    position = models.ForeignKey(StaffPosition, on_delete=models.CASCADE)
+    role = models.ForeignKey(StaffPosition, on_delete=models.CASCADE)
+    profile_photo = models.ImageField(
+        upload_to=upload_consultancy_staff_image_to,
+        default='consultancy_staff/photo/default_logo.png',
+        validators=[validate_image]
+    )
+
+    @property
+    def get_consultancy_user_email(self):
+        return self.user.email
+
+    @property
+    def get_consultancy_full_name(self):
+        return self.user.fullname
 
     def __str__(self):
-        return 'user {}  of {} with position {}'.format(self.user.email,self.consultancy,self.position)
+        return 'user {}  of {} with position {}'.format(self.user.email, self.consultancy, self.role)
 
     def clean(self):
-        if self.position.name == 'owner':
+        if self.role.name == 'owner':
             if StaffPosition.objects.filter(
                     name__iexact='owner',
             ).exists():

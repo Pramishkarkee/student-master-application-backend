@@ -2,8 +2,9 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework.permissions import AllowAny
 
 from apps.consultancy import serializers, usecases
-from apps.consultancy.mixins import ConsultancyMixin
+from apps.consultancy.mixins import ConsultancyMixin, ConsultancyStaffMixin
 from apps.core import generics
+from apps.user.mixins import ConsultancyUserMixin
 
 
 class RegisterConsultancyView(generics.CreateWithMessageAPIView):
@@ -35,4 +36,56 @@ class CreateConsultancyStaffView(generics.CreateWithMessageAPIView, ConsultancyM
         return usecases.CreateConsultancyStaffUseCase(
             serializer=serializer,
             consultancy=self.get_object()
+        ).execute()
+
+
+class CreatePasswordForConsultancyUserView(generics.CreateWithMessageAPIView, ConsultancyUserMixin):
+    """
+    Use this endpoint to save password of consultancy user
+    """
+    message = 'Password saved successfully.'
+    serializer_class = serializers.CreatePasswordForConsultancyStaffSerializer
+    permission_classes = (AllowAny,)
+
+    def get_object(self):
+        return self.get_consultancy_user()
+
+    def perform_create(self, serializer):
+        return usecases.CreatePasswordForConsultancyUserUseCase(
+            serializer=serializer,
+            consultancy_user=self.get_object()
+        ).execute()
+
+
+class ListConsultancyStaffView(generics.ListAPIView, ConsultancyMixin):
+    """
+    Use this endpoint to list all staff of particular consultancy
+    """
+    serializer_class = serializers.ListConsultancyStaffSerializer
+
+    def get_object(self):
+        return self.get_consultancy()
+
+    def get_queryset(self):
+        return usecases.ListConsultancyStaffUseCase(consultancy=self.get_object()).execute()
+
+
+class DeleteConsultancyStaffView:
+    pass
+
+
+class UpdateConsultancyStaffView(generics.UpdateWithMessageAPIView, ConsultancyStaffMixin):
+    """
+    Use this end point to update consultancy staff details
+    """
+
+    serializer_class = serializers.UpdateConsultancyStaffSerializer
+
+    def get_object(self):
+        return self.get_consultancy_staff()
+
+    def perform_update(self, serializer):
+        return usecases.UpdateConsultancyStaffViewUserUseCase(
+            serializer=serializer,
+            consultancy_staff=self.get_object()
         ).execute()
