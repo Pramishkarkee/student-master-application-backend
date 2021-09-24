@@ -1,5 +1,7 @@
+from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 
+from apps.consultancy.emails import SendEmailToConsultanySTaff
 from apps.consultancy.exceptions import ConsultancyNotFound
 from apps.consultancy.models import Consultancy, ConsultancyStaff
 from apps.core import usecases
@@ -44,10 +46,24 @@ class GetConsultancyUseCase(BaseUseCase):
             raise ConsultancyNotFound
 
 
+class GetConsultancyStaffUseCase(BaseUseCase):
+    def __init__(self, consultancy_staff_id: ConsultancyStaff):
+        self._consultancy_staff_id = consultancy_staff_id
+
+    def execute(self):
+        self._factory()
+        return self.consultancy_staff
+
+    def _factory(self):
+        try:
+            self.consultancy_staff = ConsultancyStaff.objects.get(pk=self._consultancy_staff_id)
+        except ConsultancyStaff.DoesNotExist:
+            raise ConsultancyNotFound
+
+
 class CreateConsultancyStaffUseCase(usecases.CreateUseCase):
     def __init__(self, serializer, consultancy: Consultancy):
         self._consultancy = consultancy
-        print(self._consultancy)
         super().__init__(serializer)
 
     def execute(self):
@@ -56,21 +72,76 @@ class CreateConsultancyStaffUseCase(usecases.CreateUseCase):
     def _factory(self):
         user = {
             'email': self._data.pop('email'),
-            'password': (self._data.pop('password')),
             'fullname': self._data.pop('fullname'),
         }
         # 1. create consultancy user
-        consultancy_user = ConsultancyUser.objects.create(
+        self.consultancy_user = ConsultancyUser.objects.create(
             **user
-
         )
         # 2. consultancy staff
         try:
             consultancy_staff = ConsultancyStaff.objects.create(
-                user=consultancy_user,
+                user=self.consultancy_user,
                 consultancy=self._consultancy,
-                position=self._data['position']
+                role=self._data['role'],
+                profile_photo = self._data['profile_photo']
             )
             consultancy_staff.clean()
         except DjangoValidationError as e:
             raise ValidationError(e.message_dict)
+
+        SendEmailToConsultanySTaff(
+            context={
+                'uuid': self.consultancy_user.id,
+                'name': self._consultancy.name
+            }
+        ).send(to=[self.consultancy_user.email])
+
+
+class CreatePasswordForConsultancyUserUseCase(usecases.CreateUseCase):
+    def __init__(self, serializer, consultancy_user: ConsultancyUser):
+        self._consultancy_user = consultancy_user
+        super().__init__(serializer)
+
+    def execute(self):
+        self._factory()
+
+    def _factory(self):
+        password = self._data.pop('password')
+        self._consultancy_user.set_password(password)
+        self._consultancy_user.save()
+
+
+class UpdateConsultancyStaffViewUserUseCase(BaseUseCase):
+    def __init__(self, serializer, consultancy_staff: ConsultancyStaff):
+        self._consultancy_staff = consultancy_staff
+        self._serializer = serializer
+        self._data = self._serializer.validated_data
+
+    def execute(self):
+        self._factory()
+
+    def _factory(self):
+        email = self._data.pop('email')
+        fullname = self._data.pop('fullname')
+        for data in self._data.keys():
+            setattr(self._consultancy_staff, data, self._data[data])
+        self._consultancy_staff.updated_at = timezone.now()
+        self._consultancy_staff.save()
+        user = self._consultancy_staff.user
+        user.email = email
+        user.fullname = fullname
+        user.date_joined = timezone.now()
+        user.save()
+
+
+class ListConsultancyStaffUseCase(BaseUseCase):
+    def __init__(self, consultancy:Consultancy):
+        self._consultancy = consultancy
+
+    def execute(self):
+        self._factory()
+        return self._consultancy_staff
+
+    def _factory(self):
+        self._consultancy_staff = ConsultancyStaff.objects.filter(consultancy=self._consultancy)

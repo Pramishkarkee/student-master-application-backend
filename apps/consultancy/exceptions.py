@@ -4,3 +4,7 @@ from rest_framework.exceptions import NotFound
 
 class ConsultancyNotFound(NotFound):
     default_detail = _('Consultancy not  found for following Id.')
+
+
+class ConsultancyStaffNotFound(NotFound):
+    default_detail = _('Consultancy staff  not  found for following Id.')
