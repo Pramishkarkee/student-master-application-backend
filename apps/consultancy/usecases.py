@@ -84,7 +84,7 @@ class CreateConsultancyStaffUseCase(usecases.CreateUseCase):
                 user=self.consultancy_user,
                 consultancy=self._consultancy,
                 role=self._data['role'],
-                profile_photo = self._data['profile_photo']
+                profile_photo=self._data['profile_photo']
             )
             consultancy_staff.clean()
         except DjangoValidationError as e:
@@ -136,7 +136,7 @@ class UpdateConsultancyStaffViewUserUseCase(BaseUseCase):
 
 
 class ListConsultancyStaffUseCase(BaseUseCase):
-    def __init__(self, consultancy:Consultancy):
+    def __init__(self, consultancy: Consultancy):
         self._consultancy = consultancy
 
     def execute(self):
