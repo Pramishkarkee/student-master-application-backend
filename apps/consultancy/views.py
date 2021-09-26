@@ -29,7 +29,7 @@ class CreateConsultancyStaffView(generics.CreateWithMessageAPIView, ConsultancyM
     message = 'Consultancy staff created successfully'
     serializer_class = serializers.CreateConsultancyStaffSerializer
     permission_classes = (AllowAny,)
-    parser_classes = (MultiPartParser,FileUploadParser,)
+    parser_classes = (MultiPartParser, FileUploadParser,)
 
     def get_object(self):
         return self.get_consultancy()
@@ -72,8 +72,11 @@ class ListConsultancyStaffView(generics.ListAPIView, ConsultancyMixin):
         return usecases.ListConsultancyStaffUseCase(consultancy=self.get_object()).execute()
 
 
-class DeleteConsultancyStaffView:
-    pass
+class ListConsultancyView(generics.ListAPIView):
+    serializer_class = serializers.ListConsultancySerializer
+
+    def get_queryset(self):
+        return usecases.ListConsultancyUseCase().execute()
 
 
 class UpdateConsultancyStaffView(generics.UpdateWithMessageAPIView, ConsultancyStaffMixin):

@@ -29,10 +29,10 @@ urlpatterns = [
         views.UpdateConsultancyStaffView.as_view(),
         name='update-consultancy-staff'
     ),
-    # path(
-    #     'consultancy_staff/<consultancy_staff_id>/delete-staff',
-    #     views.DeleteConsultancyStaffView.as_view(),
-    #     name='delete-consultancy-staff'
-    # ),
+    path(
+        'list',
+        views.ListConsultancyView.as_view(),
+        name='list-consultancy'
+    ),
 
 ]

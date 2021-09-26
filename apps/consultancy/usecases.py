@@ -131,7 +131,7 @@ class UpdateConsultancyStaffViewUserUseCase(BaseUseCase):
         user = self._consultancy_staff.user
         user.email = email
         user.fullname = fullname
-        user.date_joined = timezone.now()
+        user.updated_at = timezone.now()
         user.save()
 
 
@@ -145,3 +145,12 @@ class ListConsultancyStaffUseCase(BaseUseCase):
 
     def _factory(self):
         self._consultancy_staff = ConsultancyStaff.objects.filter(consultancy=self._consultancy)
+
+
+class ListConsultancyUseCase(BaseUseCase):
+    def execute(self):
+        self._factory()
+        return self._consultancy
+
+    def _factory(self):
+        self._consultancy = Consultancy.objects.all()

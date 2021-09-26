@@ -142,3 +142,21 @@ class CreatePasswordForConsultancyStaffSerializer(serializers.Serializer):
                 self.fail('password_requirement_failed')
             )
         return value
+
+
+class ListConsultancySerializer(ConsultancySerializer):
+    class Meta(ConsultancySerializer.Meta):
+        fields = (
+                'name',
+                'contact',
+                'country',
+                'city',
+                'state',
+                'street_address',
+                'latitude',
+                'longitude',
+                'website',
+                'logo',
+                'cover_image',
+                'about',
+            )
