@@ -1,4 +1,5 @@
 from django.utils.translation import gettext_lazy as _
+from rest_framework.parsers import MultiPartParser, FileUploadParser
 from rest_framework.permissions import AllowAny
 
 from apps.consultancy import serializers, usecases
@@ -28,6 +29,7 @@ class CreateConsultancyStaffView(generics.CreateWithMessageAPIView, ConsultancyM
     message = 'Consultancy staff created successfully'
     serializer_class = serializers.CreateConsultancyStaffSerializer
     permission_classes = (AllowAny,)
+    parser_classes = (MultiPartParser,FileUploadParser,)
 
     def get_object(self):
         return self.get_consultancy()

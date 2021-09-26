@@ -77,6 +77,7 @@ class ConsultancyStaffSerializer(serializers.ModelSerializer):
 class CreateConsultancyStaffSerializer(ConsultancyStaffSerializer):
     email = serializers.EmailField()
     fullname = serializers.CharField()
+    profile_photo = serializers.ImageField(write_only=True)
 
     class Meta(ConsultancyStaffSerializer.Meta):
         fields = (
