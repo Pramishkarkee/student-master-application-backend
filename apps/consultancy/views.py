@@ -12,6 +12,7 @@ class RegisterConsultancyView(generics.CreateWithMessageAPIView):
     """
     Use this end-point to register consultancy
     """
+    parser_classes = (MultiPartParser,FileUploadParser,)
     message = _('Registered successfully')
     permission_classes = (AllowAny,)
     serializer_class = serializers.RegisterConsultancySerializer
@@ -90,7 +91,7 @@ class UpdateConsultancyStaffView(generics.UpdateWithMessageAPIView, ConsultancyS
         return self.get_consultancy_staff()
 
     def perform_update(self, serializer):
-        return usecases.UpdateConsultancyStaffViewUserUseCase(
+        return usecases.UpdateConsultancyStaffUseCase(
             serializer=serializer,
             consultancy_staff=self.get_object()
         ).execute()

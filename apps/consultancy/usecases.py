@@ -1,6 +1,7 @@
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 
+from apps.consultancy import tasks
 from apps.consultancy.emails import SendEmailToConsultanySTaff
 from apps.consultancy.exceptions import ConsultancyNotFound
 from apps.consultancy.models import Consultancy, ConsultancyStaff
@@ -89,13 +90,22 @@ class CreateConsultancyStaffUseCase(usecases.CreateUseCase):
             consultancy_staff.clean()
         except DjangoValidationError as e:
             raise ValidationError(e.message_dict)
+        context = {
+            'uuid': self.consultancy_user.id,
+            'name': self._consultancy.name,
+            'user_email':self.consultancy_user.email,
+        }
+        tasks.send_set_password_email_to_user.apply_async(
+            kwargs=context
+        )
 
-        SendEmailToConsultanySTaff(
-            context={
-                'uuid': self.consultancy_user.id,
-                'name': self._consultancy.name
-            }
-        ).send(to=[self.consultancy_user.email])
+        # without celery
+        # SendEmailToConsultanySTaff(
+        #     context={
+        #         'uuid': self.consultancy_user.id,
+        #         'name': self._consultancy.name
+        #     }
+        # ).send(to=[self.consultancy_user.email])
 
 
 class CreatePasswordForConsultancyUserUseCase(usecases.CreateUseCase):
@@ -112,7 +122,7 @@ class CreatePasswordForConsultancyUserUseCase(usecases.CreateUseCase):
         self._consultancy_user.save()
 
 
-class UpdateConsultancyStaffViewUserUseCase(BaseUseCase):
+class UpdateConsultancyStaffUseCase(BaseUseCase):
     def __init__(self, serializer, consultancy_staff: ConsultancyStaff):
         self._consultancy_staff = consultancy_staff
         self._serializer = serializer
@@ -126,6 +136,10 @@ class UpdateConsultancyStaffViewUserUseCase(BaseUseCase):
         fullname = self._data.pop('fullname')
         for data in self._data.keys():
             setattr(self._consultancy_staff, data, self._data[data])
+        try:
+            self._consultancy_staff.clean()
+        except DjangoValidationError as e:
+            raise ValidationError(e.message_dict)
         self._consultancy_staff.updated_at = timezone.now()
         self._consultancy_staff.save()
         user = self._consultancy_staff.user
