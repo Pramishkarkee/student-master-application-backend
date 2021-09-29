@@ -84,6 +84,7 @@ LOCAL_APPS = [
     "apps.notification.apps.NotificationConfig",
     "apps.staff.apps.StaffConfig",
     "apps.portal.apps.PortalConfig",
+    "apps.settings.apps.SettingsConfig",
 
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
