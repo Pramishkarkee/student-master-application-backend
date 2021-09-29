@@ -108,3 +108,14 @@ class DestroyAPIView(LoggingErrorsMixin, generics.DestroyAPIView):
 
 class RetrieveAPIView(LoggingErrorsMixin, generics.RetrieveAPIView):
     logging_methods = ['GET']
+
+
+class DestroyWithMessageAPIView(DestroyAPIView):
+    message = _('Deleted successfully.')
+
+    def response(self, serializer):
+        return Response(
+            {
+                'message': self.message
+            }, status=status.HTTP_200_OK
+        )

@@ -1,3 +1,5 @@
+import re
+
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
@@ -35,7 +37,9 @@ class RegisterPortalSerializer(PortalSerializer):
         )
 
     default_error_messages = {
-        'duplicate_email': _('Email already exists try another one.')
+        'duplicate_email': _('Email already exists try another one.'),
+        'password_requirement_failed': _(
+            'Password must 8 character  with one digit,one lowercase,one uppercase and special character.')
     }
 
     def validate_email(self, value):
@@ -46,6 +50,20 @@ class RegisterPortalSerializer(PortalSerializer):
             )
         return email
 
+    def validate_password(self, value):
+        """
+        Rule 1. Password must be 8 length at minimum
+        Rule 2. Password must contain one digit,one lowercase,one uppercase and special character.
+        """
+        pattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"
+        matched = re.match(pattern, value)
+        if not matched:
+            raise serializers.ValidationError(
+                self.fail('password_requirement_failed')
+            )
+        return value
+
+
 
 class PortalStaffSerializer(serializers.ModelSerializer):
     class Meta:
@@ -55,20 +73,19 @@ class PortalStaffSerializer(serializers.ModelSerializer):
 
 class CreatePortalStaffSerializer(PortalStaffSerializer):
     email = serializers.EmailField()
-    password = fields.PasswordField()
     fullname = serializers.CharField()
 
     class Meta(PortalStaffSerializer.Meta):
         fields = (
             'email',
-            'password',
             'position',
             'fullname',
         )
 
     default_error_messages = {
         'duplicate_email': _('Email already exists try another one.'),
-        'short_password_length': _('Password must be of minimum 8 length.')
+        'password_requirement_failed': _(
+            'Password must minimum 8 character  with one digit,one lowercase,one uppercase and special character.')
     }
 
     def validate_email(self, value):
@@ -77,12 +94,18 @@ class CreatePortalStaffSerializer(PortalStaffSerializer):
             raise serializers.ValidationError(
                 self.fail('duplicate_email')
             )
-        return value
+        return email
 
     def validate_password(self, value):
-        password = len(value)
-        if password < 8:
+        """
+        Rule 1. Password must be 8 length at minimum
+        Rule 2. Password must contain one digit,one lowercase,one uppercase and special character.
+        """
+        pattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"
+        matched = re.match(pattern, value)
+        if not matched:
             raise serializers.ValidationError(
-                self.fail('short_password_length')
+                self.fail('password_requirement_failed')
             )
         return value
+

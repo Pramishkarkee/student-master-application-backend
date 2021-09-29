@@ -60,7 +60,6 @@ class RegisterConsultancySerializer(ConsultancySerializer):
         """
         pattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"
         matched = re.match(pattern, value)
-        print(matched)
         if not matched:
             raise serializers.ValidationError(
                 self.fail('password_requirement_failed')
