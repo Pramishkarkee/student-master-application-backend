@@ -25,5 +25,5 @@ pyotp==2.6.0
 psycopg2==2.9.1
 
 
-channels
+# channels
 channels==3.0.4
