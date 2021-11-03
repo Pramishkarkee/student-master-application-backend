@@ -25,5 +25,25 @@ urlpatterns = [
     path(
         'portal/',
         include('apps.portal.urls')
+    ),
+    path(
+        'setting/',
+        include('apps.settings.urls')
+    ),
+    path(
+        'troubleshooting/',
+        include('apps.troubleshooting.urls')
+    ),
+    path(
+        'schedule/',
+        include('apps.schedule.urls')
+    ),
+    path(
+        'blogs/',
+        include('apps.blog.urls')
+    ),
+    path(
+        'gallery/',
+        include('apps.gallery.urls')
     )
 ]

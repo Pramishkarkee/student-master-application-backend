@@ -10,8 +10,8 @@ class ConsultancyUserNotFound(NotFound):
 
 
 class GetConsultancyUserUseCase(BaseUseCase):
-    def __init__(self, user_id):
-        self._user_id = user_id
+    def __init__(self, consultancy_user_id):
+        self._consultancy_user_id = consultancy_user_id
 
     def execute(self):
         self._factory()
@@ -19,6 +19,6 @@ class GetConsultancyUserUseCase(BaseUseCase):
 
     def _factory(self):
         try:
-            self._user = ConsultancyUser.objects.get(pk=self._user_id)
+            self._user = ConsultancyUser.objects.get(pk=self._consultancy_user_id)
         except ConsultancyUser.DoesNotExist:
             raise ConsultancyUserNotFound

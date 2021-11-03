@@ -2,7 +2,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework.parsers import MultiPartParser, FileUploadParser
 from rest_framework.permissions import AllowAny
 
-from apps.consultancy import serializers, usecases
+from apps.consultancy import serializers, usecases, filtersets
 from apps.consultancy.mixins import ConsultancyMixin, ConsultancyStaffMixin
 from apps.core import generics
 from apps.user.mixins import ConsultancyUserMixin
@@ -12,6 +12,7 @@ class RegisterConsultancyView(generics.CreateWithMessageAPIView):
     """
     Use this end-point to register consultancy
     """
+    parser_classes = (MultiPartParser, FileUploadParser,)
     message = _('Registered successfully')
     permission_classes = (AllowAny,)
     serializer_class = serializers.RegisterConsultancySerializer
@@ -29,7 +30,7 @@ class CreateConsultancyStaffView(generics.CreateWithMessageAPIView, ConsultancyM
     message = 'Consultancy staff created successfully'
     serializer_class = serializers.CreateConsultancyStaffSerializer
     permission_classes = (AllowAny,)
-    parser_classes = (MultiPartParser,FileUploadParser,)
+    parser_classes = (MultiPartParser, FileUploadParser,)
 
     def get_object(self):
         return self.get_consultancy()
@@ -41,29 +42,12 @@ class CreateConsultancyStaffView(generics.CreateWithMessageAPIView, ConsultancyM
         ).execute()
 
 
-class CreatePasswordForConsultancyUserView(generics.CreateWithMessageAPIView, ConsultancyUserMixin):
-    """
-    Use this endpoint to save password of consultancy user
-    """
-    message = 'Password saved successfully.'
-    serializer_class = serializers.CreatePasswordForConsultancyStaffSerializer
-    permission_classes = (AllowAny,)
-
-    def get_object(self):
-        return self.get_consultancy_user()
-
-    def perform_create(self, serializer):
-        return usecases.CreatePasswordForConsultancyUserUseCase(
-            serializer=serializer,
-            consultancy_user=self.get_object()
-        ).execute()
-
-
 class ListConsultancyStaffView(generics.ListAPIView, ConsultancyMixin):
     """
     Use this endpoint to list all staff of particular consultancy
     """
     serializer_class = serializers.ListConsultancyStaffSerializer
+    filterset_class = filtersets.ConsultancyStaffSearchFilter
 
     def get_object(self):
         return self.get_consultancy()
@@ -71,9 +55,13 @@ class ListConsultancyStaffView(generics.ListAPIView, ConsultancyMixin):
     def get_queryset(self):
         return usecases.ListConsultancyStaffUseCase(consultancy=self.get_object()).execute()
 
+    no_content_error_message = _("No Consultancy staff at the moment.")
 
-class DeleteConsultancyStaffView:
-    pass
+class ListConsultancyView(generics.ListAPIView):
+    serializer_class = serializers.ListConsultancySerializer
+
+    def get_queryset(self):
+        return usecases.ListConsultancyUseCase().execute()
 
 
 class UpdateConsultancyStaffView(generics.UpdateWithMessageAPIView, ConsultancyStaffMixin):
@@ -81,13 +69,71 @@ class UpdateConsultancyStaffView(generics.UpdateWithMessageAPIView, ConsultancyS
     Use this end point to update consultancy staff details
     """
 
-    serializer_class = serializers.UpdateConsultancyStaffSerializer
+    serializer_class = serializers.UpdateConsultancyStaffDetail
+    message = _("Updated successfully")
+    parser_classes = (MultiPartParser, FileUploadParser,)
 
     def get_object(self):
         return self.get_consultancy_staff()
 
     def perform_update(self, serializer):
-        return usecases.UpdateConsultancyStaffViewUserUseCase(
+        return usecases.UpdateConsultancyStaffUseCase(
             serializer=serializer,
             consultancy_staff=self.get_object()
+        ).execute()
+
+
+class UpdateConsultancyStaffPhotoView(generics.UpdateWithMessageAPIView, ConsultancyStaffMixin):
+    """
+    Use this end point to update consultancy staff photo
+    """
+
+    serializer_class = serializers.UpdateConsultancyStaffProfilePhotoDetail
+    message = _("Updated successfully")
+    # permission_classes = (MultiPartParser,FileUploadParser,)
+    parser_classes = (MultiPartParser, FileUploadParser,)
+
+    def get_object(self):
+        return self.get_consultancy_staff()
+
+    def perform_update(self, serializer):
+        return usecases.UpdateConsultancyStaffPhotoUseCase(
+            serializer=serializer,
+            consultancy_staff=self.get_object()
+        ).execute()
+
+
+class DeactivateConsultancyUserView(generics.CreateWithMessageAPIView, ConsultancyUserMixin):
+    """
+    Use this end point to deactivate  consultancy user
+    """
+    permission_classes = (AllowAny,)  # -> to be change
+    message = _("User  deactivated successfully")
+    serializer_class = serializers.DeactivateConsultancyUserSeralizer
+
+    def get_object(self):
+        return self.get_consultancy_user()
+
+    def perform_create(self, serializer):
+        return usecases.DeactivateConsultancyUserUseCase(
+            serializer=serializer,
+            consultancy_user=self.get_object()
+        ).execute()
+
+
+class ActivateConsultancyUserView(generics.CreateWithMessageAPIView, ConsultancyUserMixin):
+    """
+    Use this end point to activate  consultancy user
+    """
+    permission_classes = (AllowAny,)  # -> to be change
+    message = _("User  activated successfully")
+    serializer_class = serializers.ActivateConsultancyUserSeralizer
+
+    def get_object(self):
+        return self.get_consultancy_user()
+
+    def perform_create(self, serializer):
+        return usecases.ActivateConsultancyUserUseCase(
+            serializer=serializer,
+            consultancy_user=self.get_object()
         ).execute()

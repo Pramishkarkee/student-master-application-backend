@@ -57,13 +57,12 @@ class ConsultancyStaff(BaseModel):
         return self.user.fullname
 
     def __str__(self):
-        return 'user {}  of {} with position {}'.format(self.user.email, self.consultancy, self.role)
+        return self.user.email
 
     def clean(self):
-        if self.role.name == 'owner':
-            if StaffPosition.objects.filter(
-                    name__iexact='owner',
-            ).exists():
-                raise DjangoValidationError(
-                    {'name': _('Cannot Assign two owners.')}
-                )
+        if self.role.name == 'owner' and StaffPosition.objects.filter(
+                name__iexact='owner',
+        ).exists():
+            raise DjangoValidationError(
+                {'role': _('Cannot Assign two owners.')}
+            )

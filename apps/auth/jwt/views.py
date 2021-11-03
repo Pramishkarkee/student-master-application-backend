@@ -32,7 +32,7 @@ class NormalUserLoginView(generics.CreateAPIView, ResponseMixin):
         return Response(response_serializer.data, status=status_code)
 
 
-class ConsultancyUserLoginView(generics.CreateAPIView,ResponseMixin):
+class ConsultancyUserLoginView(generics.CreateAPIView, ResponseMixin):
     """
     Use this end-point to get login for consultancy user
     """
@@ -58,7 +58,7 @@ class PortalUserLoginView(ConsultancyUserLoginView):
     """
     Use this end-point to get login for portal user
     """
-    pass
+    serializer_class = serializers.PortalUserLoginSerializer
 
 
 class CustomTokenRefreshView(LoggingErrorsMixin, TokenRefreshView):
@@ -88,6 +88,7 @@ class ConsultancyUser2FAVerifyView(generics.CreateAPIView, ConsultancyUserMixin,
 
 
 class PortalUser2FAVerifyView(ConsultancyUser2FAVerifyView, PortalUserMixin):
+    serializer_class = serializers.VerifyPortalUserOTPSerializer
 
     def get_object(self):
         return self.get_portal_user()
@@ -102,3 +103,61 @@ class ResendOTPCodeView(generics.CreateWithMessageAPIView):
 
     def perform_create(self, serializer):
         return usecases.ResendOTPCodeUseCase(serializer=serializer).execute()
+
+
+class CreatePasswordForConsultancyStaffUserView(generics.CreateWithMessageAPIView, ConsultancyUserMixin):
+    """
+    Use this endpoint to save password of consultancy user
+    """
+    message = 'Password saved successfully.'
+    serializer_class = serializers.CreatePasswordForConsultancyStaffSerializer
+    permission_classes = (AllowAny,)
+
+    def get_object(self):
+        return self.get_consultancy_user()
+
+    def perform_create(self, serializer):
+        return usecases.CreatePasswordForConsultancyUserUseCase(
+            serializer=serializer,
+            consultancy_user=self.get_object()
+        ).execute()
+
+
+class CreatePasswordForPortalStaffUserView(generics.CreateWithMessageAPIView, PortalUserMixin):
+    """
+    Use this endpoint to save password of portal user
+    """
+    message = 'Password saved successfully.'
+    serializer_class = serializers.CreatePasswordForPortalStaffSerializer
+    permission_classes = (AllowAny,)
+
+    def get_object(self):
+        print(self.get_portal_user())
+        return self.get_portal_user()
+
+    def perform_create(self, serializer):
+        return usecases.CreatePasswordForPortalUserUseCase(
+            serializer=serializer,
+            portal_user=self.get_object()
+        ).execute()
+
+
+
+
+
+class ChangeConsultancyUserPasswordView(generics.CreateWithMessageAPIView, ConsultancyUserMixin):
+    """
+    Use this end point to change logged in consultancy user to change password
+    """
+    permission_classes = (AllowAny,)  # -> to be change
+    message = _("Password changed successfully")
+    serializer_class = serializers.ConsultancyUserChangePasswordSerializer
+
+    def get_object(self):
+        return self.get_consultancy_user()
+
+    def perform_create(self, serializer):
+        return usecases.ChangeConsultancyUserPasswordUseCase(
+            serializer=serializer,
+            consultancy_user=self.get_object()
+        ).execute()

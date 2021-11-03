@@ -25,18 +25,35 @@ urlpatterns = [
         name='login-verify'
     ),
     path(
-        'consultancy-user/<str:user_id>/2fa/verify',
+        'consultancy-user/<str:consultancy_user_id>/2fa/verify',
         views.ConsultancyUser2FAVerifyView.as_view(),
         name='consultancy-user-2fa-verify'
     ),
     path(
-        'portal-user/<str:user_id>/2fa/verify',
+        'portal-user/<str:portal_user_id>/2fa/verify',
         views.PortalUser2FAVerifyView.as_view(),
         name='portal-user-2fa-verify'
     ),
     path(
-        'consultancy-user/resend-otp',
+        'user/resend-otp',
         views.ResendOTPCodeView.as_view(),
         name='consultancy-user-resend-otp'
     ),
+
+    path(
+        'consultancy-user/<str:consultancy_user_id>/change-password',
+        views.ChangeConsultancyUserPasswordView.as_view(),
+        name='consultancy-user-change-password'
+    ),
+    path(
+        'consultancy-user/<str:consultancy_user_id>/create-password',
+        views.CreatePasswordForConsultancyStaffUserView.as_view(),
+        name='create-consultancy-user-staff-password'
+    ),
+    path(
+        'portal-user/<str:portal_user_id>/create-password',
+        views.CreatePasswordForPortalStaffUserView.as_view(),
+        name='create-portal-user-staff-password'
+    ),
+
 ]

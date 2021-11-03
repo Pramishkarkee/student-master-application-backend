@@ -1,3 +1,4 @@
+import re
 from datetime import timedelta
 
 from django.contrib.auth import get_user_model
@@ -5,6 +6,8 @@ from django.db.models import Q
 from django.utils.datetime_safe import datetime
 from django.utils.timezone import now
 from django.utils.translation import ugettext as _
+
+
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 from rest_framework_simplejwt.serializers import (
@@ -16,7 +19,14 @@ from rest_framework_simplejwt.settings import api_settings
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.auth.jwt.cache import LoginCache
+from apps.consultancy.exceptions import ConsultancyUserEmailNotFound, PortalUserEmailNotFound
+from apps.consultancy.models import ConsultancyStaff
+from apps.core import fields
+from apps.portal.models import PortalStaff
 from apps.pyotp.mixins import OTPMixin
+from apps.settings.exceptions import SettingsNotFound
+from apps.settings.models import Settings
+from apps.user.models import ConsultancyUser, PortalUser
 
 User = get_user_model()
 
@@ -116,6 +126,25 @@ class ConsultancyUserLoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = PasswordField()
 
+    def validate_email(self, value):
+        try:
+            ConsultancyUser.objects.get(email=value)
+        except ConsultancyUser.DoesNotExist:
+            raise ConsultancyUserEmailNotFound
+        return value
+
+
+class PortalUserLoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = PasswordField()
+
+    def validate_email(self, value):
+        try:
+            PortalUser.objects.get(email=value)
+        except PortalUser.DoesNotExist:
+            raise PortalUserEmailNotFound
+        return value
+
 
 class ResendOTPCodeSerializer(serializers.Serializer):
     email = serializers.EmailField()
@@ -149,12 +178,54 @@ class VerifyConsultanyUserOTPSerializer(CodeSerializer, OTPMixin):
         # get current user from views
         user = self.context['view'].get_object()
         # check for otp code validation
+        position = ConsultancyStaff.objects.get(user=user).role.name
+        try:
+            color = Settings.objects.get(user=user).color
+        except Settings.DoesNotExist:
+            raise SettingsNotFound
         is_code_valid = self.verify_otp_for_user(user, attrs['code'], '2FA')
         if is_code_valid:
             data = super().validate(attrs)
             refresh = self.get_token(user)
             data['refresh_token'] = str(refresh)
             data['token'] = str(refresh.access_token)
+            data['role'] = position
+            data['color'] = color
+            user.last_login = now()
+            user.save()
+            return data
+        else:
+            raise serializers.ValidationError(
+                {'code': _('Invalid code.')}
+            )
+
+
+class VerifyPortalUserOTPSerializer(CodeSerializer,OTPMixin):
+    """
+    Use this to activate portal user
+    """
+
+    def get_token(self, user):
+        return RefreshToken.for_user(user)
+
+    def validate(self, attrs):
+        attrs = super(VerifyPortalUserOTPSerializer, self).validate(attrs)
+        # get current user from views
+        user = self.context['view'].get_object()
+        # check for otp code validation
+        position = PortalStaff.objects.get(user=user).role.name
+        try:
+            color = Settings.objects.get(user=user).color
+        except Settings.DoesNotExist:
+            raise SettingsNotFound
+        is_code_valid = self.verify_otp_for_user(user, attrs['code'], '2FA')
+        if is_code_valid:
+            data = super().validate(attrs)
+            refresh = self.get_token(user)
+            data['refresh_token'] = str(refresh)
+            data['token'] = str(refresh.access_token)
+            data['role'] = position
+            data['color'] = color
             user.last_login = now()
             user.save()
             return data
@@ -201,8 +272,78 @@ class NormalUserLoginDetailSerializer(serializers.Serializer):
 class NormalUserLoginResponseSerializer(serializers.Serializer):
     refresh_token = serializers.CharField(read_only=True)
     token = serializers.CharField(read_only=True)
+    role = serializers.CharField()
+    color = serializers.CharField()
     user_detail = NormalUserLoginDetailSerializer(source='user', read_only=True)
 
 
 class ConsultancyUserLoginResponseSerializer(NormalUserLoginResponseSerializer):
     user_detail = None
+
+
+class CreatePasswordForConsultancyStaffSerializer(serializers.Serializer):
+    password = fields.PasswordField()
+
+    default_error_messages = {
+        'password_requirement_failed': _(
+            'Password must 8 character  with one digit,one lowercase,one uppercase and special character.')
+    }
+
+    def validate_password(self, value):
+        """
+        Rule 1. Password must be 8 length at minimum
+        Rule 2. Password must contain one digit,one lowercase,one uppercase and special character.
+        """
+        pattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"
+        matched = re.match(pattern, value)
+        if not matched:
+            raise serializers.ValidationError(
+                self.fail('password_requirement_failed')
+            )
+        return value
+
+
+class CreatePasswordForPortalStaffSerializer(CreatePasswordForConsultancyStaffSerializer):
+    pass
+
+
+class ConsultancyUserChangePasswordSerializer(serializers.Serializer):
+    old_password = PasswordField()
+    new_password = PasswordField()
+    confirm_new_password = PasswordField()
+
+    default_error_messages = {
+        'password_requirement_failed': _(
+            'Password must 8 character  with one digit,one lowercase,one uppercase and special character.'),
+        'password_same': _("Old password is same as new password"),
+        'password_not_in_db': _("Your existing old password does n\'t match with our database please try "
+                                "again"),
+        'password_not_matched': _("Password not matched please conform your password again."),
+
+    }
+
+    def validate_password(self, value):
+        user = self.context['view'].get_object()
+        if not (user.check_password(value)):
+            raise serializers.ValidationError(self.fail('password_not_in_db'))
+        return value
+
+    def validate(self, attrs):
+        """
+        Rule 1. Password must be 8 length at minimum
+        Rule 2. Password must contain one digit,one lowercase,one uppercase and special character.
+        Rule 3. New password must not match old password
+        Rule 4. New password and confirm password fields must be same.
+        """
+        pattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"
+        matched = re.match(pattern, attrs['new_password'])
+        if attrs['old_password'] == attrs['new_password']:
+            raise serializers.ValidationError(self.fail('password_same'))
+        if matched:
+            if attrs['new_password'] != attrs['confirm_new_password']:
+                raise serializers.ValidationError(self.fail('password_not_matched'))
+        else:
+            raise serializers.ValidationError(
+                self.fail('password_requirement_failed')
+            )
+        return attrs

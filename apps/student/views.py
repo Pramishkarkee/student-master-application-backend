@@ -25,6 +25,7 @@ from .serializers import LorSerializer, PassportSerializer, CitizenshipSerialize
 from .serializers import StudentProfileUpdate, UpdateStudentAction, StudentEssayUpdateSerializer, \
     StudentEssaySerializer, GetApplyDataSerializer, EligibilityCertificateSerializer, StudentApplySerializer, \
     BookmarkSerializer, BookmarkGetCollegeSerializer, VisitedCollegeSerializer
+from ..notification.mixins import NotificationMixin
 
 User = get_user_model()
 
@@ -416,7 +417,9 @@ class EligibilityExamApi(APIView):
 
 
 @permission_classes((permissions.AllowAny,))
-class ApplyAPI(APIView):
+class ApplyAPI(APIView, NotificationMixin):
+    notification_group = ['portal_user']
+
     permission_classes = [IsAuthenticated]
 
     @method_decorator([student_required], name='dispatch')
@@ -443,11 +446,20 @@ class ApplyAPI(APIView):
                 print(serializer.is_valid())
                 if serializer.is_valid():
                     serializer.save()
+                    # send notification
+                    data = {
+                        'name': 'Student Applied',
+                        'image': request.user.student.photo.url,
+                        'content': 'Student Applied to College: {}.'.format(college.name),
+                        'id': str(request.user.student.id)
+                    }
+                    self.send_notification(data=data)
                     return Response(serializer.data)
                 else:
                     return Response({'error': serializer.errors})
         except College.DoesNotExist:
             return Response({'message': 'college Doesnt Exist'}, status=404)
+
 
     permission_classes = [IsAuthenticated]
 

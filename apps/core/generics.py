@@ -2,6 +2,7 @@ from django.utils.translation import gettext_lazy as _
 from drf_yasg.utils import swagger_auto_schema
 
 from rest_framework import generics, status
+from rest_framework.parsers import MultiPartParser, FileUploadParser
 from rest_framework.response import Response
 
 from apps.core.exceptions import NoContent
@@ -32,6 +33,7 @@ class CreateAPIView(LoggingErrorsMixin, generics.CreateAPIView):
 
 
 class CreateWithMessageAPIView(CreateAPIView):
+    parser_classes = (MultiPartParser, FileUploadParser,)
     message = _('Performed Successfully.')
 
     def response(self, result, serializer, status_code):
@@ -63,6 +65,7 @@ class ListAPIView(LoggingErrorsMixin, generics.ListAPIView):
 
 
 class UpdateAPIView(LoggingErrorsMixin, generics.UpdateAPIView):
+    parser_classes = (MultiPartParser, FileUploadParser,)
     logging_methods = ['PUT', 'PATCH']
 
     def update(self, request, *args, **kwargs):
@@ -108,3 +111,14 @@ class DestroyAPIView(LoggingErrorsMixin, generics.DestroyAPIView):
 
 class RetrieveAPIView(LoggingErrorsMixin, generics.RetrieveAPIView):
     logging_methods = ['GET']
+
+
+class DestroyWithMessageAPIView(DestroyAPIView):
+    message = _('Deleted successfully.')
+
+    def response(self, serializer):
+        return Response(
+            {
+                'message': self.message
+            }, status=status.HTTP_200_OK
+        )

@@ -34,6 +34,7 @@ from .serializers import CourceDetailFormSerializer, CollegeGallertStudentpage, 
     CourceDetailInsertSerializer, LocationSerializer, AboutUpdateSerializer
 from .serializers import FetchCourseSerializer, FacilitySerializer, CreateUserSerializer, \
     CheckCollegeAccountCreateSerializer, StudentStatusSerializer, RestrictCountrySerializer
+from ..notification.mixins import NotificationMixin
 from ..student.student_profile_data import get_student_detail
 
 User = get_user_model()
@@ -506,7 +507,8 @@ class ChartApi(APIView):
 
 
 @permission_classes((permissions.AllowAny,))
-class StudentApplication(APIView):
+class StudentApplication(APIView, NotificationMixin):
+    notification_group = ['portal_user']
     permission_classes = [IsAuthenticated]
 
     @method_decorator([college_required], name='dispatch')
@@ -533,6 +535,14 @@ class StudentApplication(APIView):
                 serializer = UpdateStatusSeializer(getdata, data={'status': status, 'action_date': action_date})
                 if serializer.is_valid():
                     serializer.save()
+                    # send notification
+                    data = {
+                        'name': 'Application Status Changed',
+                        'image': getdata.college.logourl.url,
+                        'content': 'Application Status Changed',
+                        'id': str(getdata.college.id)
+                    }
+                    self.send_notification(data=data)
                     return Response(serializer.data)
                 else:
                     return Response(serializer.errors, status=400)
@@ -578,7 +588,8 @@ class CommentApplication(APIView):
 
 
 @permission_classes((permissions.AllowAny,))
-class EnrolledStudentApi(APIView):
+class EnrolledStudentApi(APIView, NotificationMixin):
+    notification_group = ['portal_user']
     permission_classes = [IsAuthenticated]
 
     @method_decorator([college_required], name='dispatch')
@@ -603,6 +614,14 @@ class EnrolledStudentApi(APIView):
             serializer = UpdateStatusSeializer(getdata, data={'enrolled': enrolled, 'action_date': action_date})
             if serializer.is_valid():
                 serializer.save()
+                # send notification
+                data = {
+                    'name': 'Student Enrolled',
+                    'image': getdata.college.logourl.url,
+                    'content': 'Application Status Changed',
+                    'id': str(getdata.college.id)
+                }
+                self.send_notification(data=data)
                 return Response(serializer.data)
             else:
                 return Response(serializer.errors, status=400)

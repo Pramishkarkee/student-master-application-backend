@@ -6,9 +6,11 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework.exceptions import ValidationError, PermissionDenied
 
 from apps.auth.jwt.emails import EmailVerificationEmail
-from apps.core.usecases import CreateUseCase
+from apps.core import usecases
+from apps.core.usecases import CreateUseCase, BaseUseCase
 from apps.pyotp.mixins import OTPMixin
 from apps.pyotp.models import PyOTP
+from apps.user.models import ConsultancyUser, PortalUser
 
 User = get_user_model()
 
@@ -21,7 +23,7 @@ class ConsultancyUserLoginWithOTPUseCase(CreateUseCase, OTPMixin):
     def execute(self):
         self._factory()
         # print(self._user.id)
-        return {'id':self._user.id}
+        return {'id': self._user.id}
 
     def _factory(self):
         credentials = {
@@ -87,10 +89,54 @@ class ResendOTPCodeUseCase(CreateUseCase, OTPMixin):
 
     def _factory(self):
         code = self._regenerate_totp(self._user, '2FA')
-        print(code)
         EmailVerificationEmail(
             context={
                 'code': code,
                 'uuid': self._user.id
             }
         ).send(to=[self._user.email])
+
+
+class ChangeConsultancyUserPasswordUseCase(BaseUseCase):
+    def __init__(self, serializer, consultancy_user):
+        self._serializer = serializer
+        self._data = serializer.validated_data
+        self._consultancy_user = consultancy_user
+
+    def execute(self):
+        self._factory()
+
+    def _factory(self):
+        password = self._data.pop('confirm_new_password')
+        self._consultancy_user.set_password(password)
+        self._consultancy_user.save()
+
+
+
+
+class CreatePasswordForConsultancyUserUseCase(usecases.CreateUseCase):
+    def __init__(self, serializer, consultancy_user: ConsultancyUser):
+        self._consultancy_user = consultancy_user
+        super().__init__(serializer)
+
+    def execute(self):
+        self._factory()
+
+    def _factory(self):
+        password = self._data.pop('password')
+        self._consultancy_user.set_password(password)
+        self._consultancy_user.save()
+
+
+class CreatePasswordForPortalUserUseCase(usecases.CreateUseCase):
+    def __init__(self, serializer, portal_user: PortalUser):
+        self._portal_user = portal_user
+        super().__init__(serializer)
+
+    def execute(self):
+        self._factory()
+
+    def _factory(self):
+        password = self._data.pop('password')
+        self._portal_user.set_password(password)
+        self._portal_user.save()

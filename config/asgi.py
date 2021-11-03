@@ -11,16 +11,15 @@ import os
 import sys
 from pathlib import Path
 
-from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.security.websocket import AllowedHostsOriginValidator
 from django.core.asgi import get_asgi_application
-
 # This allows easy placement of apps within the interior
 # apps directory.
 from django.urls import path
 
-from apps.core.consumers import NotificationConsumer
+from apps.notification import consumers
+from apps.notification.middleware import TokenAuthMiddleware
 
 ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent
 sys.path.append(str(ROOT_DIR / "apps"))
@@ -49,12 +48,13 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.local")
 application = ProtocolTypeRouter({
     'http': get_asgi_application(),
     'websocket': AllowedHostsOriginValidator(
-        AuthMiddlewareStack(
+        TokenAuthMiddleware(
             URLRouter(
                 [
-                    path("notifications/", NotificationConsumer.as_asgi()),
+                    path("notification", consumers.NotificationConsumer.as_asgi()),
                 ]
             )
         ),
     ),
 })
+

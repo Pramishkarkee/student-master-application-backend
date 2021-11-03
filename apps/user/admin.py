@@ -15,6 +15,7 @@ class UserAdmin(UserAdmin):
         (None, {'fields': ('email', 'username', 'password')}),
         (_('Personal info'), {'fields': (
             'fullname',
+            'user_type',
         )}),
         (_('Permissions'), {
             'fields': (
@@ -36,7 +37,7 @@ class UserAdmin(UserAdmin):
         }),
     )
     ordering = ('-date_joined',)
-    list_filter = ('is_staff', 'is_superuser', 'is_active', 'is_archived', 'groups')
+    list_filter = ('is_staff', 'is_superuser', 'is_active', 'is_archived', 'groups', 'user_type')
     search_fields = ('username', 'fullname', 'email')
 
 

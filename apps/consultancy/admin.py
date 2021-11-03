@@ -6,7 +6,9 @@ from apps.core.admin import BaseModelAdmin
 
 @admin.register(models.Consultancy)
 class ConsultancyAdmin(BaseModelAdmin):
-    pass
+    list_display = BaseModelAdmin.list_display + (
+        'name',
+    )
 
 
 @admin.register(models.ConsultancyStaff)

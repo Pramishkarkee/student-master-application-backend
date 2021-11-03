@@ -3,6 +3,7 @@ Base settings to build other settings files upon.
 """
 import datetime
 from pathlib import Path
+from time import strftime
 
 import environ
 
@@ -84,6 +85,11 @@ LOCAL_APPS = [
     "apps.notification.apps.NotificationConfig",
     "apps.staff.apps.StaffConfig",
     "apps.portal.apps.PortalConfig",
+    "apps.settings.apps.SettingsConfig",
+    "apps.troubleshooting.apps.TroubleshootingConfig",
+    "apps.schedule.apps.SchedulesConfig",
+    "apps.blog.apps.BlogConfig",
+    "apps.gallery.apps.GalleryConfig",
 
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -343,3 +349,8 @@ CHANNEL_LAYERS = {
         "BACKEND": "channels.layers.InMemoryChannelLayer",
     },
 }
+
+
+TIME_FIELD_FORMAT = strftime("%H:%M: %p")
+DATE_FIELD_FORMAT = strftime("%Y-%m-%d")
+DATE_AND_TIME_FORMAT = strftime("%Y-%m-%d %H:%M: %p")

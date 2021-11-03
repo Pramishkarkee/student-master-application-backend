@@ -4,9 +4,14 @@ from apps.notification import views
 
 urlpatterns = [
     path(
-        'receive',
-        views.ReceiveNotificationView.as_view(),
-        name='receive_notification'
+        'consultancy-receive',
+        views.ConsultancyReceiveNotificationView.as_view(),
+        name='consultancy_receive_notification'
+    ),
+    path(
+        'portal-receive',
+        views.PortalReceiveNotificationView.as_view(),
+        name='portal_receive_notification'
     ),
     path(
         'send',
