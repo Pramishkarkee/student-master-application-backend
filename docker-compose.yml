@@ -29,7 +29,14 @@ services:
      - static_volume:/app/static
     networks:
       edu-network:
-
+  db:
+    image: postgres:13.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=root        
+      - POSTGRES_PASSWORD=root1234    
+      - POSTGRES_DB=student_master  
 volumes:
   static_volume:
 networks:
