@@ -15,6 +15,17 @@ urlpatterns = [
         name='portal-user-login'
     ),
     path(
+        'student-user/login',
+        views.StudentUserLoginView.as_view(),
+        name='student-user-login'
+    ),
+    path(
+        'institute-user/login',
+        views.InstituteUserLoginView.as_view(),
+        name='institute-user-login'
+
+    ),
+    path(
         'login-refresh',
         views.CustomTokenRefreshView.as_view(),
         name='login-refresh'

@@ -20,18 +20,24 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.auth.jwt.cache import LoginCache
 from apps.consultancy.exceptions import ConsultancyUserEmailNotFound, PortalUserEmailNotFound
+from apps.institute.exceptions import InstituteUserEmailNotFound
 from apps.consultancy.models import ConsultancyStaff
 from apps.core import fields
 from apps.portal.models import PortalStaff
 from apps.pyotp.mixins import OTPMixin
 from apps.settings.exceptions import SettingsNotFound
 from apps.settings.models import Settings
-from apps.user.models import ConsultancyUser, PortalUser
+from apps.user.models import ConsultancyUser, InstituteUser, PortalUser
 
 User = get_user_model()
 
 
 class CustomTokenObtainSerializer(TokenObtainSerializer):
+
+    @classmethod
+    def get_token(cls, user):
+        pass
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['password'] = PasswordField()
@@ -50,7 +56,6 @@ class CustomTokenObtainSerializer(TokenObtainSerializer):
             )
 
         self.user = self.authenticate(username=attrs['username'], password=attrs['password'])
-
         if self.user is None:
             invalid_attempt_timestamps.append(datetime.now())
             if len(invalid_attempt_timestamps) >= 5:
@@ -73,7 +78,8 @@ class CustomTokenObtainSerializer(TokenObtainSerializer):
         LoginCache.delete(attrs['username'])
         return {}
 
-    def authenticate(self, username, password):
+    @staticmethod
+    def authenticate(username, password):
         try:
             user = User.objects.get(
                 Q(email=username) | Q(username=username)
@@ -97,7 +103,9 @@ class LoginSerializer(CustomTokenObtainSerializer):
 
         data['refresh_token'] = str(refresh)
         data['token'] = str(refresh.access_token)
-
+        data['role'] = "owner"
+        data['color']=""
+        data['id']=str(self.user.id)
         self.user.last_login = now()
         self.user.save()
         return data
@@ -106,13 +114,21 @@ class LoginSerializer(CustomTokenObtainSerializer):
         pass
 
 
-class NormalUserLoginSerializer(LoginSerializer):
+class StudentUserLoginSerializer(LoginSerializer):
     def validate(self, attrs):
-        data = super(NormalUserLoginSerializer, self).validate(attrs)
+        data = super(StudentUserLoginSerializer, self).validate(attrs)
         # user detail
         data['user'] = self.user
+
         return data
 
+
+class StudentUserLoginResponseSerializer(serializers.Serializer):
+    refresh_token = serializers.CharField(read_only=True)
+    token = serializers.CharField(read_only=True)
+    role = serializers.CharField()
+    color = serializers.CharField()
+    id = serializers.CharField()
 
 # class ConsultancyUserLoginSerializer(LoginSerializer):
 #     def validate_user(self):
@@ -121,6 +137,17 @@ class NormalUserLoginSerializer(LoginSerializer):
 #                 _('Email or Password does not matched.'),
 #             )
 
+class InstituteUserLoginSerializer(serializers.Serializer):
+    email=serializers.EmailField()
+    password=PasswordField()
+
+    def validate_email(self, value):
+        try:
+            InstituteUser.objects.get(email=value)
+        except InstituteUser.DoesNotExist:
+            raise InstituteUserEmailNotFound
+
+        return value
 
 class ConsultancyUserLoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
@@ -274,7 +301,8 @@ class NormalUserLoginResponseSerializer(serializers.Serializer):
     token = serializers.CharField(read_only=True)
     role = serializers.CharField()
     color = serializers.CharField()
-    user_detail = NormalUserLoginDetailSerializer(source='user', read_only=True)
+    id = serializers.CharField()
+    # user_detail = NormalUserLoginDetailSerializer(source='user', read_only=True)
 
 
 class ConsultancyUserLoginResponseSerializer(NormalUserLoginResponseSerializer):

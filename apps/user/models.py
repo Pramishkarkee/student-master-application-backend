@@ -86,6 +86,16 @@ class StudentUser(User):
 
     class Meta:
         proxy = True
+  
+    def deactivate_user(self):
+        self.is_active = False
+        self.updated_at = timezone.now()
+        self.save()
+
+    def activate_user(self):
+        self.is_active = True
+        self.updated_at = timezone.now()
+        self.save()
 
 
 class InstituteUser(User):
@@ -94,6 +104,15 @@ class InstituteUser(User):
     class Meta:
         proxy = True
 
+    def deactivate_user(self):
+        self.is_active = False
+        self.updated_at = timezone.now()
+        self.save()
+
+    def activate_user(self):
+        self.is_active = True
+        self.updated_at = timezone.now()
+        self.save()
 
 class PortalUser(User):
     objects = managers.PortalUserManager()

@@ -11,8 +11,20 @@ urlpatterns = [
         include('apps.student.urls')
     ),
     path(
+        'notification/',
+        include('apps.notification.urls'),
+    ),
+    path(
+        'students/',
+        include('apps.students.urls')
+    ),
+    path(
         'consultancy/',
         include('apps.consultancy.urls')
+    ),
+    path(
+        'institute/',
+        include('apps.institute.urls')
     ),
     path(
         'auth/',

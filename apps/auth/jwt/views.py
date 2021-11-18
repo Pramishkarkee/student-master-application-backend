@@ -10,20 +10,20 @@ from apps.core.mixins import LoggingErrorsMixin, ResponseMixin
 from apps.user.mixins import ConsultancyUserMixin, PortalUserMixin
 
 
-class NormalUserLoginView(generics.CreateAPIView, ResponseMixin):
+class StudentUserLoginView(generics.CreateAPIView, ResponseMixin):
     """
     Use this end-point to get access token for normal user
     """
     throttle_scope = 'login'
 
-    serializer_class = serializers.NormalUserLoginSerializer
-    response_serializer_class = serializers.NormalUserLoginResponseSerializer
+    serializer_class = serializers.StudentUserLoginSerializer
+    response_serializer_class = serializers.StudentUserLoginResponseSerializer
     permission_classes = (AllowAny,)
 
     def perform_create(self, serializer):
         pass
 
-    @swagger_auto_schema(responses={200: serializers.NormalUserLoginResponseSerializer()})
+    @swagger_auto_schema(responses={200: serializers.StudentUserLoginResponseSerializer()})
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
@@ -41,7 +41,27 @@ class ConsultancyUserLoginView(generics.CreateAPIView, ResponseMixin):
     response_serializer_class = serializers.UserIdResponseSerializer
 
     def perform_create(self, serializer):
-        return usecases.ConsultancyUserLoginWithOTPUseCase(self.request, serializer=serializer).execute()
+        return usecases.UserLoginWithOTPUseCase(self.request, serializer=serializer).execute()
+
+    @swagger_auto_schema(responses={
+        200: serializers.UserIdResponseSerializer()
+    })
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+    def response(self, serializer, result, status_code):
+        serializer = self.get_response_serializer(result)
+        return Response(serializer.data)
+
+class InstituteUserLoginView(generics.CreateAPIView,ResponseMixin):
+    """
+    use this endpoint to get login
+    """
+    serializer_class = serializers.InstituteUserLoginSerializer
+    response_serializer_class = serializers.UserIdResponseSerializer
+
+    def perform_create(self, serializer):
+        return usecases.UserLoginWithOTPUseCase(self.request,serializer=serializer).execute()
 
     @swagger_auto_schema(responses={
         200: serializers.UserIdResponseSerializer()
@@ -140,9 +160,6 @@ class CreatePasswordForPortalStaffUserView(generics.CreateWithMessageAPIView, Po
             serializer=serializer,
             portal_user=self.get_object()
         ).execute()
-
-
-
 
 
 class ChangeConsultancyUserPasswordView(generics.CreateWithMessageAPIView, ConsultancyUserMixin):

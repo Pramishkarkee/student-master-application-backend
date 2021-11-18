@@ -54,6 +54,8 @@ class RegisterConsultancyUseCase(usecases.CreateUseCase, NotificationMixin):
 class GetConsultancyUseCase(BaseUseCase):
     def __init__(self, consultancy_id: Consultancy):
         self._consultancy_id = consultancy_id
+    # def __init__(self, consultancy_id):
+    #     self._consultancy_id = consultancy_id
 
     def execute(self):
         self._factory()
@@ -62,6 +64,7 @@ class GetConsultancyUseCase(BaseUseCase):
     def _factory(self):
         try:
             self._consultancy = Consultancy.objects.get(pk=self._consultancy_id)
+
         except Consultancy.DoesNotExist:
             raise ConsultancyNotFound
 

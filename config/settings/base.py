@@ -79,6 +79,8 @@ LOCAL_APPS = [
     "apps.user.apps.UserConfig",
     "apps.core.apps.CoreConfig",
     "apps.student.apps.StudentsConfig",
+    "apps.students.apps.StudentsConfig",
+    "apps.institute.apps.InstituteConfig",
     "apps.college.apps.CollegesConfig",
     "apps.consultancy.apps.ConsultancyConfig",
     "apps.pyotp.apps.PyoptConfig",

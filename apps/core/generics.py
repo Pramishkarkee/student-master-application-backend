@@ -12,6 +12,10 @@ from apps.core.serializers import MessageResponseSerializer
 
 class GenericAPIView(generics.GenericAPIView):
     logging_methods = ['GET']
+    #
+    # def response(self,result,serializer,status_code):
+    #     headers = self.get_success_headers(serializer.data)
+    #     return Response(serializer.data, status=status_code, headers=headers)
 
 
 class CreateAPIView(LoggingErrorsMixin, generics.CreateAPIView):
