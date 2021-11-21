@@ -77,7 +77,10 @@ class UpdateConsultancyStaffView(generics.UpdateWithMessageAPIView, ConsultancyS
         return self.get_consultancy_staff()
 
     def perform_update(self, serializer):
-        return usecases.UpdateConsultancyStaffUseCase(
+        """
+        CreateConsultancyStaffUseCaseUpdate is use for celery model
+        """
+        return usecases.CreateConsultancyStaffUseCase(
             serializer=serializer,
             consultancy_staff=self.get_object()
         ).execute()

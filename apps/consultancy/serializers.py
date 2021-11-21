@@ -132,6 +132,7 @@ class UpdateConsultancyStaffSerializer(CreateConsultancyStaffSerializer):
 class ListConsultancySerializer(ConsultancySerializer):
     class Meta(ConsultancySerializer.Meta):
         fields = (
+            'id',
             'name',
             'contact',
             'country',

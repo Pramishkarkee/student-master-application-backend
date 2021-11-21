@@ -6,6 +6,17 @@ class StudentUserManager(BaseUserManager):
         return super(StudentUserManager, self).get_queryset().filter(
             user_type='student_user'
         )
+    def create(self, email, password=None, **kwargs):
+        kwargs.update({
+            'is_staff': False,
+            'is_superuser': False,
+            'user_type': 'student_user',
+            'username': email,
+        })
+        user = self.model(email=email, **kwargs)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
 
 
 class InstituteUserManager(BaseUserManager):
@@ -13,7 +24,17 @@ class InstituteUserManager(BaseUserManager):
         return super(InstituteUserManager, self).get_queryset().filter(
             user_type='institute_user'
         )
-
+    def create(self, email, password=None, **kwargs):
+        kwargs.update({
+            'is_staff': False,
+            'is_superuser': False,
+            'user_type': 'institute_user',
+            'username': email,
+        })
+        user = self.model(email=email, **kwargs)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
 
 class ConsultancyUserManager(BaseUserManager):
     def get_queryset(self):

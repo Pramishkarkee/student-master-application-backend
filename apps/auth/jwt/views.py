@@ -7,23 +7,23 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from apps.auth.jwt import serializers, usecases
 from apps.core import generics
 from apps.core.mixins import LoggingErrorsMixin, ResponseMixin
-from apps.user.mixins import ConsultancyUserMixin, PortalUserMixin
+from apps.user.mixins import ConsultancyUserMixin, PortalUserMixin,InstituteUserMixin
 
 
-class NormalUserLoginView(generics.CreateAPIView, ResponseMixin):
+class StudentUserLoginView(generics.CreateAPIView, ResponseMixin):
     """
     Use this end-point to get access token for normal user
     """
     throttle_scope = 'login'
 
-    serializer_class = serializers.NormalUserLoginSerializer
-    response_serializer_class = serializers.NormalUserLoginResponseSerializer
+    serializer_class = serializers.StudentUserLoginSerializer
+    response_serializer_class = serializers.StudentUserLoginResponseSerializer
     permission_classes = (AllowAny,)
 
     def perform_create(self, serializer):
         pass
 
-    @swagger_auto_schema(responses={200: serializers.NormalUserLoginResponseSerializer()})
+    @swagger_auto_schema(responses={200: serializers.StudentUserLoginResponseSerializer()})
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
@@ -41,7 +41,7 @@ class ConsultancyUserLoginView(generics.CreateAPIView, ResponseMixin):
     response_serializer_class = serializers.UserIdResponseSerializer
 
     def perform_create(self, serializer):
-        return usecases.ConsultancyUserLoginWithOTPUseCase(self.request, serializer=serializer).execute()
+        return usecases.UserLoginWithOTPUseCase(self.request, serializer=serializer).execute()
 
     @swagger_auto_schema(responses={
         200: serializers.UserIdResponseSerializer()
@@ -52,6 +52,13 @@ class ConsultancyUserLoginView(generics.CreateAPIView, ResponseMixin):
     def response(self, serializer, result, status_code):
         serializer = self.get_response_serializer(result)
         return Response(serializer.data)
+
+class InstituteUserLoginView(ConsultancyUserLoginView):
+    """
+    use this endpoint to get login
+    """
+    serializer_class = serializers.InstituteUserLoginSerializer
+    
 
 
 class PortalUserLoginView(ConsultancyUserLoginView):
@@ -84,6 +91,7 @@ class ConsultancyUser2FAVerifyView(generics.CreateAPIView, ConsultancyUserMixin,
 
     def response(self, result, serializer, status_code):
         response_serializer = self.get_response_serializer(serializer.validated_data)
+        print("**************",response_serializer.data)
         return Response(response_serializer.data)
 
 
@@ -93,6 +101,14 @@ class PortalUser2FAVerifyView(ConsultancyUser2FAVerifyView, PortalUserMixin):
     def get_object(self):
         return self.get_portal_user()
 
+class InstituteUser2FAVerifyView(ConsultancyUser2FAVerifyView,InstituteUserMixin):
+    """
+    use this endpoint to verify otp
+    """
+    serializer_class=serializers.VerifyInstituteUserOTPSerializer
+    def get_object(self):
+
+        return self.get_institute_user()
 
 class ResendOTPCodeView(generics.CreateWithMessageAPIView):
     """
@@ -140,9 +156,6 @@ class CreatePasswordForPortalStaffUserView(generics.CreateWithMessageAPIView, Po
             serializer=serializer,
             portal_user=self.get_object()
         ).execute()
-
-
-
 
 
 class ChangeConsultancyUserPasswordView(generics.CreateWithMessageAPIView, ConsultancyUserMixin):

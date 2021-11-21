@@ -15,7 +15,7 @@ from apps.user.models import ConsultancyUser, PortalUser
 User = get_user_model()
 
 
-class ConsultancyUserLoginWithOTPUseCase(CreateUseCase, OTPMixin):
+class UserLoginWithOTPUseCase(CreateUseCase, OTPMixin):
     def __init__(self, request, serializer):
         self._request = request
         super().__init__(serializer)
@@ -31,6 +31,7 @@ class ConsultancyUserLoginWithOTPUseCase(CreateUseCase, OTPMixin):
             'password': self._data['password']
         }
         self._user = authenticate(self._request, **credentials)
+
         if self._user is not None:
             """
             Sends email confirmation mail to the user's email
@@ -54,6 +55,14 @@ class ConsultancyUserLoginWithOTPUseCase(CreateUseCase, OTPMixin):
                     'authentication_error': _('User name or password not matched')
                 }
             )
+
+
+# class InstituteUserLoginWithOTPUseCase(CreateUseCase, OTPMixin):
+#     def __init__(self, request,serializer):
+#         self._request = request
+#         super().__init__(serializer)
+#     def execute(self):
+#         self._factory()
 
 
 class ResendOTPCodeUseCase(CreateUseCase, OTPMixin):

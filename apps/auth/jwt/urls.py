@@ -15,6 +15,17 @@ urlpatterns = [
         name='portal-user-login'
     ),
     path(
+        'student-user/login',
+        views.StudentUserLoginView.as_view(),
+        name='student-user-login'
+    ),
+    path(
+        'institute-user/login',
+        views.InstituteUserLoginView.as_view(),
+        name='institute-user-login'
+
+    ),
+    path(
         'login-refresh',
         views.CustomTokenRefreshView.as_view(),
         name='login-refresh'
@@ -33,6 +44,11 @@ urlpatterns = [
         'portal-user/<str:portal_user_id>/2fa/verify',
         views.PortalUser2FAVerifyView.as_view(),
         name='portal-user-2fa-verify'
+    ),
+    path(
+        'institute-user/<str:institute_user_id>/2fa/verify',
+        views.InstituteUser2FAVerifyView.as_view(),
+        name='institute-user-2fa-verify'
     ),
     path(
         'user/resend-otp',
