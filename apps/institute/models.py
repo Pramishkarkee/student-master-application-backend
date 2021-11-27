@@ -1,24 +1,29 @@
+from datetime import datetime
+from django.core import validators
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models
 
-from apps.institute.utils import upload_institute_staff_image_to,upload_institute_logo_to,upload_institute_cover_image_to
+from apps.institute.utils import past_date,upload_institute_staff_image_to,upload_institute_logo_to,upload_institute_cover_image_to
 from apps.core import fields
 from apps.core.models import BaseModel
 from apps.core.validators import validate_image
 from apps.staff.models import StaffPosition
 from apps.user.models import InstituteUser
-
+# from apps.institute_course.models import InstituteCourse
 
 
 # Create your models here.
 class Institute(BaseModel):
     name = models.CharField(max_length=250)
     contact = fields.PhoneNumberField()
-    category = models.CharField(max_length=200)
-    university = models.CharField(max_length=200, blank=True)
-    established = models.CharField(max_length=200)
+    category = models.CharField(max_length=200)   #this represemt college or university
+    university = models.CharField(max_length=200, blank=True) #if catagory is college then add university name else not required
+    established = models.DateField(
+        default=datetime.now,
+        validators= [past_date]
+         )
     country = models.CharField(max_length=200)
     city = models.CharField(max_length=200)
     state = models.CharField(max_length=200)
@@ -72,5 +77,25 @@ class InstituteStaff(BaseModel):
                 }
             )
 
+# class Course
 
 # class InstituteDetailForm
+
+class RequiredDocument(BaseModel):
+    photo = models.BooleanField()
+    citizenship = models.BooleanField()
+    passport = models.BooleanField()
+    academic_certificate = models.BooleanField()
+    sop = models.BooleanField()
+    lor = models.BooleanField()
+
+class ScholorshipScheme(BaseModel):
+    topic = models.CharField(max_length=200)
+    description = models.TextField()
+
+    def __str__(self):
+        self.topic
+
+# class ScholorshipSchemeCourse(BaseModel):
+#     scholorship = models.ForeignKey(ScholorshipScheme, on_delete=models.CASCADE)
+#     course = models.ForeignKey(InstituteCourse , on_delete=models.CASCADE)

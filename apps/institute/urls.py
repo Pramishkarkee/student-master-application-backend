@@ -5,7 +5,7 @@ from apps.institute.views import RegisterInstituteView
 
 urlpatterns = [
     path(
-        'reguster',
+        'register',
         views.RegisterInstituteView.as_view(),
         name='register-institute'
     )

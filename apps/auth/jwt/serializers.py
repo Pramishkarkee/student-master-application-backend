@@ -207,7 +207,8 @@ class VerifyConsultanyUserOTPSerializer(CodeSerializer, OTPMixin):
         user = self.context['view'].get_object()
         # check for otp code validation
         print("user",user.id)
-        position = ConsultancyStaff.objects.get(user=user.id).role.name
+        consultancy_staff = ConsultancyStaff.objects.get(user=user)
+        position=consultancy_staff.role.name
         try:
             color = Settings.objects.get(user=user).color
         except Settings.DoesNotExist:
@@ -220,7 +221,7 @@ class VerifyConsultanyUserOTPSerializer(CodeSerializer, OTPMixin):
             data['token'] = str(refresh.access_token)
             data['role'] = position
             data['color'] = color
-            data['id']=user.id
+            data['id']=consultancy_staff.consultancy.id
             user.last_login = now()
             user.save()
             return data

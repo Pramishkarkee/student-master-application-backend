@@ -27,6 +27,10 @@ urlpatterns = [
         include('apps.institute.urls')
     ),
     path(
+        'institute_course/',
+        include('apps.institute_course.urls')
+    ),
+    path(
         'auth/',
         include('apps.auth.urls')
     ),

@@ -1,4 +1,7 @@
+from apps.institute import models
+from django.utils.datetime_safe import datetime
 from django.utils.text import slugify
+from datetime import date
 
 def upload_institute_staff_image_to(instance, filename):
     ext = filename.split('.')[-1]
@@ -24,3 +27,10 @@ def upload_institute_cover_image_to(instance, filename):
     return 'institute/cover_image/{}'.format(
         new_filename
     )
+
+
+
+def past_date(value):
+    if value > date.today():
+        raise models.DjangoValidationError("the date cannot be in the future")
+    return value

@@ -22,3 +22,5 @@ class RegisterInstituteView(generics.CreateWithMessageAPIView):
             serializer=serializer
         ).execute()
 
+
+# ListInstituteSerializer
