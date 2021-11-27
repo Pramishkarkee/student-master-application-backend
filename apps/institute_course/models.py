@@ -17,7 +17,7 @@ class Faculty(BaseModel):
     name = models.CharField(max_length=200)
 
 class Course(BaseModel):
-    faculty=models.OneToOneField(Faculty , on_delete=models.CASCADE)
+    faculty=models.ForeignKey(Faculty , on_delete=models.CASCADE)
     name=models.CharField(max_length=200)
     description=models.TextField()
 
@@ -29,8 +29,8 @@ class InstituteCourse(BaseModel):
     )
     institute = models.ForeignKey(Institute, on_delete=models.CASCADE)
     program=models.CharField(max_length=200)
-    faculty=models.OneToOneField(Faculty,on_delete=models.CASCADE)
-    course= models.OneToOneField(Course,on_delete=models.CASCADE)
+    faculty=models.ForeignKey(Faculty,on_delete=models.CASCADE)
+    course= models.ForeignKey(Course,on_delete=models.CASCADE)
     intake=models.CharField(max_length=100,choices=INTAKE_CHOICE)
     #relete the eligibility exam in next table 
     eligibility = models.CharField(max_length=200)

@@ -54,7 +54,7 @@ class AddCourseUseCase(BaseUseCase):
         except Faculty.DoesNotExist:
             raise FacultyNotFound
         
-        del self._serializer.data['faculty']
+        # del self._serializer.data['faculty']
         # print("*************delete",self._serializer.data['faculty'])
         self._course = InstituteCourse.objects.create(
             program=self._serializer.data.pop('program'),
