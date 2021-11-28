@@ -11,5 +11,10 @@ class StudentAdmin(BaseModelAdmin):
         'name',
     )
 
+@admin.register(models.StudentAddress)
+class StudentAddressAdmin(BaseModelAdmin):
+    list_display = BaseModelAdmin.list_display + (
+        'student',
+    )
 
 

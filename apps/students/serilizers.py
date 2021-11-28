@@ -2,11 +2,13 @@ import re
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.db import models
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
+from rest_framework.validators import UniqueTogetherValidator
 
-from apps.students.models import StudentModel
+from apps.students.models import StudentAddress, StudentModel
 from apps.core import fields
 User = get_user_model()
 
@@ -71,3 +73,19 @@ class StudentDetailSerializer(StudentSerializer):
             'longitude',
             'image'
         )
+
+
+class StudentAddressSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = StudentAddress
+        fields = (
+            'student',
+            'nationality',
+            'state_provision',
+            'country',
+            'city',
+            'street',
+            'postal_code'
+        )
+        

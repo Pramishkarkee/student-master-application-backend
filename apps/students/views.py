@@ -33,7 +33,24 @@ class StudentInitProfileView(generics.RetrieveAPIView, StudentMixin):
     """
     serializer_class = serilizers.StudentDetailSerializer
     def get_queryset(self):
-        # print("*************************************************",self.request._student)
         profile=usecases.GetStudentUserUseCase(student=self.kwargs.get('student_id')).execute()
-        print("&&&&&&&&&&&&&&&",profile)
         return profile
+
+
+class StudentAddressView(generics.CreateWithMessageAPIView,StudentMixin):
+    """
+    this end point is use to take student address
+    """
+    message =_("address complete successfully")
+    permission_classes=(AllowAny,)
+    serializer_class = serilizers.StudentAddressSerializer
+
+    def get_object(self):
+        return self.get_student()
+
+    def perform_create(self, serializer):
+        return usecases.AddStudentAddressUseCase(
+            student_id= self.get_object(),
+            serializer = serializer
+        ).execute()
+        

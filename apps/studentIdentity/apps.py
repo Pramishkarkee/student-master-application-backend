@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class CitizenshipConfig(AppConfig):
+class StudentidentityConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'citizenship'
+    name = 'studentIdentity'

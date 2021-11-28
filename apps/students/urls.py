@@ -12,6 +12,12 @@ urlpatterns = [
         '<student_id>/student-profile',
         views.StudentInitProfileView.as_view(),
         name='student-init-view'
+    ),
+
+    path(
+        '<student_id>/student-address',
+        views.StudentAddressView.as_view(),
+        name = 'student address view'
     )
 
 ]

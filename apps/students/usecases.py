@@ -4,11 +4,11 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework.exceptions import ValidationError
 
 from apps.notification.mixins import NotificationMixin
-from apps.students.models import StudentUser, StudentModel
+from apps.students.models import StudentAddress, StudentUser, StudentModel, CompleteProfileTracker
 from apps.core import usecases
 from apps.settings.models import Settings
 from apps.core.usecases import BaseUseCase
-from apps.students.exceptions import StudentModelNotFound
+from apps.students.exceptions import StudentAddressUnique, StudentModelNotFound
 
 
 class RegisterStudentUseCase(usecases.CreateUseCase, NotificationMixin):
@@ -41,7 +41,6 @@ class RegisterStudentUseCase(usecases.CreateUseCase, NotificationMixin):
             'id': str(self._student.id)
         }
 
-
 class GetStudentUseCase(BaseUseCase):
     def __init__(self,student_id:str):
         self._student_id =student_id
@@ -57,6 +56,38 @@ class GetStudentUseCase(BaseUseCase):
 
         except StudentModel.DoesNotExist:
             raise StudentModelNotFound
+
+class AddStudentAddressUseCase(usecases.CreateUseCase,GetStudentUseCase):
+    def __init__(self, serializer,student_id:str):
+        self._student_id= student_id
+        super().__init__(serializer)
+
+    def execute(self):
+        self._factory()
+
+    def _factory(self):
+        # add student address
+
+        StudentAddress.objects.create(
+                **self._data,
+                student=self._student_id
+            )
+
+        # get complete profile indicator
+        try:
+            complete_profile_indicator=CompleteProfileTracker.objects.get(student=self._student_id).update(complete_address = True)
+
+        except CompleteProfileTracker.DoesNotExist:
+             CompleteProfileTracker.objects.create(
+                 student=self._student_id,
+                 complete_address = True
+             )
+        
+
+        # complete profile update
+
+
+
 
 class GetStudentUserUseCase(BaseUseCase):
     def __init__(self,student):
