@@ -3,4 +3,4 @@ from django.apps import AppConfig
 
 class StudentidentityConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'studentIdentity'
+    name = 'apps.studentIdentity'

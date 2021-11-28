@@ -1,3 +1,4 @@
+from apps import studentIdentity
 from django.urls import path, include
 
 # This file will contain all the end-points
@@ -61,5 +62,9 @@ urlpatterns = [
     path(
         'gallery/',
         include('apps.gallery.urls')
+    ),
+    path(
+        'citizenship/',
+        include('apps.studentIdentity.urls')
     )
 ]

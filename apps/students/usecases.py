@@ -47,7 +47,6 @@ class GetStudentUseCase(BaseUseCase):
 
     def execute(self):
         self._factory()
-        print("mixins**************")
         return self._student
 
     def _factory(self):
