@@ -21,8 +21,8 @@ class StudentModel(BaseModel):
     user = models.OneToOneField(StudentUser, on_delete=models.CASCADE)
     fullname = models.CharField(max_length=250)
     contact = fields.PhoneNumberField()
-    latitude = models.FloatField()
-    longitude = models.FloatField()
+    latitude = models.FloatField(blank=True)
+    longitude = models.FloatField(blank=True)
     image = models.ImageField(
         upload_to=upload_student_image_to,
         default='student/image/default_logo.png',
@@ -35,7 +35,7 @@ class StudentModel(BaseModel):
         )
     
     def __str__(self):
-        return self.name
+        return self.fullname
 
 
 # class TemporaryAddress(BaseModel):
@@ -89,7 +89,7 @@ class StudentAddress(BaseModel):
 
 
 class CompleteProfileTracker(BaseModel):
-    student = models.OneToOneField(StudentModel, on_delete=CASCADE)
+    student = models.OneToOneField(StudentModel, on_delete=CASCADE,related_name='application_tracker')
     complete_address = models.BooleanField(default=False)
     complete_academic_detail = models.BooleanField(default=False)
     complete_parents_detail = models.BooleanField(default=False)

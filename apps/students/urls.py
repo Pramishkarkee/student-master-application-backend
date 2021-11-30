@@ -9,7 +9,7 @@ urlpatterns = [
         name='register-institute'
     ),
     path(
-        '<student_id>/student-profile',
+        'init/<student_id>/student-profile',
         views.StudentInitProfileView.as_view(),
         name='student-init-view'
     ),
@@ -18,7 +18,10 @@ urlpatterns = [
         '<student_id>/student-address',
         views.StudentAddressView.as_view(),
         name = 'student address view'
-    )
+    ),
+    # path(
+    #     '<s'
+    # )
 
 ]
 urlpatterns = format_suffix_patterns (urlpatterns)

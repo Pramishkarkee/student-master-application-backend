@@ -32,8 +32,13 @@ class StudentInitProfileView(generics.RetrieveAPIView, StudentMixin):
     Use this endpoint to get student detail
     """
     serializer_class = serilizers.StudentDetailSerializer
+    def get_object(self):
+        return self.get_student()
+
     def get_queryset(self):
-        profile=usecases.GetStudentUserUseCase(student=self.kwargs.get('student_id')).execute()
+        profile=usecases.GetStudentUserUseCase(
+            student=self.get_object()
+            ).execute()
         return profile
 
 

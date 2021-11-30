@@ -8,7 +8,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.validators import UniqueTogetherValidator
 
-from apps.students.models import StudentAddress, StudentModel
+from apps.students.models import CompleteProfileTracker, StudentAddress, StudentModel
 from apps.core import fields
 User = get_user_model()
 
@@ -25,7 +25,7 @@ class RegisterStudentSerializer(StudentSerializer):
 
     class Meta(StudentSerializer.Meta):
         fields = (
-            'name',
+            'fullname',
             'email',
             'password',
             'contact',
@@ -61,31 +61,48 @@ class RegisterStudentSerializer(StudentSerializer):
             )
         return value
 
+class CompleteProfileTrackerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CompleteProfileTracker
+        fields = (
+            'complete_address',
+            'complete_academic_detail',
+            'complete_parents_detail',
+            'complete_citizenship_detail',
+            'complete_passport_field',
+            'complete_sop_field',
+            'complete_personalessay_field',
+            'complete_lor_field'
+        )
 
 class StudentDetailSerializer(StudentSerializer):
     # user = serializers.CharField()
 
+    application_tracker= CompleteProfileTrackerSerializer( read_only=True)
     class Meta(StudentSerializer.Meta):
         fields = (
-            'name',
+            'id',
+            'fullname',
             'contact',
             'latitude',
             'longitude',
-            'image'
+            'image',
+            'application_tracker'
         )
 
 
 class StudentAddressSerializer(serializers.ModelSerializer):
-
+    
     class Meta:
         model = StudentAddress
         fields = (
-            'student',
+
             'nationality',
             'state_provision',
             'country',
             'city',
             'street',
-            'postal_code'
+            'postal_code',
+           
         )
         
