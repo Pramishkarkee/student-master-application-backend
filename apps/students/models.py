@@ -19,7 +19,7 @@ class StudentModel(BaseModel):
         ('others','others')
     )
     user = models.OneToOneField(StudentUser, on_delete=models.CASCADE)
-    name = models.CharField(max_length=250)
+    fullname = models.CharField(max_length=250)
     contact = fields.PhoneNumberField()
     latitude = models.FloatField()
     longitude = models.FloatField()
