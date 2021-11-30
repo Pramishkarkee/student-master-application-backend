@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class AcedemicConfig(AppConfig):
+class ParentsdetailConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'apps.acedemic'
+    name = 'parentsDetail'
