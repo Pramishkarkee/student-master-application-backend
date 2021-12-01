@@ -30,7 +30,7 @@ class CreateAcademicView(generics.CreateWithMessageAPIView,StudentMixin):
 
 class CreateSopView(generics.CreateWithMessageAPIView,StudentMixin):
     """
-    use this endpoint to add sop
+    use this endpoint to add sop one student can add one sop
     """
     permission_classes = (AllowAny ,)
     parser_classes = (MultiPartParser , FileUploadParser, )
@@ -49,7 +49,7 @@ class CreateSopView(generics.CreateWithMessageAPIView,StudentMixin):
 
 class CreateLorView(generics.CreateWithMessageAPIView,StudentMixin):
     """
-    use this endpoint to add lor
+    use this endpoint to add lor ons student can add more then one lor
     """
     permission_classes = (AllowAny ,)
     parser_classes = (MultiPartParser , FileUploadParser, )
@@ -67,12 +67,12 @@ class CreateLorView(generics.CreateWithMessageAPIView,StudentMixin):
 
 class CreatePersonalEssayView(generics.CreateWithMessageAPIView,StudentMixin):
     """
-    use this endpoint to add student personal essay
+    use this endpoint to add student personal essay one student can add one essay
     """
     permission_classes = (AllowAny ,)
     parser_classes = (MultiPartParser , FileUploadParser, )
     serializer_class = CreateEssaySerializer
-    message = _("Lor Add successfully")
+    message = _("personal essay Add successfully ")
     def get_object(self):
         return self.get_student()
 

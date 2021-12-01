@@ -71,4 +71,8 @@ urlpatterns = [
         'academic/',
         include('apps.academic.urls')
     ),
+    path(
+        'parents/',
+        include('apps.parentsDetail.urls')
+    ),
 ]
