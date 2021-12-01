@@ -43,6 +43,23 @@ class Academic(BaseModel):
             models.UniqueConstraint(fields=['student','level'],name='student academic')
         ]
 
+class StudentSop(BaseModel):
+    student= models.OneToOneField(StudentModel, on_delete=CASCADE)
+    document = models.FileField(
+        upload_to=upload_academic_doc_to
+    )
+
+class StudentLor(BaseModel):
+    student = models.ForeignKey(StudentModel,on_delete=CASCADE)
+    document = models.FileField(
+        upload_to=upload_academic_doc_to
+    )
+
+class PersonalEssay(BaseModel):
+    student = models.OneToOneField(StudentModel,on_delete=CASCADE)
+    essay = models.FileField(
+        upload_to=upload_academic_doc_to
+    )
 
         
 pre_save.connect(check_score, sender=Academic)

@@ -83,7 +83,7 @@ LOCAL_APPS = [
     "apps.institute.apps.InstituteConfig",
     "apps.institute_course.apps.InstituteCourseConfig",
     "apps.studentIdentity.apps.StudentidentityConfig",
-    "apps.acedemic.apps.AcedemicConfig",
+    "apps.academic.apps.AcademicConfig",
     "apps.college.apps.CollegesConfig",
     "apps.consultancy.apps.ConsultancyConfig",
     "apps.pyotp.apps.PyoptConfig",

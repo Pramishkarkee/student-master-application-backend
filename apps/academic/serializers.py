@@ -9,7 +9,7 @@ from rest_framework.exceptions import ValidationError
 
 from apps.core import fields
 
-from apps.academic.models import Academic
+from apps.academic.models import Academic, PersonalEssay, StudentLor, StudentSop
 
 class CreateAcademicSerializer(serializers.ModelSerializer):
     class Meta:
@@ -22,4 +22,25 @@ class CreateAcademicSerializer(serializers.ModelSerializer):
             'full_score',
             'marksheet',
             'certificate'
+        )
+
+class CreateSopSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StudentSop
+        fields = (
+            'document',
+        )
+
+class CreateLorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StudentLor
+        fields = (
+            'document',
+        )
+
+class CreateEssaySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PersonalEssay
+        fields = (
+            'essay',
         )

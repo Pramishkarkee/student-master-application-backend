@@ -64,7 +64,11 @@ urlpatterns = [
         include('apps.gallery.urls')
     ),
     path(
-        'citizenship/',
+        'student_identity/',
         include('apps.studentIdentity.urls')
-    )
+    ),
+    path(
+        'academic/',
+        include('apps.academic.urls')
+    ),
 ]
