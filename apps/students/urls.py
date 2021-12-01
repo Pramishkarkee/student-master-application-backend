@@ -19,6 +19,11 @@ urlpatterns = [
         views.StudentAddressView.as_view(),
         name = 'student address view'
     ),
+    path(
+        '<student_id>/update',
+        views.UpdateStudentView.as_view(),
+        name = 'student-update-view'
+    )
     # path(
     #     '<s'
     # )

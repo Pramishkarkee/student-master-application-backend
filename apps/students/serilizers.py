@@ -61,6 +61,15 @@ class RegisterStudentSerializer(StudentSerializer):
             )
         return value
 
+class UpdateStudentSerializer(StudentSerializer):
+    class Meta(StudentSerializer.Meta):
+        fields = (
+            'contact',
+            'latitude',
+            'longitude',
+            'fullname'
+        )
+
 class CompleteProfileTrackerSerializer(serializers.ModelSerializer):
     class Meta:
         model = CompleteProfileTracker

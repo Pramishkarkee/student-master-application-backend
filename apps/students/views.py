@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.utils.translation import gettext_lazy as _
+from rest_framework import serializers
 from rest_framework.parsers import MultiPartParser, FileUploadParser
 from rest_framework.permissions import AllowAny
 
@@ -58,4 +59,21 @@ class StudentAddressView(generics.CreateWithMessageAPIView,StudentMixin):
             student_id= self.get_object(),
             serializer = serializer
         ).execute()
+
+class UpdateStudentView(generics.UpdateWithMessageAPIView,StudentMixin):
+    """
+    use this endpoint to update student 
+    """
+    message = _("update student detail successfully")
+    serializer_class = serilizers.UpdateStudentSerializer
+
+    def get_object(self):
+        return self.get_student()
+
+    def perform_update(self, serializer):
+        return usecases.UpdateStudentUseCase(
+            student=self.get_student(),
+            serializer = serializer
+        ).execute()
+
         
