@@ -3,14 +3,14 @@ from django.urls import path, include
 
 # This file will contain all the end-points
 urlpatterns = [
-    path(
-        '',
-        include('apps.college.urls')
-    ),
-    path(
-        'student/',
-        include('apps.student.urls')
-    ),
+    # path(
+    #     '',
+    #     include('apps.college.urls')
+    # ),
+    # path(
+    #     'student/',
+    #     include('apps.student.urls')
+    # ),
     path(
         'notification/',
         include('apps.notification.urls'),

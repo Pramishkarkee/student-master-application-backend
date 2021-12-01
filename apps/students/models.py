@@ -11,7 +11,6 @@ from apps.core.validators import validate_image
 from apps.user.models import StudentUser
 
 
-# Create your models here.
 class StudentModel(BaseModel):
     GENDER_CHOOSE=(
         ('male','male'),
@@ -38,16 +37,7 @@ class StudentModel(BaseModel):
         return self.fullname
 
 
-# class TemporaryAddress(BaseModel):
-#     student = models.OneToOneField(StudentModel, on_delete=models.CASCADE)
-#     state_provision = models.CharField(max_length=200)
-#     city = models.CharField(max_length=200)
-#     street = models.CharField(max_length=200)
-#     postal_code = models.IntegerField()
-#     country = models.CharField(max_length=200)
 
-#     def __str__(self):
-#         return self.country
 
 errors = {
     'unique':'address of the user already exist'
