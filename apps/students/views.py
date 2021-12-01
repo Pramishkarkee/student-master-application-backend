@@ -76,4 +76,18 @@ class UpdateStudentView(generics.UpdateWithMessageAPIView,StudentMixin):
             serializer = serializer
         ).execute()
 
-        
+class UpdateImageView(generics.UpdateWithMessageAPIView,StudentMixin):
+    """
+    use this endpoint to update profile
+    """
+    message = _("update profile is success")
+    serializer_class = serilizers.UpdateProfilePictureSerializer
+
+    def get_object(self):
+        return self.get_student()
+
+    def perform_update(self, serializer):
+        return usecases.UpdateProfilePictureUseCase(
+            student=self.get_student(),
+            serializer = serializer
+        ).execute()

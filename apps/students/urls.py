@@ -23,6 +23,11 @@ urlpatterns = [
         '<student_id>/update',
         views.UpdateStudentView.as_view(),
         name = 'student-update-view'
+    ),
+    path(
+        '<student_id>/update/profile',
+        views.UpdateImageView.as_view(),
+        name = 'student-profile-view'
     )
     # path(
     #     '<s'

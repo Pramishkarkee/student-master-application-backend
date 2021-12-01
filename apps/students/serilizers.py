@@ -69,6 +69,11 @@ class UpdateStudentSerializer(StudentSerializer):
             'longitude',
             'fullname'
         )
+class UpdateProfilePictureSerializer(StudentSerializer):
+    class Meta(StudentSerializer.Meta):
+        fields = (
+            'image',
+        )
 
 class CompleteProfileTrackerSerializer(serializers.ModelSerializer):
     class Meta:

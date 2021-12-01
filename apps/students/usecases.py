@@ -128,3 +128,18 @@ class UpdateStudentUseCase(BaseUseCase):
         user.updated_at = timezone.now()
         user.save()
 
+
+class UpdateProfilePictureUseCase(BaseUseCase):
+    def __init__(self,serializer,student:StudentModel):
+        self._student = student
+        self._serializer = serializer
+        self._data = self._serializer.validated_data
+
+    def execute(self):
+        self._factory()
+
+    def _factory(self):
+        for data in self._data.keys():
+            setattr(self._student,data,self._data[data])
+        self._student.updated_at = timezone.now()
+        self._student.save()
