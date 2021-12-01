@@ -27,7 +27,17 @@ urlpatterns = [
     path(
         '<student_id>/update/profile',
         views.UpdateImageView.as_view(),
-        name = 'student-profile-view'
+        name = 'student-profile-update'
+    ),
+    path(
+        '<student_id>/update/address',
+        views.StudentAddressUpdateView.as_view(),
+        name = 'student-profile-update'
+    ),
+    path(
+        '<student_id>/get/address',
+        views.GetStudentAddressView.as_view(),
+        name= 'get-student-address'
     )
     # path(
     #     '<s'

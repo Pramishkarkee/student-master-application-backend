@@ -6,7 +6,7 @@ from rest_framework.permissions import AllowAny
 
 from apps.core import generics
 from apps.students import serilizers, usecases
-from apps.students.mixins import StudentMixin
+from apps.students.mixins import AddressMixin, StudentMixin
 from apps.students.models import StudentModel
 
 
@@ -43,22 +43,7 @@ class StudentInitProfileView(generics.RetrieveAPIView, StudentMixin):
         return profile
 
 
-class StudentAddressView(generics.CreateWithMessageAPIView,StudentMixin):
-    """
-    this end point is use to take student address
-    """
-    message =_("address complete successfully")
-    permission_classes=(AllowAny,)
-    serializer_class = serilizers.StudentAddressSerializer
 
-    def get_object(self):
-        return self.get_student()
-
-    def perform_create(self, serializer):
-        return usecases.AddStudentAddressUseCase(
-            student_id= self.get_object(),
-            serializer = serializer
-        ).execute()
 
 class UpdateStudentView(generics.UpdateWithMessageAPIView,StudentMixin):
     """
@@ -91,3 +76,50 @@ class UpdateImageView(generics.UpdateWithMessageAPIView,StudentMixin):
             student=self.get_student(),
             serializer = serializer
         ).execute()
+
+class StudentAddressView(generics.CreateWithMessageAPIView,StudentMixin):
+    """
+    this end point is use to take student address
+    """
+    message =_("address complete successfully")
+    permission_classes=(AllowAny,)
+    serializer_class = serilizers.StudentAddressSerializer
+
+    def get_object(self):
+        return self.get_student()
+
+    def perform_create(self, serializer):
+        return usecases.AddStudentAddressUseCase(
+            student_id= self.get_object(),
+            serializer = serializer
+        ).execute()
+
+class StudentAddressUpdateView(generics.UpdateWithMessageAPIView,AddressMixin):
+    """
+    This endpoint is use to update student address
+    """
+    message = _("address update successfully")
+    permission_classes = (AllowAny,)
+    serializer_class = serilizers.StudentAddressSerializer
+    def get_object(self):
+        return self.get_address()
+
+    def perform_create(self, serializer):
+        return usecases.StudentAddressUpdateUseCase(
+            student_id= self.get_object(),
+            serializer = serializer
+        ).execute()
+
+
+class GetStudentAddressView(generics.RetrieveAPIView,AddressMixin):
+    """
+    This endpoint is use to get student address
+    """
+    permission_classes = (AllowAny,)
+    serializer_class = serilizers.StudentAddressSerializer
+    def get_object(self):
+        return self.get_address()
+    def get_queryset(self):
+        return usecases.GetStudentAddressUseCase(
+            address=self.get_queryset()
+        )
