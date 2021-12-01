@@ -1,5 +1,4 @@
 ### Python template
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -325,8 +324,7 @@ tags
 ### Project template
 
 apps/media/
-apps/college/
-apps/student/
+
 .pytest_cache/
 
 
