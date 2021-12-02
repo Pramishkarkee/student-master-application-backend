@@ -38,6 +38,11 @@ urlpatterns = [
         '<student_id>/get/address',
         views.GetStudentAddressView.as_view(),
         name= 'get-student-address'
+    ),
+    path(
+        '<student_id>/update/latlong',
+        views.StudentLatitudeAndLongitudeUpdate.as_view(),
+        name = 'update-latitude and longitude'
     )
     # path(
     #     '<s'

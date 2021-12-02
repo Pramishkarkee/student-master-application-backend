@@ -104,7 +104,7 @@ class StudentAddressUpdateView(generics.UpdateWithMessageAPIView,AddressMixin):
     def get_object(self):
         return self.get_address()
 
-    def perform_create(self, serializer):
+    def perform_update(self, serializer):
         return usecases.StudentAddressUpdateUseCase(
             student_id= self.get_object(),
             serializer = serializer
@@ -123,3 +123,18 @@ class GetStudentAddressView(generics.RetrieveAPIView,AddressMixin):
         return usecases.GetStudentAddressUseCase(
             address=self.get_queryset()
         )
+
+class StudentLatitudeAndLongitudeUpdate(generics.UpdateWithMessageAPIView,StudentMixin):
+    """
+    this endpoint is use to update latitude and longitude
+    """
+    permission_classes = (AllowAny,)
+    serializer_class = serilizers.StudentLatitudeLongitudeUpdate
+    def get_object(self):
+        return self.get_student()
+
+    def perform_update(self, serializer):
+        return usecases.StudentLatitudeLongitudeUpdateUseCase(
+            student=self.get_object(),
+            serializer = serializer
+        ).execute()

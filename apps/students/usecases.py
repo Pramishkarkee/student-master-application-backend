@@ -159,6 +159,20 @@ class StudentAddressUpdateUseCase(BaseUseCase):
             setattr(self._address,key,self._data.get(key))
         self._address.updated_at = datetime.now()
         self._address.save()
+class StudentLatitudeLongitudeUpdateUseCase(BaseUseCase):
+    def __init__(self,serializer,student:StudentModel):
+        self._student = student
+        self._serializer = serializer
+        self._data = self._serializer.validated_data
+    def execute(self):
+        self._factory()
+
+    def _factory(self):
+        for key in self._data.keys():
+            setattr(self._student,key,self._data.get(key))
+
+        self._student.updated_at = datetime.now()
+        self._student.save()
 
 class GetAddressUseCase(BaseUseCase):
     def __init__(self,student_id:str):
@@ -179,7 +193,6 @@ class GetAddressUseCase(BaseUseCase):
 class GetStudentAddressUseCase(BaseUseCase):
     def __init__(self,address:StudentAddress):
         self._address =address
-        # self._address_id = address_id
 
     def execute(self):
         self._factory()

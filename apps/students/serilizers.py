@@ -104,6 +104,12 @@ class StudentDetailSerializer(StudentSerializer):
             'application_tracker'
         )
 
+class StudentLatitudeLongitudeUpdate(StudentSerializer):
+    class Meta(StudentSerializer.Meta):
+        fields = (
+            'latitude',
+            'longitude',
+        )
 
 class StudentAddressSerializer(serializers.ModelSerializer):
     
