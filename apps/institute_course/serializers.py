@@ -61,7 +61,7 @@ class AddInstituteCourseSerializer(InstituteCourseSerializer):
     # def create(self, validate_data):
     #     return InstituteCourse.objects.get_or_create(**validate_data)
 
-
+# class ListInstituteCourseSerializer()
 
     
         

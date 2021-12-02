@@ -8,4 +8,9 @@ urlpatterns = [
         views.AddInstituteCourse.as_view(),
         name = 'add-gallery'
     ),
+    path(
+        '<institute_id>/get',
+        views.ListInstituteCourse.as_view(),
+        name = 'get-institute'
+    )
 ]

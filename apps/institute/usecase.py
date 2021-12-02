@@ -47,3 +47,12 @@ class RegisterInstituteUsecase(usecases.CreateUseCase, NotificationMixin):
             'content': 'Institute: {} Registered.'.format(self._institute.name),
             'id': str(self._institute.id)
         }
+
+
+class ListInstituteUseCase(BaseUseCase):
+    def execute(self):
+        self._factory()
+        return self._institute
+
+    def _factory(self):
+        self._institute = Institute.objects.all()

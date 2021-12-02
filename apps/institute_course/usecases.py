@@ -1,4 +1,5 @@
 
+from apps import institute
 from django.utils.datetime_safe import datetime
 from rest_framework.exceptions import ValidationError
 from  django.utils.translation import  gettext_lazy as _
@@ -8,7 +9,7 @@ from apps.institute_course.models import InstituteCourse,Course,Faculty
 from apps.institute.models import Institute
 from apps.institute_course.exceptions import CourseNotFound, FacultyNotFound, InstituteNotFound
 
-class GetInstituteClassUseCase:
+class GetInstituteClassUseCase(BaseUseCase):
     def __init__(self , institute_id: Institute):
         self._institute_id=institute_id
 
@@ -18,7 +19,6 @@ class GetInstituteClassUseCase:
 
     def _factory(self):
         try:
-            print("**************************************************",type(self._institute_id))
             self._institute=Institute.objects.get(pk=self._institute_id)
             # print("****inst",self._institute)
         
@@ -75,3 +75,14 @@ class AddCourseUseCase(BaseUseCase):
         # self._course.save()
 
     
+
+class GetInstituteCourseUseCase(BaseUseCase):
+    def __init__(self,inst):
+        self._institute = inst
+
+    def execute(self):
+        self._factory()
+        return self._course
+
+    def _factory(self):
+        self._course = InstituteCourse.objects.filter(institute=self._institute)

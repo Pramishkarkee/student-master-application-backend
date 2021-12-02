@@ -24,11 +24,21 @@ class AddInstituteCourse(generics.CreateWithMessageAPIView,InstituteCourseMixin)
             institute = self.get_object()
              ).execute()
 
-# class ListInstituteCourse(generics.ListAPIView):
-    # """
-    # this end point is use to list course 
-    # put institute id in institute_id field
-    # """
+class ListInstituteCourse(generics.ListAPIView,InstituteCourseMixin):
+    """
+    this end point is use to list course 
+    put institute id in institute_id field
+    """
+    serializer_class = AddInstituteCourseSerializer
+    permission_classes = (AllowAny,)
+    no_content_error_message = _("No Consultancy staff at the moment.")
+    def get_object(self):
+        return self.get_institute()
+
+    def get_queryset(self):
+        return usecases.GetInstituteCourseUseCase(
+            inst=self.get_object()
+        ).execute()
 
 
 

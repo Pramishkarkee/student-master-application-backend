@@ -41,7 +41,7 @@ class Institute(BaseModel):
         default='institute/cover_image/default_cover_image.png',
         validators=[validate_image]
     )
-    # about = models.TextField(null=True, blank=True)
+    #about = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.name

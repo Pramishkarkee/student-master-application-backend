@@ -5,3 +5,4 @@ class InstituteCourseMixin:
         return GetInstituteClassUseCase(
             institute_id=self.kwargs.get('institute_id')
         ).execute()
+

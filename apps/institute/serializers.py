@@ -74,12 +74,18 @@ class RegisterInstituteSerializer(InstituteSerializer):
 class ListInstituteSerializer(InstituteSerializer):
     class Meta(InstituteSerializer.Meta):
         fields = (
-            'id',
             'name',
-            'contact',
+            'category',
+            'university',
             'established',
+            'contact',
             'country',
+            'city',
+            'state',
+            'street_address',
+            'latitude',
+            'longitude',
+            'website',
             'logo',
             'cover_image',
-
         )

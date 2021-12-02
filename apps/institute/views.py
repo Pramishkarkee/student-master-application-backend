@@ -1,3 +1,4 @@
+from apps.studentIdentity import usecases
 from django.utils.translation import gettext_lazy as _
 from rest_framework.parsers import MultiPartParser, FileUploadParser
 from rest_framework.permissions import AllowAny
@@ -23,4 +24,10 @@ class RegisterInstituteView(generics.CreateWithMessageAPIView):
         ).execute()
 
 
-# ListInstituteSerializer
+class ListInstituteView(generics.ListAPIView):
+    permission_classes = (AllowAny,)
+    serializer_class = serializers.ListInstituteSerializer
+    def get_queryset(self):
+        return usecase.ListInstituteUseCase().execute()
+
+ 
