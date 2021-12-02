@@ -1,6 +1,7 @@
+from apps.studentIdentity.mixins import CitizenshipMixins, PassportMixins
 from rest_framework import serializers
 from apps.students.mixins import StudentMixin
-from apps.studentIdentity.serializers import StudentCitizenshipSerializer, StudentPassportSerializer
+from apps.studentIdentity.serializers import GetCitizenshipSerializer, GetPassportSerializer, StudentCitizenshipSerializer, StudentPassportSerializer
 from django.shortcuts import render
 from django.utils.translation import gettext_lazy as _
 
@@ -37,4 +38,31 @@ class AddPassportView(generics.CreateWithMessageAPIView,StudentMixin):
         return usecases.AddPassportUseCase(
             serializer=serializer,
             student_id=self.get_object()
+        ).execute()
+        
+
+class GetCitizenshipView(generics.RetrieveAPIView,CitizenshipMixins):
+    """
+    this endpoint is use to find student citizenship
+    """
+    serializer_class =GetCitizenshipSerializer
+    def get_object(self):
+        return self.get_citizenship()
+
+    def get_queryset(self):
+        return usecases.GetStudentCitizenshipUseCase(
+            citizenship=self.get_object()
+        ).execute()
+
+class GetPassportView(generics.RetrieveAPIView,PassportMixins):
+    """
+    this endpoint is use to find student citizenship
+    """
+    serializer_class = GetPassportSerializer
+    def get_object(self):
+        return self.get_passport()
+
+    def get_queryset(self):
+        return usecases.GetStudentPassportUseCase(
+            passport=self.get_object()
         ).execute()

@@ -1,3 +1,4 @@
+from apps.studentIdentity.exceptions import CitizenshipNotFound, PassportNotFound
 from apps.core.models import BaseModel
 from apps.students.models import CompleteProfileTracker
 from apps.studentIdentity.models import Citizenship, Passport
@@ -62,5 +63,58 @@ class AddPassportUseCase(BaseUseCase):
             )
 
 
-# class GetCitizenshipUseCase(BaseUseCase):
+class GetCitizenshipUseCase(BaseUseCase):
+    def __init__(self,student_id):
+        self._student = student_id
+
+    def execute(self):
+        self._factory()
+        return self._citizenship
+
+    def _factory(self):
+        try:
+            self._citizenship = Citizenship.objects.get(student=self._student)
+        except Citizenship.DoesNotExist:
+            raise CitizenshipNotFound
+
+class GetStudentCitizenshipUseCase(BaseUseCase):
+    def __init__(self,citizenship):
+        self._citizenship_id= citizenship
+
+    def execute(self):
+        self._factory()
+        return self._citizenship
+    def _factory(self):
+        try:
+            self._citizenship = Citizenship.objects.get(pk=self._citizenship_id)
+        except Citizenship.DoesNotExist:
+            raise CitizenshipNotFound
     
+
+class GetPassportUseCase(BaseUseCase):
+    def __init__(self,student_id):
+        self._student = student_id
+
+    def execute(self):
+        self._factory()
+        return self._passport
+
+    def _factory(self):
+        try:
+            self._passport = Passport.objects.get(student=self._student)
+        except Passport.DoesNotExist:
+            raise PassportNotFound
+
+
+class GetStudentPassportUseCase(BaseUseCase):
+    def __init__(self,passport):
+        self._passport_id= passport
+
+    def execute(self):
+        self._factory()
+        return self._pasport
+    def _factory(self):
+        try:
+            self._pasport = Passport.objects.get(pk=self._passport_id)
+        except Passport.DoesNotExist:
+            raise PassportNotFound

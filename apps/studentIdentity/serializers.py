@@ -26,3 +26,11 @@ class StudentPassportSerializer(serializers.ModelSerializer):
             'issue_from',
             'passport_image'
         )
+
+class GetCitizenshipSerializer(StudentCitizenshipSerializer):
+    class Meta(StudentCitizenshipSerializer.Meta):
+        fields = '__all__'
+
+class GetPassportSerializer(StudentPassportSerializer):
+    class Meta(StudentPassportSerializer.Meta):
+        fields = '__all__'
