@@ -48,7 +48,6 @@ class GetStudentUseCase(BaseUseCase):
         self._student_id =student_id
 
     def execute(self):
-        
         self._factory()
         return self._student
 

@@ -60,3 +60,7 @@ class AddPassportUseCase(BaseUseCase):
                 student=self._student_id,
                 complete_passport_field=True
             )
+
+
+# class GetCitizenshipUseCase(BaseUseCase):
+    

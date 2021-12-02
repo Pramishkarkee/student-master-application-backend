@@ -55,6 +55,6 @@ class GetParentsView(generics.ListAPIView,StudentMixin):
         return self.get_student()
 
     def get_queryset(self):
-        return usecases.GetParentsUseCase(
+        return usecases.GetStudentParentsUseCase(
             student=self.get_object()
         ).execute()

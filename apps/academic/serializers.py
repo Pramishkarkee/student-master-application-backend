@@ -24,12 +24,39 @@ class CreateAcademicSerializer(serializers.ModelSerializer):
             'certificate'
         )
 
+class GetAcademicListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Academic
+        fields = (
+            'id',
+            'institute_name',
+            'duration',
+            'level',
+            'score',
+            'full_score',
+            'marksheet',
+            'certificate'
+        )
+
+class UpdateAcademicSerializer(GetAcademicListSerializer):
+    class Meta(GetAcademicListSerializer.Meta):
+        fields = (
+            'institute_name',
+            'duration',
+            'level',
+            'score',
+            'full_score',
+            'marksheet',
+            'certificate'
+        )
+
 class CreateSopSerializer(serializers.ModelSerializer):
     class Meta:
         model = StudentSop
         fields = (
             'document',
         )
+
 
 class CreateLorSerializer(serializers.ModelSerializer):
     class Meta:
@@ -44,3 +71,17 @@ class CreateEssaySerializer(serializers.ModelSerializer):
         fields = (
             'essay',
         )
+
+class GetLorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StudentLor
+        fields = '__all__'
+
+class GetPersonalEssay(serializers.ModelSerializer):
+    class Meta:
+        model = PersonalEssay
+        fields = '__all__'
+
+class GetSopSerializer(CreateSopSerializer):
+    class Meta(CreateSopSerializer.Meta):
+        fields = '__all__'

@@ -1,5 +1,6 @@
+from apps.academic.mixins import AcademicMixins, EssayMixins, SopMixins
 from rest_framework.serializers import Serializer
-from apps.academic.serializers import CreateAcademicSerializer, CreateLorSerializer, CreateSopSerializer,CreateEssaySerializer
+from apps.academic.serializers import CreateAcademicSerializer, CreateLorSerializer, CreateSopSerializer,CreateEssaySerializer, GetAcademicListSerializer, GetLorSerializer, GetPersonalEssay, GetSopSerializer, UpdateAcademicSerializer
 from django.utils.translation import gettext_lazy as _
 from rest_framework.parsers import MultiPartParser, FileUploadParser
 from rest_framework.permissions import AllowAny
@@ -27,6 +28,40 @@ class CreateAcademicView(generics.CreateWithMessageAPIView,StudentMixin):
             student=self.get_object(),
             serializer=serializer
         ).execute()
+
+
+class GetAcademicListView(generics.ListAPIView,StudentMixin):
+    """
+    this endpoint is use to get academic list
+    """
+    serializer_class = GetAcademicListSerializer
+    no_content_error_message = _('no academic detail at that moment')
+    def get_object(self):
+        return self.get_student()
+
+    def get_queryset(self):
+        return usecases.GetAcademicListUseCase(
+            student=self.get_object()
+        ).execute()
+
+
+class UpdateAcademicView(generics.UpdateWithMessageAPIView,AcademicMixins):
+    """
+    This endpoint is use to find academic list of student
+    """
+    serializer_class = UpdateAcademicSerializer
+    parser_classes = (MultiPartParser , FileUploadParser, )
+    message = _("academic detail update successfully")
+
+    def get_object(self):
+        return self.get_academic()
+
+    def perform_update(self, serializer):
+        return usecases.UpdateAcademicUseCase(
+            academic=self.get_object(),
+            serializer=serializer
+        ).execute()
+
 
 class CreateSopView(generics.CreateWithMessageAPIView,StudentMixin):
     """
@@ -81,3 +116,47 @@ class CreatePersonalEssayView(generics.CreateWithMessageAPIView,StudentMixin):
             student = self.get_object(),
             serializer =serializer
         ).execute()
+
+class GetSopView(generics.RetrieveAPIView,SopMixins):
+    """
+    This endpoint is use to get sop
+    """
+    parser_classes = (MultiPartParser , FileUploadParser, )
+    serializer_class = GetSopSerializer
+    no_content_error_message = _('no academic detail at that moment')
+    def get_object(self):
+        return self.get_sop()
+
+    def get_queryset(self):
+        return usecases.GetStudentSopUseCase(
+            sop=self.get_object()
+        )
+
+
+class GetLorListView(generics.ListAPIView,StudentMixin):
+    """
+    This endpoint is use to get sudent lor
+    """
+    parser_classes = (MultiPartParser , FileUploadParser, )
+    serializer_class = GetLorSerializer
+    no_content_error_message = _('no academic detail at that moment')
+    def get_object(self):
+        return self.get_student()
+
+    def get_queryset(self):
+        return usecases.GetLorListUseCase(
+            student=self.get_object()
+        ).execute()
+
+class GetEssayView(generics.RetrieveAPIView,EssayMixins):
+    """
+    This endpoint is use to get student personal essay
+    """
+    serializer_class = GetPersonalEssay
+    def get_object(self):
+        return self.get_essay()
+
+    def get_queryset(self):
+        return usecases.GetPersonalEssayUseCase(
+            essay=self.get_object()
+        )
