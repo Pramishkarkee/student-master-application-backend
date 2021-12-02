@@ -104,7 +104,7 @@ class LoginSerializer(CustomTokenObtainSerializer):
 
         data['refresh_token'] = str(refresh)
         data['token'] = str(refresh.access_token)
-        data['role'] = "owner"
+        # data['role'] = "owner"
         data['color']=""
         data['id']=str(self.user.id)
         self.user.last_login = now()
@@ -127,7 +127,7 @@ class StudentUserLoginSerializer(LoginSerializer):
 class StudentUserLoginResponseSerializer(serializers.Serializer):
     refresh_token = serializers.CharField(read_only=True)
     token = serializers.CharField(read_only=True)
-    role = serializers.CharField()
+    # role = serializers.CharField()
     color = serializers.CharField()
     id = serializers.CharField()
 
