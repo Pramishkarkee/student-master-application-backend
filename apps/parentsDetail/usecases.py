@@ -1,3 +1,6 @@
+from apps.parentsDetail.exceptions import ParentsNotFound
+from datetime import datetime
+from rest_framework import parsers
 from apps.students.models import CompleteProfileTracker
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils import timezone
@@ -32,3 +35,44 @@ class AddParentsUseCase(usecases.CreateUseCase):
                 complete_parents_detail=True
             )
 
+
+class GetParentsUseCase(BaseUseCase):
+    def __init__(self,parents_id) :
+        self._parents_id = parents_id
+
+    def execute(self):
+        self._factory()
+        return self._parents
+
+    def _factory(self):
+        try:
+            self._parents= StudentParents.objects.get(pk= self._parents_id)
+
+        except StudentParents.DoesNotExist:
+            raise ParentsNotFound
+
+
+class UpdateParentsUseCase(BaseUseCase):
+    def __init__(self, serializer,parents:StudentParents):
+        self._parents = parents
+        self.serializer = serializer
+        self._data = serializer.validated_data
+        
+
+    def execute(self):
+        self._factory()
+
+    def _factory(self):
+        for key in self._data.keys():
+            setattr(self._parents,key,self._data.get(key))
+
+        self._parents.updated_at = datetime.now()
+        self._parents.save()
+
+class GetStudentParentsUseCase(BaseUseCase):
+    def __init__(self,student):
+        self._student = student
+
+    def execute(self):
+        self._parents= StudentParents.objects.filter(student=self._student)
+        return self._parents

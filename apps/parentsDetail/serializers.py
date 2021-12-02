@@ -23,3 +23,28 @@ class ParentsDetailSerializer(serializers.ModelSerializer):
             'annual_income',
             'currency'
         )
+
+class UpdateParentsDetailSerializer(ParentsDetailSerializer):
+    class Meta(ParentsDetailSerializer.Meta):
+        fields = (
+            'relation',
+            'fullname',
+            'nationality',
+            'occupation',
+            'education',
+            'annual_income',
+            'currency'
+        )
+
+class GetParentsListSerializer(ParentsDetailSerializer):
+    class Meta(ParentsDetailSerializer.Meta):
+        fields = (
+            'id',
+            'relation',
+            'fullname',
+            'nationality',
+            'occupation',
+            'education',
+            'annual_income',
+            'currency'
+        )  
