@@ -105,7 +105,7 @@ class LoginSerializer(CustomTokenObtainSerializer):
         data['refresh_token'] = str(refresh)
         data['token'] = str(refresh.access_token)
         # data['role'] = "owner"
-        data['color']=""
+        # data['color']=""
         data['id']=str(self.user.id)
         self.user.last_login = now()
         self.user.save()
@@ -120,7 +120,6 @@ class StudentUserLoginSerializer(LoginSerializer):
         data = super(StudentUserLoginSerializer, self).validate(attrs)
         # user detail
         data['user'] = self.user
-
         return data
 
 

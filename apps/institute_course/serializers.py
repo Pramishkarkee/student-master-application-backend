@@ -8,7 +8,7 @@ from rest_framework.exceptions import ValidationError
 from apps.institute_course import models
 from rest_framework.validators import UniqueTogetherValidator
 
-from apps.institute_course.models import InstituteCourse
+from apps.institute_course.models import Course, Faculty, InstituteCourse
 from apps.core import fields
 
 User = get_user_model()
@@ -61,7 +61,45 @@ class AddInstituteCourseSerializer(InstituteCourseSerializer):
     # def create(self, validate_data):
     #     return InstituteCourse.objects.get_or_create(**validate_data)
 
-# class ListInstituteCourseSerializer()
+class CourseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Course
+        fields = (
+            'id',
+            'name',
+            'description'
+        )
+
+class FacultySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Faculty
+        fields = (
+            'name',
+            'id'
+        )
+
+
+class ListInstituteCourseSerializer(InstituteCourseSerializer):
+
+    course = CourseSerializer(read_only =True)
+    faculty =FacultySerializer(read_only = True)
+    class Meta(InstituteCourseSerializer.Meta):
+        fields = (
+            'id',
+            'program',
+            'faculty',
+            'course',
+            'intake',
+            'eligibility',
+            'score',
+            'last_mini_academic_score',
+            'duration_year',
+            'total_fee',
+            'fee_currency',
+            'reg_status',
+            'reg_open',
+            'reg_close'
+        )
 
     
         

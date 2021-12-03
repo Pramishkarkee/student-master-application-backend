@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import generics, serializers
 from rest_framework.exceptions import ValidationError
 
-from apps.institute.models import Institute,InstituteStaff
+from apps.institute.models import Institute, InstituteScholorship,InstituteStaff
 from apps.core import fields
 
 User = get_user_model()
@@ -88,4 +88,21 @@ class ListInstituteSerializer(InstituteSerializer):
             'website',
             'logo',
             'cover_image',
+        )
+
+
+class AddScholorshipSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InstituteScholorship
+        fields = (
+            'topic',
+            'description'
+        )
+
+class GetScholorshipSerializer(AddScholorshipSerializer):
+    class Meta(AddScholorshipSerializer.Meta):
+        fields = (
+            'id',
+            'topic',
+            'description'
         )

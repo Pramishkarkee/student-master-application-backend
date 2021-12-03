@@ -6,7 +6,7 @@ from django.db.models.deletion import CASCADE
 from django.db.models.fields import CharField
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MaxValueValidator,MinValueValidator
-from apps.institute.models import Institute
+from apps.institute.models import Institute, InstituteScholorship
 import datetime
 
 from apps.core import fields
@@ -56,6 +56,11 @@ class InstituteCourse(BaseModel):
         _("Date"),
         blank=True
     )
+    
+    class Meta:
+        unique_together = ('course','institute')
 
-
+# class ScholorshipLinkCourse(BaseModel):
+#     scholorship = models.ForeignKey(InstituteScholorship, on_delete=models.CASCADE)
+#     course = models.ForeignKey(InstituteCourse, on_delete=models.CASCADE)
 

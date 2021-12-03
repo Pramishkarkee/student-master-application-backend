@@ -13,5 +13,21 @@ urlpatterns = [
         'inistitutelist',
         views.ListInstituteView.as_view(),
         name = 'institute-list'
-    )
+    ),
+    path(
+        '<institute_id>/scholorship/add',
+        views.AddScholorshipView.as_view(),
+        name = 'scholorship-add'
+    ),
+    path(
+        '<institute_id>/scholorship/list',
+        views.GetScholorshipListView.as_view(),
+        name = 'scholorship-list'
+    ),
+    path(
+        '<scholorship_id>/scholorship/update',
+        views.UpdateScholorshipView.as_view(),
+        name = 'scholorship-update'
+    ),
+    # path()
 ]

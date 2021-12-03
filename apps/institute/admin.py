@@ -17,3 +17,9 @@ class InstituteStaffAdmin(BaseModelAdmin):
     list_filter = BaseModelAdmin.list_filter+(
         'institute',
     )   
+
+@admin.register(models.InstituteScholorship)
+class ScholorshipAdmin(BaseModelAdmin):
+    list_display = BaseModelAdmin.list_display + (
+        'topic',
+    )

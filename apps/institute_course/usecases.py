@@ -9,22 +9,6 @@ from apps.institute_course.models import InstituteCourse,Course,Faculty
 from apps.institute.models import Institute
 from apps.institute_course.exceptions import CourseNotFound, FacultyNotFound, InstituteNotFound
 
-class GetInstituteClassUseCase(BaseUseCase):
-    def __init__(self , institute_id: Institute):
-        self._institute_id=institute_id
-
-    def execute(self):
-        self._factory()
-        return self._institute
-
-    def _factory(self):
-        try:
-            self._institute=Institute.objects.get(pk=self._institute_id)
-            # print("****inst",self._institute)
-        
-        except Institute.DoesNotExist:
-
-            raise InstituteNotFound
 
 
         
@@ -85,4 +69,73 @@ class GetInstituteCourseUseCase(BaseUseCase):
         return self._course
 
     def _factory(self):
-        self._course = InstituteCourse.objects.filter(institute=self._institute)
+        self._course = InstituteCourse.objects.filter(institute=self._institute).prefetch_related('course','faculty')
+    
+
+
+class GetCourseUseCase(BaseUseCase):
+    def __init__(self,institute_course_id):
+        self._course_id = institute_course_id
+
+    def execute(self):
+        self._factory()
+        return self._course
+
+    def _factory(self):
+        try:
+            self._course = InstituteCourse.objects.get(pk=self._course_id)
+        except InstituteCourse.DoesNotExist:
+            raise CourseNotFound
+
+
+class UpdateInstituteCourseUseCase(BaseUseCase):
+    def __init__(self,serializer,institute_course:InstituteCourse):
+        self._institute_course =institute_course
+        self._serializer = serializer
+        self._data = serializer.validated_data
+
+    def execute(self):
+        self._factory()
+
+    def _factory(self):
+        for key in self._data.keys():
+            setattr(self._institute_course,key,self._data.get(key))
+
+        self._institute_course.updated_at = datetime.now()
+        self._institute_course.save()
+
+
+class DeleteInstituteCourseUseCase(BaseUseCase):
+    def __init__(self,institute_course):
+        self._institute_course = institute_course
+
+    def execute(self):
+        self._institute_course.delete()
+
+class ListFacultyUseCase(BaseUseCase):
+    def execute(self):
+        return Faculty.objects.all()
+
+
+class GetFacultyUseCase(BaseUseCase):
+    def __init__(self,faculty_id):
+        self._faculty = faculty_id
+
+    def execute(self):
+        return self._faculty
+
+    def _factory(self):
+        try:
+            self._faculty = Faculty.objects.filter(pk = self._factory)
+
+        except Faculty.DoesNotExist:
+            raise FacultyNotFound
+
+
+class ListCourseUseCase(BaseUseCase):
+    def __init__(self,faculty):
+        self._faculty = faculty
+
+    def execute(self):
+        self._course = Course.objects.filter(faculty = self._faculty)
+        return self._course

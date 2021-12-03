@@ -1,6 +1,7 @@
 from datetime import datetime
 from django.core import validators
 from django.db.models import Q
+from django.db.models.deletion import CASCADE
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models
@@ -41,7 +42,7 @@ class Institute(BaseModel):
         default='institute/cover_image/default_cover_image.png',
         validators=[validate_image]
     )
-    #about = models.TextField(null=True, blank=True)
+    about = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -77,9 +78,6 @@ class InstituteStaff(BaseModel):
                 }
             )
 
-# class Course
-
-# class InstituteDetailForm
 
 class RequiredDocument(BaseModel):
     photo = models.BooleanField()
@@ -89,13 +87,13 @@ class RequiredDocument(BaseModel):
     sop = models.BooleanField()
     lor = models.BooleanField()
 
-class ScholorshipScheme(BaseModel):
+
+
+class InstituteScholorship(BaseModel):
+    institute = models.ForeignKey(Institute,on_delete=CASCADE)
     topic = models.CharField(max_length=200)
     description = models.TextField()
-
     def __str__(self):
-        self.topic
+        return self.topic
 
-# class ScholorshipSchemeCourse(BaseModel):
-#     scholorship = models.ForeignKey(ScholorshipScheme, on_delete=models.CASCADE)
-#     course = models.ForeignKey(InstituteCourse , on_delete=models.CASCADE)
+

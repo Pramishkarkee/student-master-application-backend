@@ -11,6 +11,26 @@ urlpatterns = [
     path(
         '<institute_id>/get',
         views.ListInstituteCourse.as_view(),
-        name = 'get-institute'
-    )
+        name = 'get-institute-course'
+    ),
+    path(
+        '<institute_course_id>/update',
+        views.UpdateInstituteCourse.as_view(),
+        name = 'update-course'
+    ),
+    path(
+        '<institute_course_id>/delete',
+        views.DeleteInstituteCourseView.as_view(),
+        name = 'delete-course'
+    ),
+    path(
+        'listfaculty',
+        views.ListFacultyView.as_view(),
+        name = 'list-faculty'
+    ),
+    path(
+        '<faculty_id>/listcourse',
+        views.ListCourseView.as_view(),
+        name='list course'
+    ),
 ]
