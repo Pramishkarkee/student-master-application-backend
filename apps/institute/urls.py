@@ -29,5 +29,10 @@ urlpatterns = [
         views.UpdateScholorshipView.as_view(),
         name = 'scholorship-update'
     ),
+    path(
+        '<scholorship_id>/scholorship/delete',
+        views.DeleteScholorshipView.as_view(),
+        name= 'delete-scholorship-view'
+    )
     # path()
 ]

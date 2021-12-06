@@ -91,7 +91,6 @@ class ConsultancyUser2FAVerifyView(generics.CreateAPIView, ConsultancyUserMixin,
 
     def response(self, result, serializer, status_code):
         response_serializer = self.get_response_serializer(serializer.validated_data)
-        print("**************",response_serializer.data)
         return Response(response_serializer.data)
 
 

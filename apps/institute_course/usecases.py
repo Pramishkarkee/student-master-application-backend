@@ -1,25 +1,24 @@
 
+from apps.consultancy.exceptions import ConsultancyNotFound
+from apps.consultancy.models import Consultancy
+from apps.students.exceptions import StudentModelNotFound
+from apps.students.models import StudentModel
 from apps import institute
 from django.utils.datetime_safe import datetime
 from rest_framework.exceptions import ValidationError
 from  django.utils.translation import  gettext_lazy as _
 
 from apps.core.usecases import BaseUseCase
-from apps.institute_course.models import InstituteCourse,Course,Faculty
+from apps.institute_course.models import InstituteApply, InstituteCourse,Course,Faculty
 from apps.institute.models import Institute
 from apps.institute_course.exceptions import CourseNotFound, FacultyNotFound, InstituteNotFound
 
-
-
-        
 
 class AddCourseUseCase(BaseUseCase):
 
     def __init__(self , serializer ,institute:str):
         self._institute= institute
         self._serializer=serializer
-
-
 
     def execute(self):
         self._factory()
@@ -38,8 +37,6 @@ class AddCourseUseCase(BaseUseCase):
         except Faculty.DoesNotExist:
             raise FacultyNotFound
         
-        # del self._serializer.data['faculty']
-        # print("*************delete",self._serializer.data['faculty'])
         self._course = InstituteCourse.objects.create(
             program=self._serializer.data.pop('program'),
             faculty = faculty,
@@ -56,9 +53,7 @@ class AddCourseUseCase(BaseUseCase):
             reg_close = self._serializer.data.pop('reg_close'),
             institute=self._institute
             )
-        # self._course.save()
-
-    
+   
 
 class GetInstituteCourseUseCase(BaseUseCase):
     def __init__(self,inst):
@@ -139,3 +134,60 @@ class ListCourseUseCase(BaseUseCase):
     def execute(self):
         self._course = Course.objects.filter(faculty = self._faculty)
         return self._course
+
+
+class ApplyUseCase(BaseUseCase):
+    def __init__(self,serializer):
+        self._serializer = serializer
+
+    def execute(self):
+        self._factory()
+
+    def _factory(self):
+        self.student=self._serializer.data['student'],
+        self.course = self._serializer.data.pop('course'),
+        self.consultancy= self._serializer.data.pop('consultancy'),
+        self.institute = self._serializer.data.pop('institute'),
+        self._get_instance()
+        if self.consultancy[0]:
+            data = {
+                'student':self.student_instant,
+                'course' :self.course_instant,
+                'institute' : self.institute_instance,
+                'consultancy' : self.consultancy_instance
+            }
+        else:
+            data = {
+                'student':self.student_instant,
+                'course' :self.course_instant,
+                'institute' : self.institute_instance
+            }
+        InstituteApply.objects.create(
+            **data
+        )
+
+    def _get_instance(self):
+        try:
+            self.student_instant = StudentModel.objects.get(pk=str(self.student[0]))
+        except StudentModel.DoesNotExist:
+            raise StudentModelNotFound
+
+        try:
+            self.course_instant = InstituteCourse.objects.get(pk=str(self.course[0]))
+        except InstituteCourse.DoesNotExist:
+            raise CourseNotFound
+
+        try:
+            self.institute_instance = Institute.objects.get(pk = str(self.institute[0]))
+
+        except Institute.DoesNotExist:
+            raise InstituteNotFound
+
+        try:
+            if self.consultancy[0]:
+                self.consultancy_instance = Consultancy.objects.get(pk = str(self.consultancy[0]))
+            else:
+                self.consultancy_instance = ""
+
+        except Consultancy.DoesNotExist:
+            raise InstituteNotFound

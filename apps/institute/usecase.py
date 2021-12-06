@@ -1,5 +1,5 @@
 from datetime import datetime
-from apps.institute.exceptions import InstituteNotFound
+from apps.institute.exceptions import InstituteNotFound, InstituteScholorshipDoesntExist
 from apps import institute
 from apps.staff.models import StaffPosition
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -99,7 +99,11 @@ class GetScholorshipUseCase(BaseUseCase):
         return self._scholorship 
     
     def _factory(self):
-        self._scholorship = InstituteScholorship.objects.get(pk=self._scholorship_id)
+        try:
+            self._scholorship = InstituteScholorship.objects.get(pk=self._scholorship_id)
+
+        except InstituteScholorship.DoesNotExist:
+            raise InstituteScholorshipDoesntExist
 
 class UpdateScholorshipUseCase(BaseUseCase):
     def __init__(self,serializer,scholorship: InstituteScholorship):
@@ -128,3 +132,14 @@ class ListScholorshipUseCase(BaseUseCase):
 
     def _factory(self):
         self._scholorship = InstituteScholorship.objects.filter(institute = self._institute)
+
+
+class DeleteScholorshipUseCase(BaseUseCase):
+    def __init__(self,scholorship):
+        self._scholorship = scholorship
+
+    def execute(self):
+        return self._factory()
+
+    def _factory(self):
+        self._scholorship.delete()

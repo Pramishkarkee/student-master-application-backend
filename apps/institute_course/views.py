@@ -6,7 +6,13 @@ from rest_framework.parsers import MultiPartParser, FileUploadParser
 from rest_framework.permissions import AllowAny
 
 from apps.core import generics
-from apps.institute_course.serializers import CourseSerializer, FacultySerializer, InstituteCourseSerializer,AddInstituteCourseSerializer, ListInstituteCourseSerializer
+from apps.institute_course.serializers import (
+    CourseSerializer, 
+    FacultySerializer, 
+    InstituteCourseSerializer,
+    AddInstituteCourseSerializer, 
+    ListInstituteCourseSerializer, 
+    StudentApplySerializer)
 from apps.institute_course import usecases
 # from apps.institute_course.mixins import InstituteCourseMixin
 
@@ -101,3 +107,15 @@ class ListCourseView(generics.ListAPIView,FacultyMixin):
             faculty= self.get_object()
         ).execute()
 
+class ApplyInstituteCourseView(generics.CreateWithMessageAPIView):
+    """
+    This endpoint is use to apply
+    """
+    serializer_class = StudentApplySerializer
+    message = _("student apply successfully")
+    permission_classes = (AllowAny,)
+
+    def perform_create(self, serializer):
+        return usecases.ApplyUseCase(
+            serializer = serializer
+        ).execute()

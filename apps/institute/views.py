@@ -80,3 +80,15 @@ class UpdateScholorshipView(generics.UpdateWithMessageAPIView,ScholorshipMixins)
             serializer=serializer
         ).execute()
 #  AddScholorshipSerializer
+class DeleteScholorshipView(generics.DestroyWithMessageAPIView,ScholorshipMixins):
+    """
+    This endpoint is use to delete scholorship
+    """
+    message =_("delete successfully")
+    def get_object(self):
+        return self.get_scholorship()
+
+    def perform_destroy(self, instance):
+        return usecase.DeleteScholorshipUseCase(
+            scholorship=self.get_object()
+        ).execute()

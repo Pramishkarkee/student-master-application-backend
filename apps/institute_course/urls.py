@@ -33,4 +33,9 @@ urlpatterns = [
         views.ListCourseView.as_view(),
         name='list course'
     ),
+    path(
+        'apply',
+        views.ApplyInstituteCourseView.as_view(),
+        name = 'apply'
+    ),
 ]
