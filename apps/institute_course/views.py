@@ -1,4 +1,5 @@
-from apps.institute_course.mixins import CourseMixin, FacultyMixin
+from apps.auth.jwt import serializers
+from apps.institute_course.mixins import ApplyMixin, CourseMixin, FacultyMixin
 from apps.institute.mixins import InstituteMixins
 from apps.institute_course import usecases
 from django.utils.translation import gettext_lazy as _
@@ -7,6 +8,7 @@ from rest_framework.permissions import AllowAny
 
 from apps.core import generics
 from apps.institute_course.serializers import (
+    CommentApplicationSerializer,
     CourseSerializer, 
     FacultySerializer, 
     InstituteCourseSerializer,
@@ -119,3 +121,20 @@ class ApplyInstituteCourseView(generics.CreateWithMessageAPIView):
         return usecases.ApplyUseCase(
             serializer = serializer
         ).execute()
+
+class AddCommentApplicationView(generics.CreateWithMessageAPIView,ApplyMixin):
+    """
+    This api is use to comment on student application
+    """
+    serializer_class = CommentApplicationSerializer
+    message = "comment successfully"
+
+    def get_object(self):
+        return self.get_apply()
+
+    def perform_create(self, serializer):
+        return usecases.AddCommentApplyInstitute(
+            serializer =serializer,
+            apply = self.get_object()
+        )
+

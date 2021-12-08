@@ -9,3 +9,10 @@ class CourseNotFound(NotFound):
 
 class FacultyNotFound(NotFound):
     default_detail = _('faculty not found')
+
+class InstituteApplyNotFound(NotFound):
+    default_detail = _("student application not found following id")
+
+             
+class InstituteStaffNotFound(NotFound):
+    default_detail = _("staff not found following id")

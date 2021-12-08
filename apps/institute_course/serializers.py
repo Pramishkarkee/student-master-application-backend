@@ -8,7 +8,7 @@ from rest_framework.exceptions import ValidationError
 from apps.institute_course import models
 from rest_framework.validators import UniqueTogetherValidator
 
-from apps.institute_course.models import Course, Faculty, InstituteApply, InstituteCourse
+from apps.institute_course.models import CommentApplicationInstitute, Course, Faculty, InstituteApply, InstituteCourse
 from apps.core import fields
 
 User = get_user_model()
@@ -102,10 +102,13 @@ class ListInstituteCourseSerializer(InstituteCourseSerializer):
         )
 
     
-# class StudentApplySerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Faculty,
-#         fields = '__all__'
+class CommentApplicationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CommentApplicationInstitute
+        fields = (
+            'institute_user',
+            'comment'
+        )
 class StudentApplySerializer(serializers.ModelSerializer):
     class Meta:
         model = InstituteApply

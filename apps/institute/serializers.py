@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 from rest_framework import generics, serializers
 from rest_framework.exceptions import ValidationError
+from apps.institute import models
 
 from apps.institute.models import Institute, InstituteScholorship,InstituteStaff
 from apps.core import fields
@@ -18,7 +19,7 @@ class InstituteSerializer(serializers.ModelSerializer):
 
 
 class RegisterInstituteSerializer(InstituteSerializer):
-    email = serializers.EmailField(write_only=True)
+    # email = serializers.EmailField(write_only=True)
     password = fields.PasswordField()
 
     class Meta(InstituteSerializer.Meta):
@@ -105,4 +106,24 @@ class GetScholorshipSerializer(AddScholorshipSerializer):
             'id',
             'topic',
             'description'
+        )
+
+class InstituteStaffSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InstituteStaff
+        fields = '__all__'
+
+
+class CreateInstituteStaffSerializer(InstituteStaffSerializer):
+    email = serializers.EmailField()
+    fullname = serializers.CharField()
+    profile_photo = serializers.ImageField(write_only=True)
+
+    class Meta(InstituteStaffSerializer.Meta):
+        model = InstituteStaff
+        fields = (
+            'email',
+            'fullname',
+            'role',
+            'profile_photo',
         )

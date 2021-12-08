@@ -38,4 +38,9 @@ urlpatterns = [
         views.ApplyInstituteCourseView.as_view(),
         name = 'apply'
     ),
+    path(
+        '<apply_id>/application/comment',
+        views.AddCommentApplicationView.as_view(),
+        name= 'comment-apply'
+    )
 ]

@@ -1,3 +1,4 @@
+from apps.auth.jwt import serializers
 from datetime import datetime
 from apps.institute.exceptions import InstituteNotFound, InstituteScholorshipDoesntExist
 from apps import institute
@@ -7,7 +8,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from rest_framework.exceptions import ValidationError
 
-
+from apps.consultancy.emails import SendEmailToConsultanySTaff
 from apps.core import usecases
 from apps.core.usecases import BaseUseCase, CreateUseCase
 from apps.notification.mixins import NotificationMixin
@@ -22,9 +23,10 @@ class RegisterInstituteUsecase(usecases.CreateUseCase, NotificationMixin):
         self.send_notification()
 
     def _factory(self):
+        email = self._data["email"]
         # create consultancy user
         user = InstituteUser.objects.create(
-            email=self._data.pop("email"),
+            email=email,
             password=(self._data.pop("password"))
         )
 
@@ -143,3 +145,55 @@ class DeleteScholorshipUseCase(BaseUseCase):
 
     def _factory(self):
         self._scholorship.delete()
+
+
+class CreateConsultancyStaffUseCase(BaseUseCase):
+    def __init__(self,serializer,institute):
+        self._institute = institute
+        self._data = serializer.validated_data
+
+    def execute(self):
+        self._factory()
+
+    def _factory(self):
+        user  = {
+            'email':self._data.pop('email'),
+            'fullname' : self._data.pop('fullname')
+        }
+
+        #1. create consultancy user
+        self.institute_user = InstituteUser.objects.create(
+            **user
+        )
+        Settings.objects.create(user = self.institute_user)
+
+        #2 . institute staff
+        try:
+            consultancy_staff = InstituteStaff.objects.create(
+                user=self.institute_user,
+                institute=self._institute,
+                role=self._data['role'],
+                profile_photo=self._data['profile_photo']
+            )
+            consultancy_staff.clean()
+        except DjangoValidationError as e:
+            raise ValidationError(e.message_dict)
+        # context = {
+        #     'uuid': self.institute_user.id,
+        #     'name': self.institute_user.name,
+        #     'user_email':self.institute_user.email,
+        # }
+        # tasks.send_set_password_email_to_user.apply_async(
+        #     kwargs=context
+        # )
+
+        # without celery
+        SendEmailToConsultanySTaff(
+            context={
+                'uuid': self.institute_user.id,
+                'name': self._institute.name
+            }
+        ).send(to=[self.institute_user.email])
+    
+
+

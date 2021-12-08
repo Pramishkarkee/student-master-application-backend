@@ -11,3 +11,9 @@ class FacultyMixin:
         return usecases.GetFacultyUseCase(
             faculty_id = self.kwargs.get('faculty_id')
         ).execute()
+
+class ApplyMixin:
+    def get_apply(self):
+        return usecases.GetApplyInstitute(
+            apply_id=self.kwargs.get("apply_id")
+        ).execute()

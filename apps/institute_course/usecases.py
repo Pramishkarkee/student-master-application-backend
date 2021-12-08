@@ -1,4 +1,6 @@
 
+from apps.auth.jwt import serializers
+import apps
 from apps.consultancy.exceptions import ConsultancyNotFound
 from apps.consultancy.models import Consultancy
 from apps.students.exceptions import StudentModelNotFound
@@ -9,9 +11,9 @@ from rest_framework.exceptions import ValidationError
 from  django.utils.translation import  gettext_lazy as _
 
 from apps.core.usecases import BaseUseCase
-from apps.institute_course.models import InstituteApply, InstituteCourse,Course,Faculty
-from apps.institute.models import Institute
-from apps.institute_course.exceptions import CourseNotFound, FacultyNotFound, InstituteNotFound
+from apps.institute_course.models import CommentApplicationInstitute, InstituteApply, InstituteCourse,Course,Faculty
+from apps.institute.models import Institute, InstituteStaff
+from apps.institute_course.exceptions import CourseNotFound, FacultyNotFound, InstituteApplyNotFound, InstituteNotFound, InstituteStaffNotFound
 
 
 class AddCourseUseCase(BaseUseCase):
@@ -191,3 +193,41 @@ class ApplyUseCase(BaseUseCase):
 
         except Consultancy.DoesNotExist:
             raise InstituteNotFound
+
+
+class GetApplyInstitute(BaseUseCase):
+    def __init__(self,apply_id):
+        self.apply_id =apply_id
+
+    def execute(self):
+        self._factory()
+        return self._apply
+
+    def _factory(self):
+        try:
+            self._apply = InstituteApply.objects.get(pk = self.apply_id)
+
+        except InstituteApply.DoesNotExist:
+            raise InstituteApplyNotFound
+
+
+class AddCommentApplyInstitute(BaseUseCase):
+    def __init__(self,serializer,apply):
+        self._apply = apply
+        self._serializer = serializer
+
+    def execute(self):
+        self._factory()
+
+    def _factory(self):
+        try:
+            institutestaff=InstituteStaff.objects.get(pk = str(self._serializer.data.pop('institute_user')[0]))
+        
+        except InstituteStaff.DoesNotExist:
+            raise InstituteStaffNotFound
+
+        CommentApplicationInstitute.objects.create(
+            application = self._apply,
+            institute_user = institutestaff,
+            comment = self._serializer.data.pop('comment')
+        )

@@ -25,6 +25,24 @@ class RegisterInstituteView(generics.CreateWithMessageAPIView):
             serializer=serializer
         ).execute()
 
+class AddInstituteStaffView(generics.CreateWithMessageAPIView ,InstituteMixins):
+    """
+    This endpoint is use to add staff in institute
+    """
+    message = 'Institute stsff create successfully'
+    serializer_class = serializers.CreateInstituteStaffSerializer
+    parser_classes = (MultiPartParser,FileUploadParser)
+    message = _('Add staff successfully')
+
+    def get_object(self):
+        return self.get_institute()
+
+    def perform_create(self, serializer):
+        return usecase.CreateConsultancyStaffUseCase(
+            institute=self.get_object(),
+            serializer = serializer
+        ).execute()
+
 
 class ListInstituteView(generics.ListAPIView):
     permission_classes = (AllowAny,)

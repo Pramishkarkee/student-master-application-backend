@@ -5,6 +5,7 @@ from django.db.models.deletion import CASCADE
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models
+from django.core.validators import validate_email
 
 from apps.institute.utils import past_date,upload_institute_staff_image_to,upload_institute_logo_to,upload_institute_cover_image_to
 from apps.core import fields
@@ -25,6 +26,8 @@ class Institute(BaseModel):
         default=datetime.now,
         validators= [past_date]
          )
+    email = models.EmailField(blank = True)
+    # email = models.EmailField(unique = True ,validators = [validate_email,])
     country = models.CharField(max_length=200)
     city = models.CharField(max_length=200)
     state = models.CharField(max_length=200)

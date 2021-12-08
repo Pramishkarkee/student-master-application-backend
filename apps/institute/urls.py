@@ -33,6 +33,11 @@ urlpatterns = [
         '<scholorship_id>/scholorship/delete',
         views.DeleteScholorshipView.as_view(),
         name= 'delete-scholorship-view'
+    ),
+    path(
+        '<institute_id>/staff/add',
+        views.AddInstituteStaffView.as_view(),
+        name='add-staff'
     )
     # path()
 ]
