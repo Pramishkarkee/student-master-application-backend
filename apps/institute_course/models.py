@@ -88,7 +88,7 @@ class InstituteApply(BaseModel):
         )
     action = models.CharField(
         choices=ACTION_OPTION, 
-        default='pending', 
+        default='applied', 
         max_length=20
         )
     action_data = models.DateField(_('Date'), blank=True, null=True)
@@ -107,7 +107,7 @@ class InstituteApply(BaseModel):
         )
     view_date = models.DateField(blank=True, null=True)
     forward = models.BooleanField(default=False)
-
+    cancel = models.BooleanField(default=False)
     class Meta:
         unique_together = ('student','course')
 
