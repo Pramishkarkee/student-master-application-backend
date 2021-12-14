@@ -41,7 +41,7 @@ class InstituteCourse(BaseModel):
     intake=models.CharField(max_length=100,choices=INTAKE_CHOICE)
     #relete the eligibility exam in next table 
     eligibility = models.CharField(max_length=200)
-    score = models.FloatField()
+    score = models.FloatField()  #this is eligibility score
     last_mini_academic_score = models.FloatField(
         validators=[MinValueValidator(40.0),MaxValueValidator(100.0)]
         )
