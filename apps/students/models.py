@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models
 from django.db.models import Q
-from django.db.models.deletion import CASCADE
+from django.db.models.deletion import CASCADE, DO_NOTHING
 from django.utils.translation import gettext_lazy as _
 
 from apps.students.utils import upload_student_image_to
@@ -9,7 +9,7 @@ from apps.core import fields
 from apps.core.models import BaseModel
 from apps.core.validators import validate_image
 from apps.user.models import StudentUser
-
+from apps.institute.models import Institute
 
 class StudentModel(BaseModel):
     GENDER_CHOOSE=(
@@ -91,3 +91,13 @@ class CompleteProfileTracker(BaseModel):
     def __str__(self):
         return self.student.name
 
+
+class FavouriteInstitute(BaseModel):
+    student = models.ForeignKey(
+        StudentModel,
+        on_delete=DO_NOTHING
+        )
+    institute = models.ForeignKey(
+        Institute,
+        on_delete=DO_NOTHING
+    )

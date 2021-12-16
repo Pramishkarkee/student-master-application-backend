@@ -5,7 +5,7 @@ from django.core import validators
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models
 from django.db.models import Q
-from django.db.models.deletion import CASCADE
+from django.db.models.deletion import CASCADE, DO_NOTHING
 from django.db.models.fields import CharField
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MaxValueValidator,MinValueValidator
@@ -78,13 +78,14 @@ class InstituteApply(BaseModel):
         ('pending','pending'),
         ('applied','applied')
     )
-    student = models.ForeignKey(StudentModel, on_delete=CASCADE)
-    course = models.ForeignKey(InstituteCourse, on_delete=CASCADE)
+    student = models.ForeignKey(StudentModel, 
+    on_delete=DO_NOTHING)
+    course = models.ForeignKey(InstituteCourse, on_delete=DO_NOTHING)
     consultancy = models.ForeignKey(
         Consultancy, 
         blank=True, 
         null=True,
-        on_delete=CASCADE
+        on_delete=DO_NOTHING
         )
     action = models.CharField(
         choices=ACTION_OPTION, 
@@ -97,13 +98,13 @@ class InstituteApply(BaseModel):
         InstituteStaff, 
         blank=True, 
         null=True,
-        on_delete=CASCADE
+        on_delete=DO_NOTHING
         )
     action_consultancy_user = models.ForeignKey(
         ConsultancyStaff, 
         blank=True, 
         null=True, 
-        on_delete=CASCADE
+        on_delete=DO_NOTHING
         )
     view_date = models.DateField(blank=True, null=True)
     forward = models.BooleanField(default=False)
@@ -113,14 +114,14 @@ class InstituteApply(BaseModel):
 
 
 class CommentApplicationInstitute(BaseModel):
-    application = models.ForeignKey(InstituteApply,on_delete=CASCADE)
-    institute_user = models.ForeignKey(InstituteStaff,on_delete=CASCADE)
+    application = models.ForeignKey(InstituteApply,on_delete=DO_NOTHING)
+    institute_user = models.ForeignKey(InstituteStaff,on_delete=DO_NOTHING)
     comment = models.TextField()
 
 
 class CommentApplicationConsultancy(BaseModel):
-    application = models.ForeignKey(InstituteApply,on_delete=CASCADE)
-    consultancy_user = models.ForeignKey(ConsultancyStaff,on_delete=CASCADE)
+    application = models.ForeignKey(InstituteApply,on_delete=DO_NOTHING)
+    consultancy_user = models.ForeignKey(ConsultancyStaff,on_delete=DO_NOTHING)
     comment = models.TextField()
 
 
