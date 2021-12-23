@@ -43,9 +43,11 @@ urlpatterns = [
         '<student_id>/update/latlong',
         views.StudentLatitudeAndLongitudeUpdate.as_view(),
         name = 'update-latitude and longitude'
-    )
+    ),
     # path(
-    #     '<s'
+    #     '<student_id>/<institute_id>/favourite',
+    #     views.AddFavouriteInstitute.as_view(),
+    #     name = 'add-fav'
     # )
 
 ]

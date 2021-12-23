@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework.exceptions import ValidationError
 
 from apps.notification.mixins import NotificationMixin
-from apps.students.models import StudentAddress, StudentUser, StudentModel, CompleteProfileTracker
+from apps.students.models import FavouriteInstitute, StudentAddress, StudentUser, StudentModel, CompleteProfileTracker
 from apps.core import usecases
 from apps.settings.models import Settings
 from apps.core.usecases import BaseUseCase
@@ -203,3 +203,17 @@ class GetStudentAddressUseCase(BaseUseCase):
 
         except StudentModel.DoesNotExist:
             raise StudentModelNotFound
+
+
+class AddFavourateInstituteUseCase(BaseUseCase):
+    def __init__(self , student:StudentModel ,institute):
+        self._student = student
+        self._institute = institute
+    def execute(self):
+        self._factory()
+
+    def _factory(self):
+        FavouriteInstitute.objects.create(
+                student = self._student,
+                institute = self._institute
+            )

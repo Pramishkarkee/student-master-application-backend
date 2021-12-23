@@ -1,3 +1,4 @@
+from apps.institute.mixins import InstituteMixins
 from django.shortcuts import render
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
@@ -138,3 +139,16 @@ class StudentLatitudeAndLongitudeUpdate(generics.UpdateWithMessageAPIView,Studen
             student=self.get_object(),
             serializer = serializer
         ).execute()
+
+# class AddFavouriteInstitute(generics.CreateWithMessageAPIView,StudentMixin,InstituteMixins):
+#     """
+#     This endpoint is use to add bookmark
+#     """
+#     permission_classes = (AllowAny,)
+#     # serializer_class = serilizers.AddFavouriteInstituteSerializer
+#     serializer_class = None
+#     def perform_create(self):
+#         return usecases.AddFavourateInstituteUseCase(
+#             institute=self.get_institute(),
+#             student = self.get_student()
+#         )

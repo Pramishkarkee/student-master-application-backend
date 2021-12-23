@@ -1,6 +1,5 @@
 
 from apps.auth.jwt import serializers
-import apps
 from apps.consultancy.exceptions import ConsultancyNotFound
 from apps.consultancy.models import Consultancy
 from apps.students.exceptions import StudentModelNotFound
@@ -26,8 +25,6 @@ class AddCourseUseCase(BaseUseCase):
         self._factory()
 
     def _factory(self):
-
-        print("this is *inst",self._institute)
         try:
             course=Course.objects.get(pk=self._serializer.data.pop('course'))
         except Course.DoesNotExist:

@@ -8,7 +8,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.validators import UniqueTogetherValidator
 
-from apps.students.models import CompleteProfileTracker, StudentAddress, StudentModel
+from apps.students.models import CompleteProfileTracker, FavouriteInstitute, StudentAddress, StudentModel
 from apps.core import fields
 User = get_user_model()
 
@@ -126,3 +126,11 @@ class StudentAddressSerializer(serializers.ModelSerializer):
            
         )
         
+class AddFavouriteInstituteSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = FavouriteInstitute
+        fields = (
+            'student',
+            'institute',
+        )

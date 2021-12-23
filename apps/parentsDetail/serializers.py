@@ -21,7 +21,10 @@ class ParentsDetailSerializer(serializers.ModelSerializer):
             'occupation',
             'education',
             'annual_income',
-            'currency'
+            'currency',
+            'email',
+            'country_code',
+            'contact',
         )
 
 class UpdateParentsDetailSerializer(ParentsDetailSerializer):
@@ -33,7 +36,10 @@ class UpdateParentsDetailSerializer(ParentsDetailSerializer):
             'occupation',
             'education',
             'annual_income',
-            'currency'
+            'currency',
+            'email',
+            'country_code',
+            'contact',
         )
 
 class GetParentsListSerializer(ParentsDetailSerializer):
@@ -46,5 +52,8 @@ class GetParentsListSerializer(ParentsDetailSerializer):
             'occupation',
             'education',
             'annual_income',
-            'currency'
+            'currency',
+            'email',
+            'country_code',
+            'contact',
         )  
