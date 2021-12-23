@@ -58,3 +58,6 @@ class GetParentsView(generics.ListAPIView,StudentMixin):
         return usecases.GetStudentParentsUseCase(
             student=self.get_object()
         ).execute()
+
+class HouseHoldCreateView(generics.ListAPIView,StudentMixin):
+    pass
