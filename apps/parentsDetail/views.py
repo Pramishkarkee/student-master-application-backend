@@ -59,5 +59,3 @@ class GetParentsView(generics.ListAPIView,StudentMixin):
             student=self.get_object()
         ).execute()
 
-class HouseHoldCreateView(generics.ListAPIView,StudentMixin):
-    pass
