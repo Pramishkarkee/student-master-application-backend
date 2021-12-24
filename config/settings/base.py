@@ -96,6 +96,8 @@ LOCAL_APPS = [
     "apps.schedule.apps.SchedulesConfig",
     "apps.blog.apps.BlogConfig",
     "apps.gallery.apps.GalleryConfig",
+    "apps.language.apps.LanguageConfig",
+    "apps.activity.apps.ActivityConfig",
 
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

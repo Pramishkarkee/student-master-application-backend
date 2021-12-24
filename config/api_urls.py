@@ -1,4 +1,5 @@
-from apps import studentIdentity
+from django import urls
+from apps import activity, studentIdentity
 from django.urls import path, include
 
 # This file will contain all the end-points
@@ -75,4 +76,12 @@ urlpatterns = [
         'parents/',
         include('apps.parentsDetail.urls')
     ),
+    path(
+        'language/',
+        include('apps.language.urls')
+    ),
+    path(
+        'activities/',
+        include('apps.activity.urls')
+    )
 ]

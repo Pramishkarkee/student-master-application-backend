@@ -1,7 +1,8 @@
+from apps.institute.usecase import UpdateInstituteUseCase
 from django.urls import path
 from apps.institute import views
 
-from apps.institute.views import RegisterInstituteView
+from apps.institute.views import RegisterInstituteView, UpdateInstituteView
 
 urlpatterns = [
     path(
@@ -13,6 +14,26 @@ urlpatterns = [
         'inistitutelist',
         views.ListInstituteView.as_view(),
         name = 'institute-list'
+    ),
+    path(
+        '<institute_id>/detail/student',
+        views.DetailInstituteView.as_view(),
+        name = 'institute-detail'
+    ),
+    path(
+        '<institute_id>/update/logo',
+        views.UpdateInstituteLogoView.as_view(),
+        name="logo update"
+    ),
+    path(
+        '<institute_id>/update/coverimage',
+        views.UpdateInstituteCoverimageView.as_view(),
+        name="coverimage update"
+    ),
+    path(
+        '<institute_id>/update',
+        views.UpdateInstituteView.as_view(),
+        name = 'update'
     ),
     path(
         '<institute_id>/scholorship/add',

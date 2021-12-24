@@ -1,3 +1,4 @@
+from apps import institute
 from datetime import datetime
 from django.core import validators
 from django.db.models import Q
@@ -34,7 +35,7 @@ class Institute(BaseModel):
     street_address = models.CharField(max_length=200)
     latitude = models.FloatField()
     longitude = models.FloatField()
-    website = models.URLField()
+    website = models.URLField(blank=True,null=True)
     logo = models.ImageField(
         upload_to=upload_institute_logo_to,
         default='institute/logo/default_logo.png',
@@ -99,4 +100,13 @@ class InstituteScholorship(BaseModel):
     def __str__(self):
         return self.topic
 
-
+class SocialMediaLink(BaseModel):
+    SOCIAL_MEDIA = (
+        ('facebook','facebook'),
+        ('youtube','youtube'),
+        ('linkdin','linkdin'),
+        ('instagram','instagram')
+    )
+    institute  = models.ForeignKey(Institute,on_delete=CASCADE)
+    name = models.CharField(choices=SOCIAL_MEDIA,max_length=100)
+    link = models.URLField()

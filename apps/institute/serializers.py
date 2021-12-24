@@ -1,5 +1,4 @@
 import re
-
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
@@ -71,11 +70,11 @@ class RegisterInstituteSerializer(InstituteSerializer):
             return value
 
 
-
-class ListInstituteSerializer(InstituteSerializer):
+class UpdateInstituteSerializer(InstituteSerializer):
     class Meta(InstituteSerializer.Meta):
         fields = (
             'name',
+            'email',
             'category',
             'university',
             'established',
@@ -87,8 +86,66 @@ class ListInstituteSerializer(InstituteSerializer):
             'latitude',
             'longitude',
             'website',
+
+        )
+        def validate_email(self, value):
+            email = value.lower()
+            if Institute.objects.filter(email__iexact=email).exists():
+                raise serializers.ValidationError(
+                    self.fail('duplicate_email')
+                )
+            return value
+
+
+class UpdateInstituteLogoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model =Institute
+        fields = (
+            'logo',
+        )
+
+
+class UpdateInstituteCoverImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model =Institute
+        fields = (
+            'cover_image',
+        )
+class ListInstituteSerializer(InstituteSerializer):
+    class Meta(InstituteSerializer.Meta):
+        fields = (
+            'id',
+            'name',
+            'category',
+            'university',
+            'established',
+            'contact',
+            'email',
+            'country',
             'logo',
             'cover_image',
+        )
+
+class InstituteDetailSerilaizer(serializers.ModelSerializer):
+    class Meta:
+        model = Institute
+        fields = (
+            'name',
+            'category',
+            'university',
+            'established',
+            'contact',
+            'email',
+            'country',
+            'logo',
+            'cover_image',
+            'about',
+            'website',
+            'longitude',
+            'latitude',
+            'state',
+            'city',
+            'street_address',
         )
 
 

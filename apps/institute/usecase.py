@@ -77,6 +77,35 @@ class GetInstituteUseCase(BaseUseCase):
         except Institute.DoesNotExist:
             raise InstituteNotFound
 
+class GetInstituteDetailUseCase(BaseUseCase):
+    def __init__(self,institute_id:str):
+        self._institute_id = institute_id
+
+    def execute(self):
+        self._factory()
+        return self._institute
+
+    def _factory(self):
+        try:
+            self._institute = Institute.objects.get(pk=self._institute_id)
+
+        except Institute.DoesNotExist:
+            raise InstituteNotFound
+
+class UpdateInstituteUseCase(usecases.CreateUseCase):
+    def __init__(self, institute,serializer):
+        self._institute = institute
+        self._data=serializer.validated_data
+
+    def execute(self):
+        self._factory()
+
+    def _factory(self):
+        for key in self._data.keys():
+            setattr(self._institute,key,self._data.get(key))
+
+        self._institute.updated_at =datetime.now()
+        self._institute.save()
 
 
 class AddScholorshipUseCase(usecases.CreateUseCase):

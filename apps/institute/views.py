@@ -1,3 +1,4 @@
+from apps.institute.models import Institute
 from apps import institute
 from apps.institute.mixins import InstituteMixins, ScholorshipMixins
 from apps.studentIdentity import usecases
@@ -43,12 +44,79 @@ class AddInstituteStaffView(generics.CreateWithMessageAPIView ,InstituteMixins):
             serializer = serializer
         ).execute()
 
+class UpdateInstituteView(generics.UpdateWithMessageAPIView,InstituteMixins):
+    """
+    This endpoint is use to update institute
+    """
+    message = 'institute update successfully'
+    serializer_class = serializers.UpdateInstituteSerializer
+    
+
+    def get_object(self):
+        return self.get_institute()
+
+    def perform_update(self, serializer):
+        return usecase.UpdateInstituteUseCase(
+            institute=self.get_object(),
+            serializer = serializer
+        ).execute()
+#update logo
+class UpdateInstituteLogoView(generics.UpdateWithMessageAPIView,InstituteMixins):
+    """
+    This endpoint is use to update institute logo
+    """
+    message = 'institute logo update successfully'
+    serializer_class = serializers.UpdateInstituteLogoSerializer
+    parser_classes = (MultiPartParser,FileUploadParser)
+    def get_object(self):
+        return self.get_institute()
+
+    def perform_update(self, serializer):
+        return usecase.UpdateInstituteUseCase(
+            institute=self.get_object(),
+            serializer = serializer
+        ).execute()
+
+#update coverimage
+class UpdateInstituteCoverimageView(generics.UpdateWithMessageAPIView,InstituteMixins):
+    """
+    This endpoint is use to update institute coverimage
+    """
+    message = 'institute coverimage update successfully'
+    serializer_class = serializers.UpdateInstituteCoverImageSerializer
+    parser_classes = (MultiPartParser,FileUploadParser)
+
+    def get_object(self):
+        return self.get_institute()
+
+    def perform_update(self, serializer):
+        return usecase.UpdateInstituteUseCase(
+            institute=self.get_object(),
+            serializer = serializer
+        ).execute()
+
 
 class ListInstituteView(generics.ListAPIView):
     permission_classes = (AllowAny,)
     serializer_class = serializers.ListInstituteSerializer
     def get_queryset(self):
         return usecase.ListInstituteUseCase().execute()
+
+
+class DetailInstituteView(generics.RetrieveAPIView,Institute,InstituteMixins):
+    """
+    this endpoint is use to get institute detail
+    """
+    permission_classes = (AllowAny,)
+    serializer_class = serializers.InstituteDetailSerilaizer
+
+    def get_object(self):
+        return self.get_institute()
+
+    def get_queryset(self):
+        return usecase.GetInstituteDetailUseCase(
+            institute_id=self.get_object()
+        ).execute()
 
  
 class AddScholorshipView(generics.CreateWithMessageAPIView,InstituteMixins):
