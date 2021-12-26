@@ -140,15 +140,29 @@ class StudentLatitudeAndLongitudeUpdate(generics.UpdateWithMessageAPIView,Studen
             serializer = serializer
         ).execute()
 
-# class AddFavouriteInstitute(generics.CreateWithMessageAPIView,StudentMixin,InstituteMixins):
-#     """
-#     This endpoint is use to add bookmark
-#     """
-#     permission_classes = (AllowAny,)
-#     # serializer_class = serilizers.AddFavouriteInstituteSerializer
-#     serializer_class = None
-#     def perform_create(self):
-#         return usecases.AddFavourateInstituteUseCase(
-#             institute=self.get_institute(),
-#             student = self.get_student()
-#         )
+class AddFavouriteInstitute(generics.CreateWithMessageAPIView,StudentMixin):
+    """
+    This endpoint is use to add bookmark
+    """
+    permission_classes = (AllowAny,)
+    serializer_class = serilizers.AddFavouriteInstituteSerializer
+    def perform_create(self,serializer):
+        return usecases.AddFavourateInstituteUseCase(
+            serializer = serializer,
+            student = self.get_student()
+        ).execute()
+
+
+class GetFavouriteInstitute(generics.ListAPIView,StudentMixin):
+    """
+    This endpoint is use to get fav student institute
+    """
+    permission_classes = (AllowAny,)
+    serializer_class  = serilizers.GetFavouriteInstituteSerializer
+    def get_object(self):
+        return self.get_student()
+
+    def get_queryset(self):
+        return usecases.GetFavouriteInstituteUseCase(
+            student = self.get_object()
+        ).execute()

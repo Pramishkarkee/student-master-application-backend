@@ -131,6 +131,10 @@ class AddFavouriteInstituteSerializer(serializers.ModelSerializer):
     class Meta:
         model = FavouriteInstitute
         fields = (
-            'student',
             'institute',
         )
+
+class GetFavouriteInstituteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FavouriteInstitute
+        fields = '__all__'

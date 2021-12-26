@@ -44,11 +44,16 @@ urlpatterns = [
         views.StudentLatitudeAndLongitudeUpdate.as_view(),
         name = 'update-latitude and longitude'
     ),
-    # path(
-    #     '<student_id>/<institute_id>/favourite',
-    #     views.AddFavouriteInstitute.as_view(),
-    #     name = 'add-fav'
-    # )
+    path(
+        '<student_id>/favourite/add',
+        views.AddFavouriteInstitute.as_view(),
+        name = 'add-fav'
+    ),
+    path(
+        '<student_id>/favourite/get',
+        views.GetFavouriteInstitute.as_view(),
+        name='get-favourite'
+    )
 
 ]
 urlpatterns = format_suffix_patterns (urlpatterns)

@@ -206,14 +206,30 @@ class GetStudentAddressUseCase(BaseUseCase):
 
 
 class AddFavourateInstituteUseCase(BaseUseCase):
-    def __init__(self , student:StudentModel ,institute):
+    def __init__(self , student:StudentModel ,serializer):
         self._student = student
-        self._institute = institute
+        self._serializer = serializer
+        self._data = self._serializer.validated_data
     def execute(self):
         self._factory()
 
     def _factory(self):
         FavouriteInstitute.objects.create(
                 student = self._student,
-                institute = self._institute
+                **self._data
             )
+
+class GetFavouriteInstituteUseCase(BaseUseCase):
+    def __init__(self , student:StudentModel):
+        print("**********************")
+        self._student = student
+
+    def execute(self):
+        print("**********************************************************************")
+        self._factory()
+        return self._favourite
+
+    def _factory(self):
+        self._favourite = FavouriteInstitute.objects.filter(
+            student = self._student
+        )
