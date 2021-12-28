@@ -110,3 +110,6 @@ class SocialMediaLink(BaseModel):
     institute  = models.ForeignKey(Institute,on_delete=CASCADE)
     name = models.CharField(choices=SOCIAL_MEDIA,max_length=100)
     link = models.URLField()
+
+    class Meta:
+        unique_together = ('institute','name')

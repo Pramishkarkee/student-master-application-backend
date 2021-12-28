@@ -59,6 +59,21 @@ urlpatterns = [
         '<institute_id>/staff/add',
         views.AddInstituteStaffView.as_view(),
         name='add-staff'
+    ),
+    path(
+        '<institute_id>/socialmedia/add',
+        views.AddSolicalMediaView.as_view(),
+        name = 'add-social-media'
+    ),
+    path(
+        '<socialmedia_id>/socialmedia/delete',
+        views.DeleteSocialMediaView.as_view(),
+        name="delete-social-media"
+    ),
+    path(
+        '<institute_id>/socialmedia/list',
+        views.GetSocialMediaListView.as_view(),
+        name = 'get-social-media-list'
     )
     # path()
 ]

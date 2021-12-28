@@ -6,7 +6,7 @@ from rest_framework import generics, serializers
 from rest_framework.exceptions import ValidationError
 from apps.institute import models
 
-from apps.institute.models import Institute, InstituteScholorship,InstituteStaff
+from apps.institute.models import Institute, InstituteScholorship,InstituteStaff, SocialMediaLink
 from apps.core import fields
 
 User = get_user_model()
@@ -183,4 +183,21 @@ class CreateInstituteStaffSerializer(InstituteStaffSerializer):
             'fullname',
             'role',
             'profile_photo',
+        )
+
+class AddSocialMediaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SocialMediaLink
+        fields = (
+            'name',
+            'link'
+        )
+
+class GetSocialMediaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SocialMediaLink
+        fields = (
+            'id',
+            'name',
+            'link'
         )

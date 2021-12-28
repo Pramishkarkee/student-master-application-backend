@@ -1,6 +1,6 @@
 from apps.auth.jwt import serializers
 from datetime import datetime
-from apps.institute.exceptions import InstituteNotFound, InstituteScholorshipDoesntExist
+from apps.institute.exceptions import InstituteNotFound, InstituteScholorshipDoesntExist, SocialMediaLinkDoesntExist
 from apps import institute
 from apps.staff.models import StaffPosition
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -12,7 +12,7 @@ from apps.consultancy.emails import SendEmailToConsultanySTaff
 from apps.core import usecases
 from apps.core.usecases import BaseUseCase, CreateUseCase
 from apps.notification.mixins import NotificationMixin
-from apps.institute.models import Institute, InstituteScholorship, InstituteStaff,InstituteUser
+from apps.institute.models import Institute, InstituteScholorship, InstituteStaff,InstituteUser, SocialMediaLink
 from apps.settings.models import Settings
 
 class RegisterInstituteUsecase(usecases.CreateUseCase, NotificationMixin):
@@ -226,3 +226,55 @@ class CreateConsultancyStaffUseCase(BaseUseCase):
     
 
 
+class SocialiMedialinkUseCase(usecases.CreateUseCase):
+
+    def __init__(self,serializer,institute):
+        self._institute = institute
+        self._data=serializer.validated_data
+
+    def execute(self):
+        self._factory()
+
+    def _factory(self):
+        SocialMediaLink.objects.create(
+            institute = self._institute,
+            **self._data
+        )
+
+
+class DeleteSocialMediaUseCase(BaseUseCase):
+    def __init__(self,socialmedia):
+        self._socialmedia = socialmedia
+
+    def execute(self):
+        return self._factory()
+
+    def _factory(self):
+        self._socialmedia.delete()
+
+class GetSocialMedia(BaseUseCase):
+    def __init__(self,socialmedia_id):
+        self._socialmedia_id = socialmedia_id
+
+    def execute(self):
+        self._factory()
+        return self._socialmedia_id 
+    
+    def _factory(self):
+        try:
+            self._socialmedia_id  = SocialMediaLink.objects.get(pk=self._socialmedia_id)
+
+        except SocialMediaLink.DoesNotExist:
+            raise SocialMediaLinkDoesntExist
+
+
+class GetSocialMediaLinkListUseCase(BaseUseCase):
+    def __init__(self,institute):
+        self._institute = institute
+
+    def execute(self):
+        self._factory()
+        return self._socialmedia
+
+    def _factory(self):
+        self._socialmedia=SocialMediaLink.objects.filter(institute=self._institute)

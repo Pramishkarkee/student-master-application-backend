@@ -23,3 +23,9 @@ class ScholorshipAdmin(BaseModelAdmin):
     list_display = BaseModelAdmin.list_display + (
         'topic',
     )
+
+@admin.register(models.SocialMediaLink)
+class SocialMediaAdmin(BaseModelAdmin):
+    list_display = BaseModelAdmin.list_display+(
+        'name',
+    )

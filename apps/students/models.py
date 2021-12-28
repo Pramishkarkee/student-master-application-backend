@@ -62,7 +62,8 @@ class StudentAddress(BaseModel):
     student = models.OneToOneField(
         StudentModel, 
         on_delete=models.CASCADE,
-        error_messages=errors
+        error_messages=errors,
+        related_name='address_relation'
         )
     nationality =models.CharField(
         choices=NATIONALITY_CHOOSE,
@@ -101,3 +102,5 @@ class FavouriteInstitute(BaseModel):
         Institute,
         on_delete=DO_NOTHING
     )
+    class Meta:
+        unique_together = ['student','institute']

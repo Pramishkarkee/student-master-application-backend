@@ -11,3 +11,9 @@ class ScholorshipMixins:
         return usecase.GetScholorshipUseCase(
             scholorship_id = self.kwargs.get('scholorship_id')
         ).execute()
+
+class SocialMediaMixins:
+    def get_socialmedia(self):
+        return usecase.GetSocialMedia(
+            socialmedia_id = self.kwargs.get('socialmedia_id')
+        ).execute()

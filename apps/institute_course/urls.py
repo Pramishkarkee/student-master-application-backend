@@ -42,5 +42,10 @@ urlpatterns = [
         '<apply_id>/application/comment',
         views.AddCommentApplicationView.as_view(),
         name= 'comment-apply'
+    ),
+    path(
+        '<institute_id>/application/list',
+        views.ListStudentApplicationView.as_view(),
+        name='list-application'
     )
 ]

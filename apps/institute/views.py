@@ -1,6 +1,6 @@
 from apps.institute.models import Institute
 from apps import institute
-from apps.institute.mixins import InstituteMixins, ScholorshipMixins
+from apps.institute.mixins import InstituteMixins, ScholorshipMixins, SocialMediaMixins
 from apps.studentIdentity import usecases
 from django.utils.translation import gettext_lazy as _
 from rest_framework.parsers import MultiPartParser, FileUploadParser
@@ -177,4 +177,49 @@ class DeleteScholorshipView(generics.DestroyWithMessageAPIView,ScholorshipMixins
     def perform_destroy(self, instance):
         return usecase.DeleteScholorshipUseCase(
             scholorship=self.get_object()
+        ).execute()
+
+
+class AddSolicalMediaView(generics.CreateWithMessageAPIView,InstituteMixins):
+    """
+    this endpoint is use to add sociali media
+    """
+    message = _("social media added")
+    serializer_class = serializers.AddSocialMediaSerializer
+    def get_object(self):
+        return self.get_institute()
+
+    def perform_create(self, serializer):
+        return usecase.SocialiMedialinkUseCase(
+            institute=self.get_object(),
+            serializer=serializer
+        ).execute()
+
+
+class DeleteSocialMediaView(generics.DestroyWithMessageAPIView,SocialMediaMixins):
+    """
+    This endpont is use to delete social media
+    """
+    message = _("social media delete successfully")
+
+    def get_object(self):
+        return self.get_socialmedia()
+
+    def perform_destroy(self, instance):
+        return usecase.DeleteSocialMediaUseCase(
+            socialmedia= self.get_object()
+        ).execute()
+
+class GetSocialMediaListView(generics.ListAPIView,InstituteMixins):
+    """
+    This api is use to get social media link
+    """
+    serializer_class = serializers.GetSocialMediaSerializer
+
+    def get_object(self):
+        return self.get_institute()
+
+    def get_queryset(self):
+        return usecase.GetSocialMediaLinkListUseCase(
+            institute=self.get_object()
         ).execute()

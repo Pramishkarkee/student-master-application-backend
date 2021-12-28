@@ -10,6 +10,8 @@ from rest_framework.validators import UniqueTogetherValidator
 
 from apps.institute_course.models import CommentApplicationInstitute, Course, Faculty, InstituteApply, InstituteCourse
 from apps.core import fields
+from apps.students.models import StudentModel,StudentAddress
+
 
 User = get_user_model()
 
@@ -109,7 +111,9 @@ class CommentApplicationSerializer(serializers.ModelSerializer):
             'institute_user',
             'comment'
         )
+
 class StudentApplySerializer(serializers.ModelSerializer):
+    
     class Meta:
         model = InstituteApply
         fields = (
@@ -117,4 +121,41 @@ class StudentApplySerializer(serializers.ModelSerializer):
             'course',
             'institute',
             'consultancy'
+        )
+
+
+class GetStudentAddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StudentAddress
+        fields = ['state_provision','country']
+
+class GetStudentApplicantSerializer(serializers.ModelSerializer):
+    address_relation=GetStudentAddressSerializer(many=False,read_only =True)
+    class Meta:
+        model = StudentModel
+        fields = (
+            'fullname',
+            'address_relation'
+            )
+
+class ApplicationInstituteCourseSerializer(InstituteCourseSerializer):
+
+    course = CourseSerializer(read_only =True)
+    class Meta(InstituteCourseSerializer.Meta):
+        fields = (
+            'course',
+        )
+
+class GetStudentApplicationInstituteSerializer(serializers.ModelSerializer):
+    student = GetStudentApplicantSerializer(many=False,read_only =True)
+    course = ApplicationInstituteCourseSerializer(many=False,read_only =True)
+    class Meta:
+        model = InstituteApply
+        fields = (
+            'student',
+            'course',
+            'consultancy',
+            'action',
+            'cancel',
+            'created_at'
         )

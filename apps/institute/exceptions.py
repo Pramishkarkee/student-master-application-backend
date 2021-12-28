@@ -9,3 +9,6 @@ class InstituteNotFound(NotFound):
 
 class InstituteScholorshipDoesntExist(NotFound):
     default_detail = _("scholorship doesnt exist")
+
+class SocialMediaLinkDoesntExist(NotFound):
+    default_detail = _("social media doesnt exist")

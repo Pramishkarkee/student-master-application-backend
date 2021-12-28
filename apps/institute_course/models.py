@@ -18,15 +18,14 @@ from apps.core.models import BaseModel
 
 class Faculty(BaseModel):
     name = models.CharField(max_length=200)
-    def __str__(self):
-        self.name
+    # def __str__(self):
+    #     self.name
 
 class Course(BaseModel):
     faculty=models.ForeignKey(Faculty , on_delete=models.CASCADE)
     name=models.CharField(max_length=200)
     description=models.TextField()
-    def __str__(self):
-        self.name
+    
 
 class InstituteCourse(BaseModel):
     INTAKE_CHOICE=(
@@ -79,7 +78,8 @@ class InstituteApply(BaseModel):
         ('applied','applied')
     )
     student = models.ForeignKey(StudentModel, 
-    on_delete=DO_NOTHING)
+    on_delete=DO_NOTHING
+    )
     course = models.ForeignKey(InstituteCourse, on_delete=DO_NOTHING)
     consultancy = models.ForeignKey(
         Consultancy, 

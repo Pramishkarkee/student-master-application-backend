@@ -191,6 +191,27 @@ class ApplyUseCase(BaseUseCase):
         except Consultancy.DoesNotExist:
             raise InstituteNotFound
 
+class ListStudentApplicationCourseUseCase(BaseUseCase):
+    def __init__(self,institute):
+        self._institute = institute
+
+    def execute(self):
+        self._factory()
+        return self._apply
+
+    def _factory(self):
+        self._apply = InstituteApply.objects.filter(institute=self._institute).prefetch_related('course','student')
+        # if self._apply.consultancy !=None:
+        print("***********************",self._apply[0].consultancy)
+        # for i in self._apply:
+        #     if i.consultancy==None:
+        #         print("this is none")
+        #     else:
+        #         try:
+        #             i.consultancy = Consultancy.objects.get(pk=i.consultancy).name
+        #         except Consultancy.DoesNotExist:
+        #             i.consultancy=None
+            
 
 class GetApplyInstitute(BaseUseCase):
     def __init__(self,apply_id):
