@@ -200,17 +200,8 @@ class ListStudentApplicationCourseUseCase(BaseUseCase):
         return self._apply
 
     def _factory(self):
-        self._apply = InstituteApply.objects.filter(institute=self._institute).prefetch_related('course','student')
-        # if self._apply.consultancy !=None:
-        print("***********************",self._apply[0].consultancy)
-        # for i in self._apply:
-        #     if i.consultancy==None:
-        #         print("this is none")
-        #     else:
-        #         try:
-        #             i.consultancy = Consultancy.objects.get(pk=i.consultancy).name
-        #         except Consultancy.DoesNotExist:
-        #             i.consultancy=None
+        self._apply = InstituteApply.objects.filter(institute=self._institute)
+
             
 
 class GetApplyInstitute(BaseUseCase):
@@ -228,6 +219,20 @@ class GetApplyInstitute(BaseUseCase):
         except InstituteApply.DoesNotExist:
             raise InstituteApplyNotFound
 
+class CancleStudentApplicationUseCase(BaseUseCase):
+    def __init__(self,application,serializer):
+        self._application = application
+        self._data = serializer.validated_data
+
+    def execute(self):
+        self._factory()
+
+    def _factory(self):
+        for key in self._data.keys():
+            setattr(self._application,key,self._data.get(key))
+
+        self._application.updated_at = datetime.now()
+        self._application.save()
 
 class AddCommentApplyInstitute(BaseUseCase):
     def __init__(self,serializer,apply):
@@ -248,4 +253,17 @@ class AddCommentApplyInstitute(BaseUseCase):
             application = self._apply,
             institute_user = institutestaff,
             comment = self._serializer.data.pop('comment')
+        )
+
+class ListCommentInstituteUseCase(BaseUseCase):
+    def __init__(self,apply):
+        self._apply = apply
+
+    def execute(self):
+        self._factory()
+        return self._comment
+
+    def _factory(self):
+        self._comment=CommentApplicationInstitute.objects.filter(
+            application = self._apply
         )

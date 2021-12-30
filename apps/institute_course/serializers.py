@@ -112,6 +112,16 @@ class CommentApplicationSerializer(serializers.ModelSerializer):
             'comment'
         )
 
+class ListApplicationCommentSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source="commentor_name")
+
+    class Meta:
+        model = CommentApplicationInstitute
+        fields = (
+            'name',
+            'created_at',
+            'comment'
+        )
 class StudentApplySerializer(serializers.ModelSerializer):
     
     class Meta:
@@ -146,16 +156,45 @@ class ApplicationInstituteCourseSerializer(InstituteCourseSerializer):
             'course',
         )
 
-class GetStudentApplicationInstituteSerializer(serializers.ModelSerializer):
-    student = GetStudentApplicantSerializer(many=False,read_only =True)
-    course = ApplicationInstituteCourseSerializer(many=False,read_only =True)
+# class GetStudentApplicationInstituteSerializer(serializers.ModelSerializer):
+#     student = GetStudentApplicantSerializer(many=False,read_only =True)
+#     course = ApplicationInstituteCourseSerializer(many=False,read_only =True)
+#     # consultancy = serializers.CharField()
+
+#     class Meta:
+#         model = InstituteApply
+#         fields = (
+#             'student',
+#             'course',
+#             'consultancy',
+#             'action',
+#             'cancel',
+#             'created_at'
+#         )
+
+class CancleStudentApplicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = InstituteApply
         fields = (
+            'cancel',
+        )
+
+
+class GetStudentApplicationInstituteSerializer(serializers.ModelSerializer):
+    student_name = serializers.CharField(source='get_student_user_name')
+    consultancy = serializers.CharField(source='get_consultancy_name')
+    course = serializers.CharField(source='get_student_course') 
+    address = serializers.CharField(source='student_address')
+    class Meta:
+        model = InstituteApply
+        fields = (
+            'id',
             'student',
+            'student_name',
             'course',
             'consultancy',
             'action',
             'cancel',
-            'created_at'
+            'created_at',
+            'address',
         )

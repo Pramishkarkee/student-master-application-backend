@@ -30,7 +30,7 @@ class AddInstituteStaffView(generics.CreateWithMessageAPIView ,InstituteMixins):
     """
     This endpoint is use to add staff in institute
     """
-    message = 'Institute stsff create successfully'
+    message = 'Institute staff create successfully'
     serializer_class = serializers.CreateInstituteStaffSerializer
     parser_classes = (MultiPartParser,FileUploadParser)
     message = _('Add staff successfully')
@@ -39,7 +39,7 @@ class AddInstituteStaffView(generics.CreateWithMessageAPIView ,InstituteMixins):
         return self.get_institute()
 
     def perform_create(self, serializer):
-        return usecase.CreateConsultancyStaffUseCase(
+        return usecase.CreateInstituteStaffUseCase(
             institute=self.get_object(),
             serializer = serializer
         ).execute()

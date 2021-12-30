@@ -9,13 +9,15 @@ from rest_framework.permissions import AllowAny
 
 from apps.core import generics
 from apps.institute_course.serializers import (
+    CancleStudentApplicationSerializer,
     CommentApplicationSerializer,
     CourseSerializer, 
     FacultySerializer,
     GetStudentApplicantSerializer,
     GetStudentApplicationInstituteSerializer, 
     InstituteCourseSerializer,
-    AddInstituteCourseSerializer, 
+    AddInstituteCourseSerializer,
+    ListApplicationCommentSerializer, 
     ListInstituteCourseSerializer, 
     StudentApplySerializer)
 
@@ -143,6 +145,20 @@ class AddCommentApplicationView(generics.CreateWithMessageAPIView,ApplyMixin):
             apply = self.get_object()
         )
 
+class GetListCommentApplicationView(generics.ListAPIView,ApplyMixin):
+    """
+    this endpoint is use to get comment
+    """
+    serializer_class = ListApplicationCommentSerializer
+
+    def get_object(self):
+        return self.get_apply()
+
+    def get_queryset(self):
+        return usecases.ListCommentInstituteUseCase(
+            apply = self.get_object()
+        ).execute()
+
 class ListStudentApplicationView(generics.ListAPIView,InstituteMixins):
     """
     this api is use to list application
@@ -155,3 +171,20 @@ class ListStudentApplicationView(generics.ListAPIView,InstituteMixins):
         return usecases.ListStudentApplicationCourseUseCase(
             institute=self.get_object()
         ).execute()
+
+
+class CancleStudentApplication(generics.UpdateWithMessageAPIView,ApplyMixin):
+    """
+    This endpoint is use to cancle application
+    """
+    serializer_class = CancleStudentApplicationSerializer
+    def get_object(self):
+        return self.get_apply()
+
+    def perform_update(self, serializer):
+        return usecases.CancleStudentApplicationUseCase(
+            application=self.get_object(),
+            serializer = serializer
+        ).execute()
+
+

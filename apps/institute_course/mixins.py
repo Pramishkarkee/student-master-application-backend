@@ -17,3 +17,4 @@ class ApplyMixin:
         return usecases.GetApplyInstitute(
             apply_id=self.kwargs.get("apply_id")
         ).execute()
+

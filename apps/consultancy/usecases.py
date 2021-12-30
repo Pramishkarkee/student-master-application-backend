@@ -118,17 +118,17 @@ class CreateConsultancyStaffUseCase(usecases.CreateUseCase):
             'name': self._consultancy.name,
             'user_email':self.consultancy_user.email,
         }
-        tasks.send_set_password_email_to_user.apply_async(
-            kwargs=context
-        )
+        # tasks.send_set_password_email_to_user.apply_async(
+        #     kwargs=context
+        # )
 
         # without celery
-        # SendEmailToConsultanySTaff(
-        #     context={
-        #         'uuid': self.consultancy_user.id,
-        #         'name': self._consultancy.name
-        #     }
-        # ).send(to=[self.consultancy_user.email])
+        SendEmailToConsultanySTaff(
+            context={
+                'uuid': self.consultancy_user.id,
+                'name': self._consultancy.name
+            }
+        ).send(to=[self.consultancy_user.email])
 
 
 

@@ -52,7 +52,36 @@ class RegisterInstituteUsecase(usecases.CreateUseCase, NotificationMixin):
             'id': str(self._institute.id)
         }
 
+class CreateInstituteStaff(BaseUseCase):
+    def __init__(self,institute,serializer):
+        self._institute = institute
+        self._data = serializer.validated_data
 
+    def execute(self):
+        self._factory()
+
+    def _factory(self):
+        user = {
+            'email':self._data.pop('email'),
+            'fullname':self._data.pop('fullname')
+        }
+        self.institute_user=InstituteUser.objects.create(
+            **user
+        )
+        Settings.objects.create(user=self.institute_staff)
+
+        try:
+            institute_staff = InstituteStaff.objects.create(
+                user = self.institute_user,
+                institute = self._institute,
+                role = self._data['role'],
+                profile_photo = self._data['profile_photo']
+            )
+            institute_staff.clean()
+        except DjangoValidationError as e:
+            raise ValidationError(e.message_dict)
+
+            
 class ListInstituteUseCase(BaseUseCase):
     def execute(self):
         self._factory()
@@ -176,7 +205,7 @@ class DeleteScholorshipUseCase(BaseUseCase):
         self._scholorship.delete()
 
 
-class CreateConsultancyStaffUseCase(BaseUseCase):
+class CreateInstituteStaffUseCase(BaseUseCase):
     def __init__(self,serializer,institute):
         self._institute = institute
         self._data = serializer.validated_data
@@ -190,7 +219,7 @@ class CreateConsultancyStaffUseCase(BaseUseCase):
             'fullname' : self._data.pop('fullname')
         }
 
-        #1. create consultancy user
+        #1. create institute user
         self.institute_user = InstituteUser.objects.create(
             **user
         )
@@ -217,12 +246,12 @@ class CreateConsultancyStaffUseCase(BaseUseCase):
         # )
 
         # without celery
-        SendEmailToConsultanySTaff(
-            context={
-                'uuid': self.institute_user.id,
-                'name': self._institute.name
-            }
-        ).send(to=[self.institute_user.email])
+        # SendEmailToConsultanySTaff(
+        #     context={
+        #         'uuid': self.institute_user.id,
+        #         'name': self._institute.name
+        #     }
+        # ).send(to=[self.institute_user.email])
     
 
 

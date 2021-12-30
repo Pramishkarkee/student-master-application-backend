@@ -36,6 +36,11 @@ urlpatterns = [
         name = 'update'
     ),
     path(
+        '<institute_id>/staff/add',
+        views.AddInstituteStaffView.as_view(),
+        name="add-staff"
+    ),
+    path(
         '<institute_id>/scholorship/add',
         views.AddScholorshipView.as_view(),
         name = 'scholorship-add'

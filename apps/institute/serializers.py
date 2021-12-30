@@ -70,6 +70,37 @@ class RegisterInstituteSerializer(InstituteSerializer):
             return value
 
 
+class InstituteStaffSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InstituteStaff
+        fields = '__all__'
+
+class CreateInstituteStaffSerializer(InstituteStaffSerializer):
+    email = serializers.EmailField()
+    fullname = serializers.CharField()
+    profile_photo = serializers.ImageField(write_only=True)
+
+    class Meta(InstituteStaffSerializer.Meta):
+        fields = (
+            'email',
+            'fullname',
+            'role',
+            'profile_photo',
+        )
+
+    default_error_messages = {
+        'duplicate_email': _('Email already exists try another one.'),
+        # 'password_requirement_failed': _(
+        #     'Password must 8 character  with one digit,one lowercase,one uppercase and special character.')
+    }
+
+    def validate_email(self, value):
+        email = value.lower()
+        if User.objects.filter(email__iexact=email).exists():
+            raise serializers.ValidationError(
+                self.fail('duplicate_email')
+            )
+        return value
 class UpdateInstituteSerializer(InstituteSerializer):
     class Meta(InstituteSerializer.Meta):
         fields = (

@@ -1,6 +1,7 @@
+from apps import consultancy
 from apps.user.models import InstituteUser
 from apps.consultancy.models import Consultancy, ConsultancyStaff
-from apps.students.models import StudentModel
+from apps.students.models import StudentAddress, StudentModel
 from django.core import validators
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models
@@ -109,6 +110,32 @@ class InstituteApply(BaseModel):
     view_date = models.DateField(blank=True, null=True)
     forward = models.BooleanField(default=False)
     cancel = models.BooleanField(default=False)
+
+    @property
+    def institute_user_action(self):
+        return self.action_institute_user.user.fullname
+    @property
+    def get_student_user_name(self):
+        return self.student.fullname
+
+    @property
+    def get_student_course(self):
+        return self.course.course.name
+
+    @property
+    def student_address(self):
+        try:
+            self.address = StudentAddress.objects.get(student=self.student)
+            return self.address.country
+        except StudentAddress.DoesNotExist:
+            return None
+    @property
+    def get_consultancy_name(self):
+        if self.consultancy != None:
+            return self.consultancy.name
+        else:
+            return None
+
     class Meta:
         unique_together = ('student','course')
 
@@ -117,6 +144,11 @@ class CommentApplicationInstitute(BaseModel):
     application = models.ForeignKey(InstituteApply,on_delete=DO_NOTHING)
     institute_user = models.ForeignKey(InstituteStaff,on_delete=DO_NOTHING)
     comment = models.TextField()
+
+    @property
+    def commentor_name(self):
+        return self.institute_user.user.fullname
+
 
 
 class CommentApplicationConsultancy(BaseModel):
