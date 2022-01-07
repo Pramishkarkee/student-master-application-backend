@@ -34,3 +34,12 @@ def past_date(value):
     if value > date.today():
         raise models.DjangoValidationError("the date cannot be in the future")
     return value
+
+
+def upload_facility_image_to(instance, filename):
+    ext = filename.split('.')[-1]
+    new_filename = "%s.%s" % (slugify(instance.name), ext)
+
+    return 'facility/icon/{}'.format(
+        new_filename
+    )

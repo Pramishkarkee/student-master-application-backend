@@ -29,3 +29,16 @@ class SocialMediaAdmin(BaseModelAdmin):
     list_display = BaseModelAdmin.list_display+(
         'name',
     )
+
+@admin.register(models.AddInstituteFacility)
+class InstituteFacility(BaseModelAdmin):
+    list_filter = BaseModelAdmin.list_filter+(
+        'institute',
+    )
+
+
+@admin.register(models.Facility)
+class Facility(BaseModelAdmin):
+    list_display = BaseModelAdmin.list_display + (
+        'name',
+    )

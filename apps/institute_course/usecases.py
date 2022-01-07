@@ -8,6 +8,7 @@ from apps import institute
 from django.utils.datetime_safe import datetime
 from rest_framework.exceptions import ValidationError
 from  django.utils.translation import  gettext_lazy as _
+from django.db.models import Count
 
 from apps.core.usecases import BaseUseCase
 from apps.institute_course.models import CommentApplicationInstitute, InstituteApply, InstituteCourse,Course,Faculty
@@ -267,3 +268,18 @@ class ListCommentInstituteUseCase(BaseUseCase):
         self._comment=CommentApplicationInstitute.objects.filter(
             application = self._apply
         )
+
+
+class ApplicationDashboardUsecase(BaseUseCase):
+    def __init__(self,institute):
+        self._institute = institute
+
+    def execute(self):
+        self._factory()
+        return self.applicant
+
+    def _factory(self):
+        self.applicant=InstituteApply.objects.filter(
+            institute=self._institute,
+            # created_at__range=["2021-12-01", "2022-01-31"]
+            ).values('action').annotate(Count('action'))

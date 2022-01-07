@@ -173,3 +173,4 @@ class ChangeConsultancyUserPasswordView(generics.CreateWithMessageAPIView, Consu
             serializer=serializer,
             consultancy_user=self.get_object()
         ).execute()
+        

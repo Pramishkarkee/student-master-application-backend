@@ -34,7 +34,7 @@ class InstituteCourse(BaseModel):
         ('yearly' , 'yearly'),
         ('fall' , 'fall' )
     )
-    institute = models.ForeignKey(Institute, on_delete=models.CASCADE)
+    institute = models.ForeignKey(Institute, on_delete=models.CASCADE ,related_name = 'course_related')
     program=models.CharField(max_length=200)
     faculty=models.ForeignKey(Faculty,on_delete=models.CASCADE)
     course= models.ForeignKey(Course,on_delete=models.CASCADE)
@@ -63,7 +63,10 @@ class InstituteCourse(BaseModel):
         _("Date"),
         blank=True
     )
-    
+    @property
+    def get_course_name(self):
+        return self.course.name
+
     class Meta:
         unique_together = ('course','institute')
 

@@ -9,6 +9,7 @@ from rest_framework.permissions import AllowAny
 
 from apps.core import generics
 from apps.institute_course.serializers import (
+    ApplicationSerializerDashboard,
     CancleStudentApplicationSerializer,
     CommentApplicationSerializer,
     CourseSerializer, 
@@ -188,3 +189,16 @@ class CancleStudentApplication(generics.UpdateWithMessageAPIView,ApplyMixin):
         ).execute()
 
 
+
+class ApplicantDashboard(generics.ListAPIView,InstituteMixins):
+    """
+    student applicant dashboard
+    """
+    serializer_class = ApplicationSerializerDashboard
+    def get_object(self):
+        return self.get_institute()
+
+    def get_queryset(self):
+        return usecases.ApplicationDashboardUsecase(
+            institute=self.get_object()
+        ).execute()

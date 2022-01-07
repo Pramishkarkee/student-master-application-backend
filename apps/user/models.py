@@ -93,7 +93,7 @@ class StudentUser(User):
         self.save()
 
     def activate_user(self):
-        self.is_active = True
+        self.is_active = False
         self.updated_at = timezone.now()
         self.save()
 

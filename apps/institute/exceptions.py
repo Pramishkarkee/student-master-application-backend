@@ -12,3 +12,6 @@ class InstituteScholorshipDoesntExist(NotFound):
 
 class SocialMediaLinkDoesntExist(NotFound):
     default_detail = _("social media doesnt exist")
+
+class FacilityDoesntExist(NotFound):
+    default_detail = _("facility doesnt exist")

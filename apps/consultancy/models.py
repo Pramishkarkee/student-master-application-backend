@@ -48,6 +48,8 @@ class ConsultancyStaff(BaseModel):
         validators=[validate_image]
     )
 
+
+
     @property
     def get_consultancy_user_email(self):
         return self.user.email

@@ -1,3 +1,4 @@
+from apps.students.email import SendEmailToStudent
 from datetime import datetime
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils import timezone
@@ -34,6 +35,12 @@ class RegisterStudentUseCase(usecases.CreateUseCase, NotificationMixin):
         )
 
         Settings.objects.create(user=user)
+        SendEmailToStudent(
+            context={
+                'uuid': user.id,
+                'name': user.fullname
+            }
+        ).send(to=[user.email])
 
     def get_notification_data(self):
         return {
@@ -221,11 +228,10 @@ class AddFavourateInstituteUseCase(BaseUseCase):
 
 class GetFavouriteInstituteUseCase(BaseUseCase):
     def __init__(self , student:StudentModel):
-        print("**********************")
+
         self._student = student
 
     def execute(self):
-        print("**********************************************************************")
         self._factory()
         return self._favourite
 

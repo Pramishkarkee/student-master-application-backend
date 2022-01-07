@@ -1,3 +1,4 @@
+from django.http.response import JsonResponse
 from apps.institute.models import Institute
 from apps import institute
 from apps.institute.mixins import InstituteMixins, ScholorshipMixins, SocialMediaMixins
@@ -223,3 +224,20 @@ class GetSocialMediaListView(generics.ListAPIView,InstituteMixins):
         return usecase.GetSocialMediaLinkListUseCase(
             institute=self.get_object()
         ).execute()
+
+class AddFacilityView(generics.CreateWithMessageAPIView,InstituteMixins):
+    """
+    This end point is use to add facility
+    """
+    serializer_class =serializers.AddInstituteFacilitySerializer
+
+    def get_object(self):
+        return self.get_institute()
+
+    def perform_create(self, serializer):
+        return usecase.CreateInstituteFacilityUseCase(
+            serializer=serializer,
+            institute=self.get_object()
+        ).execute()
+
+# class Dashboard(generics.)

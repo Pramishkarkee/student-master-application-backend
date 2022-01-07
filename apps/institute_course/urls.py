@@ -57,5 +57,10 @@ urlpatterns = [
         '<apply_id>/application/comment/list',
         views.GetListCommentApplicationView.as_view(),
         name="list-comment"
-    )
+    ),
+    path(
+        '<institute_id>/applicant/dashboard/count',
+        views.ApplicantDashboard.as_view(),
+        name = 'applicant-count'
+    ),
 ]

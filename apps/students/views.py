@@ -166,3 +166,9 @@ class GetFavouriteInstitute(generics.ListAPIView,StudentMixin):
         return usecases.GetFavouriteInstituteUseCase(
             student = self.get_object()
         ).execute()
+
+# class CreateInstituteVisitor(generics.CreateWithMessageAPIView):
+#     """
+#     This endpoint is use to create visitor
+#     """
+    

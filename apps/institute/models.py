@@ -2,7 +2,7 @@ from apps import institute
 from datetime import datetime
 from django.core import validators
 from django.db.models import Q
-from django.db.models.deletion import CASCADE
+from django.db.models.deletion import CASCADE, DO_NOTHING
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models
@@ -14,6 +14,7 @@ from apps.core.models import BaseModel
 from apps.core.validators import validate_image
 from apps.staff.models import StaffPosition
 from apps.user.models import InstituteUser
+from apps.institute.utils import upload_facility_image_to
 # from apps.institute_course.models import InstituteCourse
 
 
@@ -113,3 +114,26 @@ class SocialMediaLink(BaseModel):
 
     class Meta:
         unique_together = ('institute','name')
+
+
+
+class Facility(BaseModel):
+    name = models.CharField(max_length=20)
+    icon = models.FileField(upload_to=upload_facility_image_to)
+
+    
+    def __str__(self):
+        return self.name
+
+
+class AddInstituteFacility(BaseModel):
+    facility = models.ForeignKey(Facility,on_delete=DO_NOTHING)
+    institute = models.ForeignKey(Institute,on_delete=CASCADE ,related_name='facility_related')
+
+    @property
+    def get_facility_name(self):
+        return self.facility.name
+
+    @property
+    def get_facility_icone(self):
+        return self.facility.icon

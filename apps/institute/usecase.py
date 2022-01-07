@@ -1,6 +1,7 @@
+from apps.institute.email import SendEmailToInstituteStaff
 from apps.auth.jwt import serializers
 from datetime import datetime
-from apps.institute.exceptions import InstituteNotFound, InstituteScholorshipDoesntExist, SocialMediaLinkDoesntExist
+from apps.institute.exceptions import FacilityDoesntExist, InstituteNotFound, InstituteScholorshipDoesntExist, SocialMediaLinkDoesntExist
 from apps import institute
 from apps.staff.models import StaffPosition
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -12,7 +13,13 @@ from apps.consultancy.emails import SendEmailToConsultanySTaff
 from apps.core import usecases
 from apps.core.usecases import BaseUseCase, CreateUseCase
 from apps.notification.mixins import NotificationMixin
-from apps.institute.models import Institute, InstituteScholorship, InstituteStaff,InstituteUser, SocialMediaLink
+from apps.institute.models import (AddInstituteFacility, 
+                                   Facility, 
+                                   Institute, 
+                                   InstituteScholorship, 
+                                   InstituteStaff,
+                                   InstituteUser, 
+                                   SocialMediaLink)
 from apps.settings.models import Settings
 
 class RegisterInstituteUsecase(usecases.CreateUseCase, NotificationMixin):
@@ -246,12 +253,12 @@ class CreateInstituteStaffUseCase(BaseUseCase):
         # )
 
         # without celery
-        # SendEmailToConsultanySTaff(
-        #     context={
-        #         'uuid': self.institute_user.id,
-        #         'name': self._institute.name
-        #     }
-        # ).send(to=[self.institute_user.email])
+        SendEmailToInstituteStaff(
+            context={
+                'uuid': self.institute_user.id,
+                'name': self._institute.name
+            }
+        ).send(to=[self.institute_user.email])
     
 
 
@@ -307,3 +314,21 @@ class GetSocialMediaLinkListUseCase(BaseUseCase):
 
     def _factory(self):
         self._socialmedia=SocialMediaLink.objects.filter(institute=self._institute)
+
+
+class CreateInstituteFacilityUseCase(BaseUseCase):
+    def __init__(self,serializer,institute):
+        self._data = serializer.validated_data
+        self._institute = institute
+
+    def execute(self):
+        self._factory()
+
+    def _factory(self):
+        try:
+            AddInstituteFacility.objects.create(
+                facility=self._data.pop('facility'),
+                institute = self._institute
+            )
+        except Facility.DoesNotExist:
+            raise FacilityDoesntExist

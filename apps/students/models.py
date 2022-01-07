@@ -1,3 +1,5 @@
+from django.db.models.lookups import In
+from apps import institute
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models
 from django.db.models import Q
@@ -104,3 +106,21 @@ class FavouriteInstitute(BaseModel):
     )
     class Meta:
         unique_together = ['student','institute']
+
+class VisitorIdCreator(BaseModel):
+    latitude = models.FloatField(blank=True,null=True)
+    longitude = models.FloatField(blank=True,null=True)
+
+class InstituteVisitor(BaseModel):
+    visitor = models.ForeignKey(
+        VisitorIdCreator,
+        on_delete=DO_NOTHING
+    )
+    institute = models.ForeignKey(
+        Institute,
+        on_delete=DO_NOTHING
+    )
+
+    class Meta:
+        unique_together = ('visitor','institute')
+    

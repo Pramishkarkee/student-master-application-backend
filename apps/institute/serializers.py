@@ -1,3 +1,4 @@
+from apps.institute_course.models import InstituteCourse
 import re
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -6,7 +7,7 @@ from rest_framework import generics, serializers
 from rest_framework.exceptions import ValidationError
 from apps.institute import models
 
-from apps.institute.models import Institute, InstituteScholorship,InstituteStaff, SocialMediaLink
+from apps.institute.models import AddInstituteFacility, Institute, InstituteScholorship,InstituteStaff, SocialMediaLink
 from apps.core import fields
 
 User = get_user_model()
@@ -156,8 +157,30 @@ class ListInstituteSerializer(InstituteSerializer):
             'logo',
             'cover_image',
         )
+class InstituteDetailCourseSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source='get_course_name')
+    class Meta:
+        model = InstituteCourse
+        fields = (
+            'name',
+            'id'
+        )
 
+class FacilitySerializer(serializers.ModelSerializer):
+ 
+    name = serializers.CharField(source='get_facility_name') 
+    icon = serializers.CharField(source='get_facility_icone') 
+    class Meta:
+        model = AddInstituteFacility
+        fields = (
+            'name',
+            'icon',
+            'id'
+        )
+        
 class InstituteDetailSerilaizer(serializers.ModelSerializer):
+    course_related = InstituteDetailCourseSerializer(many=True,read_only =True)
+    facility_related = FacilitySerializer(many=True,read_only =True)
     class Meta:
         model = Institute
         fields = (
@@ -177,6 +200,8 @@ class InstituteDetailSerilaizer(serializers.ModelSerializer):
             'state',
             'city',
             'street_address',
+            'facility_related',
+            'course_related'
         )
 
 
@@ -231,4 +256,12 @@ class GetSocialMediaSerializer(serializers.ModelSerializer):
             'id',
             'name',
             'link'
+        )
+
+
+class AddInstituteFacilitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AddInstituteFacility
+        fields = (
+            'facility',
         )

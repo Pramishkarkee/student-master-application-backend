@@ -198,3 +198,10 @@ class GetStudentApplicationInstituteSerializer(serializers.ModelSerializer):
             'created_at',
             'address',
         )
+
+
+class ApplicationSerializerDashboard(serializers.Serializer):
+    action = serializers.CharField()
+    action__count = serializers.IntegerField()
+
+# <BaseModelQuerySet [{'action': 'applied', 'action__count': 1}, {'action': 'verify', 'action__count': 1}]>
