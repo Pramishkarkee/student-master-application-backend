@@ -20,6 +20,10 @@ from apps.institute.utils import upload_facility_image_to
 
 # Create your models here.
 class Institute(BaseModel):
+    TYPE_CHOICE=(
+        ('PUBLIC','public'),
+        ('PEIVATE','private')
+    )
     name = models.CharField(max_length=250)
     contact = fields.PhoneNumberField()
     category = models.CharField(max_length=200)   #this represemt college or university
@@ -48,7 +52,7 @@ class Institute(BaseModel):
         validators=[validate_image]
     )
     about = models.TextField(null=True, blank=True)
-
+    type = models.TextField(max_length=200,choices=TYPE_CHOICE,blank=True,null=True)
     def __str__(self):
         return self.name
 

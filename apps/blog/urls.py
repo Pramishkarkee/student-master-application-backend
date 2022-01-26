@@ -50,5 +50,10 @@ urlpatterns = [
         views.DeleteRelationView.as_view(),
         name='delete-relation'
 
+    ),
+    path(
+        'institute/<str:institute_id>/add',
+        views.CreateInstituteBlogView.as_view(),
+        name='create-institute'
     )
 ]

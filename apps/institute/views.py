@@ -240,4 +240,18 @@ class AddFacilityView(generics.CreateWithMessageAPIView,InstituteMixins):
             institute=self.get_object()
         ).execute()
 
+
+class GetFacilityView(generics.ListAPIView,InstituteMixins):
+    """
+    this endpoint is use to get facility
+    """
+    serializer_class = serializers.FacilitySerializer
+
+    def get_object(self):
+        return self.get_institute()
+
+    def get_queryset(self):
+        return usecase.GetFacilityUseCase(
+            institute= self.get_object()
+        ).execute()
 # class Dashboard(generics.)

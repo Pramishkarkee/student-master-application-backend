@@ -102,6 +102,8 @@ class CreateInstituteStaffSerializer(InstituteStaffSerializer):
                 self.fail('duplicate_email')
             )
         return value
+
+
 class UpdateInstituteSerializer(InstituteSerializer):
     class Meta(InstituteSerializer.Meta):
         fields = (
@@ -118,8 +120,8 @@ class UpdateInstituteSerializer(InstituteSerializer):
             'latitude',
             'longitude',
             'website',
-
         )
+        
         def validate_email(self, value):
             email = value.lower()
             if Institute.objects.filter(email__iexact=email).exists():

@@ -71,6 +71,6 @@ if settings.DEBUG:
 
         urlpatterns = [path("__debug__/", include(debug_toolbar.urls))] + urlpatterns
 
-admin.site.site_header = "Student Master Admin"
+admin.site.site_header = "Tutee Line"
 admin.site.index_title = "Welcome to Student Master Admin Portal"
 admin.site.site_title = "Student Master Admin Portal"

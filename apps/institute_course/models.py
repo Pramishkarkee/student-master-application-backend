@@ -91,6 +91,7 @@ class InstituteApply(BaseModel):
         null=True,
         on_delete=DO_NOTHING
         )
+    
     action = models.CharField(
         choices=ACTION_OPTION, 
         default='applied', 
@@ -142,6 +143,17 @@ class InstituteApply(BaseModel):
     class Meta:
         unique_together = ('student','course')
 
+class AddScholorshipInCourse(BaseModel):
+    course = models.ForeignKey(
+        InstituteCourse,
+        on_delete=DO_NOTHING
+        )
+    scholorship = models.ForeignKey(
+        InstituteScholorship,
+        on_delete=CASCADE
+    )
+    
+    # pass
 
 class CommentApplicationInstitute(BaseModel):
     application = models.ForeignKey(InstituteApply,on_delete=DO_NOTHING)

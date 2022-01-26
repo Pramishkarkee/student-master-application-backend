@@ -1,6 +1,8 @@
+from django.db import models
+from django.db.models import fields
 from rest_framework import serializers
 
-from apps.blog.models import Blogs, Relation
+from apps.blog.models import Blogs, InstituteBlog, Relation
 
 
 class BlogSerializer(serializers.ModelSerializer):
@@ -64,3 +66,24 @@ class ListRelationSerializer(RelationSerializer):
 
 class UpdateRelationSerialzier(AddRelationSerializer):
     pass
+
+
+class CreateInstituteBlogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InstituteBlog
+        fields = (
+            'relation',
+            'title',
+            'author_name',
+            'content',
+            'image',
+        )
+# class CreateBlogSerilaizer(serializers.ModelSerializer):
+#     class Meta:
+#         model = PortelBlog
+#         fields = (
+#             'title',
+#             'author_name',
+#             'content',
+#             'image'
+#         )

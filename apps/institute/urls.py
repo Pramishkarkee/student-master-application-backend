@@ -85,5 +85,10 @@ urlpatterns = [
         views.AddFacilityView.as_view(),
         name = 'add-facility'
     ),
+    path(
+        '<institute_id>/facility/get',
+        views.GetFacilityView.as_view(),
+        name = 'get-facility-view'
+    ),
     # path()
 ]

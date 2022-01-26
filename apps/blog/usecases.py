@@ -1,7 +1,7 @@
 from django.utils.datetime_safe import datetime
 from rest_framework.exceptions import ValidationError
 
-from apps.blog.models import Blogs, Relation
+from apps.blog.models import Blogs, InstituteBlog, Relation
 from apps.core.usecases import BaseUseCase
 
 from django.utils.translation import gettext_lazy as _
@@ -138,3 +138,16 @@ class DeleteRelationUseCase(BaseUseCase):
 
     def _factory(self):
         self._relation.delete()
+
+class CreateInstituteBlogUseCase(BaseUseCase):
+    def __init__(self,institute,serializer):
+        self._institute = institute
+        self.serializer = serializer
+        self.data = serializer.validated_data
+
+    def execute(self):
+        self._factory()
+
+    def _factory(self):
+        self._blog = InstituteBlog(**self.data,institute=self._institute)
+        self._blog.save()

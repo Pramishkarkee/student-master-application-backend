@@ -1,3 +1,4 @@
+from apps.institute.mixins import InstituteMixins
 from django.shortcuts import render
 from django.utils.translation import gettext_lazy as _
 
@@ -116,4 +117,22 @@ class UpdateRelationView(generics.UpdateAPIView, RelationMixin):
         return usecases.UpdateRelationUseCase(
             serializer=serializer,
             relation=self.get_object()
+        ).execute()
+
+# class Get
+
+class CreateInstituteBlogView(generics.CreateWithMessageAPIView,InstituteMixins):
+    """
+    This endpoint is use to create institute blog
+    """
+    serializer_class = serializers.CreateInstituteBlogSerializer
+    message = _("institute blog create Successfully")
+
+    def get_object(self):
+        return self.get_institute()
+
+    def perform_create(self, serializer):
+        return usecases.CreateInstituteBlogUseCase(
+            institute=self.get_object(),
+            serializer= serializer
         ).execute()

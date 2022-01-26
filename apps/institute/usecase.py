@@ -332,3 +332,15 @@ class CreateInstituteFacilityUseCase(BaseUseCase):
             )
         except Facility.DoesNotExist:
             raise FacilityDoesntExist
+
+
+class GetFacilityUseCase(BaseUseCase):
+    def __init__(self,institute):
+        self._institute = institute
+
+    def execute(self):
+        self._factory()
+        return self._facility
+
+    def _factory(self):
+        self._facility = AddInstituteFacility.objects.filter(institute = self._institute)

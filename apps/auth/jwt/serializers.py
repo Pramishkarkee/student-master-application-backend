@@ -1,3 +1,5 @@
+from apps.students.exceptions import StudentModelNotFound
+from apps.students.models import StudentModel
 import re
 from datetime import timedelta
 
@@ -98,18 +100,22 @@ class LoginSerializer(CustomTokenObtainSerializer):
         return RefreshToken.for_user(user)
 
     def validate(self, attrs):
-        data = super().validate(attrs)
-        self.validate_user()
-        refresh = self.get_token(self.user)
+        try:
+            data = super().validate(attrs)
+            self.validate_user()
+            student=StudentModel.objects.get(user=self.user.id)
+            refresh = self.get_token(self.user)
 
-        data['refresh_token'] = str(refresh)
-        data['token'] = str(refresh.access_token)
-        # data['role'] = "owner"
-        # data['color']=""
-        data['id']=str(self.user.id)
-        self.user.last_login = now()
-        self.user.save()
-        return data
+            data['refresh_token'] = str(refresh)
+            data['token'] = str(refresh.access_token)
+            data['sid']=str(student.pk)
+            data['id']=str(self.user.id)
+            self.user.last_login = now()
+            self.user.save()
+            return data
+        except StudentModel.DoesNotExist:
+            raise StudentModelNotFound
+        
 
     def validate_user(self):
         pass
@@ -126,8 +132,7 @@ class StudentUserLoginSerializer(LoginSerializer):
 class StudentUserLoginResponseSerializer(serializers.Serializer):
     refresh_token = serializers.CharField(read_only=True)
     token = serializers.CharField(read_only=True)
-    # role = serializers.CharField()
-    color = serializers.CharField()
+    sid = serializers.CharField()
     id = serializers.CharField()
 
 # class ConsultancyUserLoginSerializer(LoginSerializer):
