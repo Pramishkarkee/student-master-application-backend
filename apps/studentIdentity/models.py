@@ -1,5 +1,5 @@
 from django.db.models.deletion import CASCADE
-from django.core.exceptions import ValidationError as DjangoValidationError
+# from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _

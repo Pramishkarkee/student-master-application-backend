@@ -61,7 +61,6 @@ class GetStudentUseCase(BaseUseCase):
     def _factory(self):
         try:
             self._student = StudentModel.objects.get(pk=self._student_id)
-
         except StudentModel.DoesNotExist:
             raise StudentModelNotFound
 

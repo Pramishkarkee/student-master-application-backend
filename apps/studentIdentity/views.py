@@ -1,7 +1,11 @@
 from apps.studentIdentity.mixins import CitizenshipMixins, PassportMixins
 from rest_framework import serializers
 from apps.students.mixins import StudentMixin
-from apps.studentIdentity.serializers import GetCitizenshipSerializer, GetPassportSerializer, StudentCitizenshipSerializer, StudentPassportSerializer
+from apps.studentIdentity.serializers import (GetCitizenshipSerializer, 
+GetPassportSerializer, StudentCitizenshipSerializer, StudentPassportSerializer, 
+UpdateCitizenshipBackSerializer, UpdateCitizenshipCharacterSerialzer,UpdateCitizenshipFrontSerializer,
+StudentPassportUpdateSerializer,
+PasswordImageUpdateSerializer)
 from django.shortcuts import render
 from django.utils.translation import gettext_lazy as _
 
@@ -36,8 +40,8 @@ class AddPassportView(generics.CreateWithMessageAPIView,StudentMixin):
 
     def perform_create(self, serializer):
         return usecases.AddPassportUseCase(
-            serializer=serializer,
-            student_id=self.get_object()
+            student_id=self.get_object(),
+            serializer=serializer
         ).execute()
         
 
@@ -64,5 +68,78 @@ class GetPassportView(generics.RetrieveAPIView,PassportMixins):
 
     def get_queryset(self):
         return usecases.GetStudentPassportUseCase(
+            passport=self.get_object()
+        ).execute()
+
+
+class UpdateCitizenshipFrontPageView(generics.UpdateWithMessageAPIView,CitizenshipMixins):
+    """
+    this endpoint is use to update frontpage
+    """
+    serializer_class = UpdateCitizenshipFrontSerializer
+    def get_object(self):
+        return self.get_citizenship()
+
+    def perform_update(self, serializer):
+        return usecases.UpdateCitizenshipUseCase(
+            serializer=serializer,
+            citizenship=self.get_object()
+        ).execute()
+
+
+class UpdateCitizenshipBackPageView(generics.UpdateWithMessageAPIView,CitizenshipMixins):
+    """
+    this endpoint is use to update frontpage
+    """
+    serializer_class = UpdateCitizenshipBackSerializer
+    def get_object(self):
+        return self.get_citizenship()
+
+    def perform_update(self, serializer):
+        return usecases.UpdateCitizenshipUseCase(
+            serializer=serializer,
+            citizenship=self.get_object()
+        ).execute()
+
+class UpdateCitizenshipView(generics.UpdateWithMessageAPIView,CitizenshipMixins):
+    """
+    update citizenship
+    """
+    serializer_class = UpdateCitizenshipCharacterSerialzer
+    def get_object(self):
+        return self.get_citizenship()
+
+    def perform_update(self, serializer):
+        return usecases.UpdateCitizenshipUseCase(
+            serializer=serializer,
+            citizenship=self.get_object()
+        ).execute()
+
+
+class UpdatePassportImageView(generics.UpdateWithMessageAPIView,PassportMixins):
+    """
+    update passport image
+    """
+    serializer_class = PasswordImageUpdateSerializer
+    def get_object(self):
+        return self.get_passport()
+
+    def perform_update(self, serializer):
+        return usecases.UpdatePassportUseCase(
+            serializer=serializer,
+            passport=self.get_object()
+        ).execute()
+
+class UpdatePassportView(generics.UpdateWithMessageAPIView,PassportMixins):
+    """
+    update passport
+    """
+    serializer_class = StudentPassportUpdateSerializer
+    def get_object(self):
+        return self.get_passport()
+
+    def perform_update(self, serializer):
+        return usecases.UpdatePassportUseCase(
+            serializer=serializer,
             passport=self.get_object()
         ).execute()

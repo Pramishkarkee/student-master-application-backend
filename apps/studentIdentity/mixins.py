@@ -11,3 +11,6 @@ class PassportMixins:
         return usecases.GetPassportUseCase(
             student_id=self.kwargs.get('student_id')
         ).execute()
+
+
+
