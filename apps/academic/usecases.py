@@ -85,7 +85,8 @@ class CreateStudentSopUseCase(usecases.CreateUseCase):
         self._factory()
 
     def _factory(self):
-        #1. create Academic
+        #1. create Sop
+        
         self._academic=StudentSop.objects.create(
             student=self._student,
             **self._data
