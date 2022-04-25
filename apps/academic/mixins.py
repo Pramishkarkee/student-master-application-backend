@@ -5,6 +5,11 @@ class AcademicMixins:
             academic_id = self.kwargs.get("academic_id")
         ).execute()
 
+class GetSopMixin:
+    def get_sop(self):
+        return usecases.GetSopByIdUseCase(
+            id = self.kwargs.get("sop_id")
+        )
 class SopMixins:
     def get_sop(self):
         return usecases.GetSopUseCase(

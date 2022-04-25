@@ -7,13 +7,11 @@ urlpatterns = [
         'add',
         views.AddGalleryView.as_view(),
         name='add-gallery'
-
     ),
     path(
         'list',
         views.ListGalleryView.as_view(),
         name='list-gallery'
-
     ),
     path(
         '<str:gallery_id>/update',

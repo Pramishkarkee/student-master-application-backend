@@ -65,6 +65,23 @@ class UpdateAcademicUseCase(BaseUseCase):
         self._academic.updated_at = timezone.now()
         self._academic.save()
 
+class UpdateSopUseCase(BaseUseCase):
+    def __init__(self,serializer,id:StudentSop):
+        self._id = id
+        self._serializer = serializer
+        self._data = self._serializer.validated_data
+    
+    def execute(self):
+        self._factory()
+
+    def _factory(self):
+        for data in self._data.keys():
+            setattr(self._id,data, self._data[data])
+        
+        self._id.updated_at = timezone.now()
+        self._id.save()
+
+        
 class GetAcademicListUseCase(BaseUseCase):
     def __init__(self,student):
         self._student = student
@@ -74,7 +91,19 @@ class GetAcademicListUseCase(BaseUseCase):
         return self._academic
 
         
-        
+class GetSopByIdUseCase(BaseUseCase):
+    def __init__(self,id):
+        self._sop_id = id
+    
+    def execute(self):
+        self._factory()
+        return self._sop
+    
+    def _factory(self):
+        try:
+            self._sop = StudentSop.objects.get(id= self._sop_id)
+        except StudentSop.DoesNotExist:
+            raise SopNotFound 
 
 class CreateStudentSopUseCase(usecases.CreateUseCase):
     def __init__(self, serializer ,student):

@@ -48,4 +48,9 @@ urlpatterns = [
         views.GetEssayView.as_view(),
         name = 'get-essay'
     ),
+    path(
+        '<sop_id>/sop/update',
+        views.UpdateSopView.as_view(),
+        name = 'update-sop'
+    )
 ]

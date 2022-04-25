@@ -19,18 +19,19 @@ class InstituteSerializer(serializers.ModelSerializer):
 
 
 class RegisterInstituteSerializer(InstituteSerializer):
-    # email = serializers.EmailField(write_only=True)
+    email = serializers.EmailField(write_only=True)
     password = fields.PasswordField()
 
     class Meta(InstituteSerializer.Meta):
         fields = (
             'name',
-            'email',
+            'institute_email',
             'category',
             'university',
             'established',
             'password',
             'contact',
+            'email',
             'country',
             'city',
             'state',
@@ -40,6 +41,7 @@ class RegisterInstituteSerializer(InstituteSerializer):
             'website',
             'logo',
             'cover_image',
+            'about'
 
         )
 
@@ -108,7 +110,7 @@ class UpdateInstituteSerializer(InstituteSerializer):
     class Meta(InstituteSerializer.Meta):
         fields = (
             'name',
-            'email',
+            'institute_email',
             'category',
             'university',
             'established',
@@ -154,7 +156,7 @@ class ListInstituteSerializer(InstituteSerializer):
             'university',
             'established',
             'contact',
-            'email',
+            'institute_email',
             'country',
             'logo',
             'cover_image',
@@ -191,7 +193,7 @@ class InstituteDetailSerilaizer(serializers.ModelSerializer):
             'university',
             'established',
             'contact',
-            'email',
+            'institute_email',
             'country',
             'logo',
             'cover_image',

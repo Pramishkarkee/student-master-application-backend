@@ -85,3 +85,10 @@ class GetPersonalEssay(serializers.ModelSerializer):
 class GetSopSerializer(CreateSopSerializer):
     class Meta(CreateSopSerializer.Meta):
         fields = '__all__'
+
+class UpdateSopSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StudentSop
+        fields = (
+            'document',
+        )

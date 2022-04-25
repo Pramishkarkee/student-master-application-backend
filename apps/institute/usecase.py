@@ -30,10 +30,10 @@ class RegisterInstituteUsecase(usecases.CreateUseCase, NotificationMixin):
         self.send_notification()
 
     def _factory(self):
-        email = self._data["email"]
+        # email = self._data["email"]
         # create consultancy user
         user = InstituteUser.objects.create(
-            email=email,
+            email=self._data.pop("email"),
             password=(self._data.pop("password"))
         )
 

@@ -32,7 +32,7 @@ class Institute(BaseModel):
         default=datetime.now,
         validators= [past_date]
          )
-    email = models.EmailField(blank = True)
+    institute_email = models.EmailField(blank = True,validators = [validate_email,])
     # email = models.EmailField(unique = True ,validators = [validate_email,])
     country = models.CharField(max_length=200)
     city = models.CharField(max_length=200)

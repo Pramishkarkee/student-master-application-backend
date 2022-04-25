@@ -21,26 +21,26 @@ class RegisterStudentUseCase(usecases.CreateUseCase, NotificationMixin):
         self.send_notification()
 
     def _factory(self):
-        # 1. create consultancy user
-
+        # 1. create student user
+   
         user = StudentUser.objects.create(
             email=self._data.pop('email'),
             password=self._data.pop('password'),
-            fullname=self._data.pop('fullname')
+            fullname=self._data.get('fullname')
         )
-        # 2. consultancy
+        # 2. Student
         self._student = StudentModel.objects.create(
             user=user,
             **self._data
         )
 
         Settings.objects.create(user=user)
-        SendEmailToStudent(
-            context={
-                'uuid': user.id,
-                'name': user.fullname
-            }
-        ).send(to=[user.email])
+        # SendEmailToStudent(
+        #     context={
+        #         'uuid': user.id,
+        #         'name': user.fullname
+        #     }
+        # ).send(to=[user.email])
 
     def get_notification_data(self):
         return {

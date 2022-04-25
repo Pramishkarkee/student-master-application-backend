@@ -31,7 +31,9 @@ class RegisterStudentSerializer(StudentSerializer):
             'contact',
             'latitude',
             'longitude',
-            'image'
+            'image',
+            'gender',
+            'dob',
         )
 
     default_error_messages = {

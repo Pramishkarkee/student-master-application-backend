@@ -1,6 +1,8 @@
-from apps.academic.mixins import AcademicMixins, EssayMixins, SopMixins
+from apps.academic.mixins import AcademicMixins, EssayMixins, SopMixins,GetSopMixin
 from rest_framework.serializers import Serializer
-from apps.academic.serializers import CreateAcademicSerializer, CreateLorSerializer, CreateSopSerializer,CreateEssaySerializer, GetAcademicListSerializer, GetLorSerializer, GetPersonalEssay, GetSopSerializer, UpdateAcademicSerializer
+from apps.academic.serializers import (CreateAcademicSerializer, CreateLorSerializer, CreateSopSerializer,
+CreateEssaySerializer, GetAcademicListSerializer, GetLorSerializer, GetPersonalEssay, GetSopSerializer, UpdateSopSerializer,
+UpdateAcademicSerializer)
 from django.utils.translation import gettext_lazy as _
 from rest_framework.parsers import MultiPartParser, FileUploadParser
 from rest_framework.permissions import AllowAny
@@ -160,3 +162,21 @@ class GetEssayView(generics.RetrieveAPIView,EssayMixins):
         return usecases.GetPersonalEssayUseCase(
             essay=self.get_object()
         )
+
+class UpdateSopView(generics.UpdateWithMessageAPIView,GetSopMixin):
+    """
+    This endpoint is use to find academic list of student
+    """
+    serializer_class = UpdateSopSerializer
+    parser_classes = (MultiPartParser , FileUploadParser, )
+    message = _("sop detail update successfully")
+
+    def get_object(self):
+        return self.get_sop()
+
+    def perform_update(self, serializer):
+        return usecases.UpdateSopUseCase(
+            serializer=serializer,
+            id=self.get_object(),
+            
+        ).execute()
