@@ -9,7 +9,7 @@ class GetSopMixin:
     def get_sop(self):
         return usecases.GetSopByIdUseCase(
             id = self.kwargs.get("sop_id")
-        )
+        ).execute()
 class SopMixins:
     def get_sop(self):
         return usecases.GetSopUseCase(
@@ -26,4 +26,10 @@ class EssayMixins:
     def get_essay(self):
         return usecases.GetEssayUseCase(
             student_id = self.kwargs.get("student_id")
+        ).execute()
+
+class GetEssayMixins:
+    def get_essay(self):
+        return usecases.GetEssayByIdUseCase(
+            essay_id = self.kwargs.get("essay_id")
         ).execute()

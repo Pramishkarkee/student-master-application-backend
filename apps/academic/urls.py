@@ -52,5 +52,25 @@ urlpatterns = [
         '<sop_id>/sop/update',
         views.UpdateSopView.as_view(),
         name = 'update-sop'
+    ),
+    path(
+        '<sop_id>/sop/delete',
+        views.DeleteSopView.as_view(),
+        name ="delete-sop"
+    ),
+    path(
+        '<essay_id>/essay/update',
+        views.UpdateEssayView.as_view(),
+        name = 'update-essay'
+    ),
+    path(
+        '<essay_id>/essay/delete',
+        views.DeleteEssayView.as_view(),
+        name ="delete-essay"
+    ),
+    path(
+        '<academic_id>/academic/delete',
+        views.DeleteAcademicView.as_view(),
+        name = 'delete-academic'
     )
 ]

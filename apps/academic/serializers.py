@@ -92,3 +92,10 @@ class UpdateSopSerializer(serializers.ModelSerializer):
         fields = (
             'document',
         )
+
+class UpdateEssaySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PersonalEssay
+        fields = (
+            'essay',
+        )

@@ -1,8 +1,8 @@
-from apps.academic.mixins import AcademicMixins, EssayMixins, SopMixins,GetSopMixin
+from apps.academic.mixins import AcademicMixins, EssayMixins, SopMixins,GetSopMixin,GetEssayMixins
 from rest_framework.serializers import Serializer
 from apps.academic.serializers import (CreateAcademicSerializer, CreateLorSerializer, CreateSopSerializer,
 CreateEssaySerializer, GetAcademicListSerializer, GetLorSerializer, GetPersonalEssay, GetSopSerializer, UpdateSopSerializer,
-UpdateAcademicSerializer)
+UpdateAcademicSerializer,UpdateEssaySerializer)
 from django.utils.translation import gettext_lazy as _
 from rest_framework.parsers import MultiPartParser, FileUploadParser
 from rest_framework.permissions import AllowAny
@@ -179,4 +179,58 @@ class UpdateSopView(generics.UpdateWithMessageAPIView,GetSopMixin):
             serializer=serializer,
             id=self.get_object(),
             
+        ).execute()
+
+
+class DeleteSopView(generics.DestroyAPIView,GetSopMixin):
+    message = _("delete successfully")
+    permission_classes = (AllowAny,)
+    def get_object(self):
+        return self.get_sop()
+
+    def perform_destroy(self, instance):
+        return usecases.DeleteSopUseCase(
+            sop=self.get_object()
+        ).execute()
+
+class UpdateEssayView(generics.UpdateWithMessageAPIView,GetEssayMixins):
+    serializer_class = UpdateEssaySerializer
+    parser_classes = (MultiPartParser , FileUploadParser, )
+    message = _("update essay successfully")
+    permission_classes = (AllowAny,)
+
+    def get_object(self):
+        return self.get_essay()
+
+    def perform_update(self, serializer):
+        return usecases.UpdateEssayUseCase(
+            serializer=serializer,
+            essay=self.get_object(),
+        ).execute()
+
+class DeleteEssayView(generics.DestroyAPIView,GetEssayMixins):
+    message = _("delete successfully")
+    permission_classes = (AllowAny,)
+    def get_object(self):
+        return self.get_essay()
+
+    def perform_destroy(self, instance):
+        return usecases.DeleteEssayUseCase(
+            essay=self.get_object()
+        ).execute()
+
+
+class DeleteAcademicView(generics.DestroyAPIView,AcademicMixins):
+    """
+    This endpoint is use to find academic list of student
+    """
+    message = _("delete successfully")
+    permission_classes = (AllowAny,)
+
+    def get_object(self):
+        return self.get_academic()
+
+    def perform_update(self, instance):
+        return usecases.DeleteAcademicUseCase(
+            academic=self.get_object(),
         ).execute()

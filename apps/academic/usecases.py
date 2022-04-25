@@ -101,7 +101,9 @@ class GetSopByIdUseCase(BaseUseCase):
     
     def _factory(self):
         try:
+
             self._sop = StudentSop.objects.get(id= self._sop_id)
+
         except StudentSop.DoesNotExist:
             raise SopNotFound 
 
@@ -250,7 +252,18 @@ class GetEssayUseCase(BaseUseCase):
         except PersonalEssay.DoesNotExist:
             raise EssayNotFound
 
-
+class GetEssayByIdUseCase(BaseUseCase):
+    def __init__(self,essay_id):
+        self._essay_id = essay_id
+    def execute(self):
+        self._factory()
+        return self._essay
+    
+    def _factory(self):
+        try:
+            self._essay= PersonalEssay.objects.get(id=self._essay_id)
+        except PersonalEssay.DoesNotExist:
+            raise EssayNotFound
 class GetPersonalEssayUseCase(BaseUseCase):
     def __init__(self,essay):
         self._essay = essay
@@ -264,3 +277,50 @@ class GetPersonalEssayUseCase(BaseUseCase):
             self._personal_essay= PersonalEssay.objects.get(student=self._essay)
         except PersonalEssay.DoesNotExist:
             raise EssayNotFound
+
+class DeleteSopUseCase(BaseUseCase):
+    def __init__(self,sop):
+        self._sop = sop
+    
+    def execute(self):
+        self._factory()
+
+    def _factory(self):
+        self._sop.delete()
+
+class UpdateEssayUseCase(BaseUseCase):
+    def __init__(self,serializer,essay:PersonalEssay):
+        self._essay = essay
+        self._serializer = serializer
+        self._data = self._serializer.validated_data
+    
+    def execute(self):
+        self._factory()
+
+    def _factory(self):
+        for data in self._data.keys():
+            setattr(self._essay,data, self._data[data])
+        
+        self._essay.updated_at = timezone.now()
+        self._essay.save()
+
+class DeleteEssayUseCase(BaseUseCase):
+    def __init__(self,essay):
+        self._essay = essay
+    
+    def execute(self):
+        self._factory()
+
+    def _factory(self):
+        self._essay.delete()
+
+
+class DeleteAcademicUseCase(BaseUseCase):
+    def __init__(self,academic):
+        self._academic = academic
+    
+    def execute(self):
+        self._factory()
+
+    def _factory(self):
+        self._academic.delete()
