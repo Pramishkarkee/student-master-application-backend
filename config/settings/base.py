@@ -98,6 +98,7 @@ LOCAL_APPS = [
     "apps.gallery.apps.GalleryConfig",
     "apps.language.apps.LanguageConfig",
     "apps.activity.apps.ActivityConfig",
+    "apps.review.apps.ReviewConfig",
 
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

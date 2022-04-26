@@ -1,4 +1,4 @@
-from apps.blog.usecases import GetBlogsUseCase, GetRelationUseCase
+from apps.blog.usecases import GetBlogsUseCase, GetInstituteBlogsByIdUseCase, GetRelationUseCase
 
 
 class BlogsMixin:
@@ -12,4 +12,10 @@ class RelationMixin:
     def get_relation(self):
         return GetRelationUseCase(
             relation_id=self.kwargs.get('relation_id')
+        ).execute()
+
+class InstituteBlogMixin:
+    def get_institute_blog(self):
+        return GetInstituteBlogsByIdUseCase(
+            institute_blog_id=self.kwargs.get('institute_blog_id')
         ).execute()

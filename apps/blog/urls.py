@@ -55,5 +55,20 @@ urlpatterns = [
         'institute/<str:institute_id>/add',
         views.CreateInstituteBlogView.as_view(),
         name='create-institute'
+    ),
+    path(
+        'institute/<str:institute_id>/list',
+        views.ListInstituteBlogsView.as_view(),
+        name ='list institute blog'
+    ),
+    path(
+        'institute/<str:institute_blog_id>/update',
+        views.UpdateInstituteBlogView.as_view(),
+        name ='update-institute-blog'
+    ),
+    path(
+        'institute/<str:institute_blog_id>/delete',
+        views.DeleteInstituteBlogView.as_view(),
+        name = 'delete-institute-blog'
     )
 ]

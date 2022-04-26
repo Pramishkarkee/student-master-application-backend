@@ -17,8 +17,6 @@ class CreateLanguageUseCase(BaseUseCase):
         self._data = serializer.validated_data
 
     def execute(self):
-        # print()
-        print("***********************",self._student)
         self._factory()
 
     def _factory(self):

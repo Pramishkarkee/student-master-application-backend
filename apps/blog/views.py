@@ -1,10 +1,9 @@
 from apps.institute.mixins import InstituteMixins
 from django.shortcuts import render
 from django.utils.translation import gettext_lazy as _
-
-# Create your views here.
+from rest_framework.permissions import AllowAny
 from apps.blog import serializers, usecases
-from apps.blog.mixins import BlogsMixin, RelationMixin
+from apps.blog.mixins import BlogsMixin, InstituteBlogMixin, RelationMixin
 from apps.core import generics
 
 
@@ -135,4 +134,46 @@ class CreateInstituteBlogView(generics.CreateWithMessageAPIView,InstituteMixins)
         return usecases.CreateInstituteBlogUseCase(
             institute=self.get_object(),
             serializer= serializer
+        ).execute()
+
+class ListInstituteBlogsView(generics.ListAPIView,InstituteMixins):
+    """
+    This endpoint is use to list institute blog
+    """
+    serializer_class = serializers.ListInstituteBlogSerializer
+
+    def get_object(self):
+        return self.get_institute()
+
+    def get_queryset(self):
+        return usecases.ListInstituteBlogsUseCase(
+            institute=self.get_object(),
+        ).execute()
+
+class UpdateInstituteBlogView(generics.UpdateAPIView,InstituteBlogMixin):
+    """
+    this end point is use to update blogs
+    """
+    serializer_class = serializers.UpdateInstituteBlogSerializer
+    message = _('Update blog Successfully')
+    permission_classes = (AllowAny,)
+    def get_object(self):
+        return self.get_institute_blog()
+
+    def perform_update(self, serializer):
+        return usecases.InstituteBlogUpdateUseCase(
+            blog=self.get_object(),
+            serializer = serializer
+        ).execute()
+
+class DeleteInstituteBlogView(generics.DestroyAPIView,InstituteBlogMixin):
+    """
+    This endpoint is use to delete institute blog
+    """
+    def get_object(self):
+        return self.get_institute_blog()
+
+    def perform_destroy(self, instance):
+        return usecases.DeleteInstituteBlogUseCase(
+            blog=self.get_object(),
         ).execute()

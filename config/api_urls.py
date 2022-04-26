@@ -83,5 +83,9 @@ urlpatterns = [
     path(
         'activities/',
         include('apps.activity.urls')
+    ),
+    path(
+        'review/',
+        include('apps.review.urls')
     )
 ]

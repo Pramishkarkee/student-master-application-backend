@@ -78,12 +78,20 @@ class CreateInstituteBlogSerializer(serializers.ModelSerializer):
             'content',
             'image',
         )
-# class CreateBlogSerilaizer(serializers.ModelSerializer):
-#     class Meta:
-#         model = PortelBlog
-#         fields = (
-#             'title',
-#             'author_name',
-#             'content',
-#             'image'
-#         )
+
+class ListInstituteBlogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InstituteBlog
+        fields = "__all__"
+
+class UpdateInstituteBlogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InstituteBlog
+        fields = (
+            'relation',
+            'title',
+            'author_name',
+            'content',
+            'image',
+        )
+

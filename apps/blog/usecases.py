@@ -45,6 +45,21 @@ class GetBlogsUseCase(BaseUseCase):
         except Blogs.DoesNotExist:
             raise ValidationError({'error': _('Blogs  does not exist for following id.')})
 
+class GetInstituteBlogsByIdUseCase(BaseUseCase):
+    def __init__(self, institute_blog_id):
+        self._blog_id = institute_blog_id
+
+    def execute(self):
+        self._factory()
+        return self._blog
+
+    def _factory(self):
+        try:
+            self._blog = InstituteBlog.objects.get(pk=self._blog_id)
+
+        except Blogs.DoesNotExist:
+            raise ValidationError({'error': _('Blogs  does not exist for following id.')})
+
 
 class UpdateBlogsUseCase(BaseUseCase):
     def __init__(self, serializer, blogs: Blogs):
@@ -151,3 +166,39 @@ class CreateInstituteBlogUseCase(BaseUseCase):
     def _factory(self):
         self._blog = InstituteBlog(**self.data,institute=self._institute)
         self._blog.save()
+
+class ListInstituteBlogsUseCase(BaseUseCase):
+    def __init__(self,institute):
+        self._institute =institute
+    
+    def execute(self):
+        self._factory()
+        return self._blogs
+
+    def _factory(self):
+        self._blogs = InstituteBlog.objects.filter(institute= self._institute)
+
+
+class InstituteBlogUpdateUseCase(BaseUseCase):
+    def __init__(self,blog:InstituteBlog,serializer):
+        self._blog =blog
+        self._serializer = serializer
+        self._data = self._serializer.validated_data
+    
+    def execute(self):
+        self._factory()
+
+    def _factory(self):
+        for key in self._data.keys():
+            setattr(self._blog, key, self._data.get(key))
+        self._blog.updated_at = datetime.now()
+        self._blog.save()
+
+class DeleteInstituteBlogUseCase(BaseUseCase):
+    def __init__(self,blog:InstituteBlog):
+        self._blog =blog
+    def execute(self):
+        self._factory()
+    
+    def _factory(self):
+        self._blog.delete()
