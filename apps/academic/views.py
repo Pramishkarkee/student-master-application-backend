@@ -1,7 +1,7 @@
 from apps.academic.mixins import AcademicMixins, EssayMixins, SopMixins,GetSopMixin,GetEssayMixins
 from rest_framework.serializers import Serializer
 from apps.academic.serializers import (CreateAcademicSerializer, CreateLorSerializer, CreateSopSerializer,
-CreateEssaySerializer, GetAcademicListSerializer, GetLorSerializer, GetPersonalEssay, GetSopSerializer, UpdateSopSerializer,
+CreateEssaySerializer, GetAcademicListSerializer, GetLorSerializer, GetPersonalEssay, GetSopSerializer, UpdateCertificateSerializer, UpdateMarksheetSerializer, UpdateSopSerializer,
 UpdateAcademicSerializer,UpdateEssaySerializer)
 from django.utils.translation import gettext_lazy as _
 from rest_framework.parsers import MultiPartParser, FileUploadParser
@@ -64,7 +64,41 @@ class UpdateAcademicView(generics.UpdateWithMessageAPIView,AcademicMixins):
             serializer=serializer
         ).execute()
 
+class UpdateMarksheetView(generics.UpdateWithMessageAPIView,AcademicMixins):
+    """
+    This endpoint is use to update marksheet file
+    """
+    serializer_class = UpdateMarksheetSerializer
+    parser_classes = (MultiPartParser , FileUploadParser, )
+    message = _("marksheet update successfully")
 
+    def get_object(self):
+        return self.get_academic()
+
+    def perform_update(self, serializer):
+        return usecases.UpdateAcademicUseCase(
+            academic=self.get_object(),
+            serializer=serializer
+        ).execute()
+
+class UpdateCertificateView(generics.UpdateWithMessageAPIView,AcademicMixins):
+    """
+    This endpoint is use to update certificate
+    """
+    serializer_class = UpdateCertificateSerializer
+    parser_classes = (MultiPartParser , FileUploadParser, )
+    message = _("marksheet update successfully")
+
+    def get_object(self):
+        return self.get_academic()
+
+    def perform_update(self, serializer):
+        return usecases.UpdateAcademicUseCase(
+            academic=self.get_object(),
+            serializer=serializer
+        ).execute()
+
+        
 class CreateSopView(generics.CreateWithMessageAPIView,StudentMixin):
     """
     use this endpoint to add sop one student can add one sop
@@ -207,6 +241,7 @@ class UpdateEssayView(generics.UpdateWithMessageAPIView,GetEssayMixins):
             serializer=serializer,
             essay=self.get_object(),
         ).execute()
+
 
 class DeleteEssayView(generics.DestroyAPIView,GetEssayMixins):
     message = _("delete successfully")

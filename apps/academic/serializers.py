@@ -1,4 +1,5 @@
 import re
+from turtle import mode
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -46,8 +47,18 @@ class UpdateAcademicSerializer(GetAcademicListSerializer):
             'level',
             'score',
             'full_score',
+        )
+
+class UpdateCertificateSerializer(GetAcademicListSerializer):
+    class Meta(GetAcademicListSerializer.Meta):
+        fields = (
+            'certificate',
+        )
+
+class UpdateMarksheetSerializer(GetAcademicListSerializer):
+    class Meta(GetAcademicListSerializer.Meta):
+        fields = (
             'marksheet',
-            'certificate'
         )
 
 class CreateSopSerializer(serializers.ModelSerializer):
@@ -98,4 +109,6 @@ class UpdateEssaySerializer(serializers.ModelSerializer):
         model = PersonalEssay
         fields = (
             'essay',
+            'content'
         )
+

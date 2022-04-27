@@ -72,5 +72,15 @@ urlpatterns = [
         '<academic_id>/academic/delete',
         views.DeleteAcademicView.as_view(),
         name = 'delete-academic'
+    ),
+    path(
+        '<academic_id>/academic/marksheet/update',
+        views.UpdateMarksheetView.as_view(),
+        name="marksheet update"
+    ),
+    path(
+        '<academic_id>/academic/certificate/update',
+        views.UpdateCertificateView.as_view(),
+        name="update certificate"
     )
 ]

@@ -69,7 +69,9 @@ class UpdateStudentSerializer(StudentSerializer):
             'contact',
             'latitude',
             'longitude',
-            'fullname'
+            'fullname',
+            'dob',
+            'gender'
         )
 class UpdateProfilePictureSerializer(StudentSerializer):
     class Meta(StudentSerializer.Meta):
