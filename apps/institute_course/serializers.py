@@ -132,6 +132,13 @@ class StudentApplySerializer(serializers.ModelSerializer):
             'institute',
             'consultancy'
         )
+        validators = [
+            UniqueTogetherValidator(
+                queryset=InstituteApply.objects.all(),
+                fields=['student', 'course'],
+                message="One student can apply one course"
+            )
+        ]
 
 
 class GetStudentAddressSerializer(serializers.ModelSerializer):

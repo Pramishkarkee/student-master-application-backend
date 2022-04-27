@@ -7,7 +7,7 @@ from rest_framework.permissions import AllowAny
 
 from apps.core import generics
 from apps.students import serilizers, usecases
-from apps.students.mixins import AddressMixin, StudentMixin
+from apps.students.mixins import AddressMixin, FavouriteMixin, StudentMixin
 from apps.students.models import StudentModel
 
 
@@ -28,7 +28,7 @@ class RegisterStudentView(generics.CreateWithMessageAPIView):
         ).execute()
 
 
-# class
+
 class StudentInitProfileView(generics.RetrieveAPIView, StudentMixin):
     """
     Use this endpoint to get student detail
@@ -165,6 +165,18 @@ class GetFavouriteInstitute(generics.ListAPIView,StudentMixin):
     def get_queryset(self):
         return usecases.GetFavouriteInstituteUseCase(
             student = self.get_object()
+        ).execute()
+
+class DeleteFavouriteInstitute(generics.DestroyWithMessageAPIView,FavouriteMixin):
+    """
+    this endpoint is use to delete favourite
+    """
+    def get_object(self):
+        return self.get_favourite()
+
+    def perform_destroy(self, instance):
+        return usecases.DeleteFavouriteInstitute(
+            favourite = self.get_object(),
         ).execute()
 
 # class CreateInstituteVisitor(generics.CreateWithMessageAPIView):

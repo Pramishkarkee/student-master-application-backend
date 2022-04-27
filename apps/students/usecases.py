@@ -10,7 +10,7 @@ from apps.students.models import FavouriteInstitute, StudentAddress, StudentUser
 from apps.core import usecases
 from apps.settings.models import Settings
 from apps.core.usecases import BaseUseCase
-from apps.students.exceptions import StudentAddressUnique, StudentModelNotFound
+from apps.students.exceptions import FavouriteInstituteNotFound, StudentAddressUnique, StudentModelNotFound
 
 
 class RegisterStudentUseCase(usecases.CreateUseCase, NotificationMixin):
@@ -63,6 +63,22 @@ class GetStudentUseCase(BaseUseCase):
             self._student = StudentModel.objects.get(pk=self._student_id)
         except StudentModel.DoesNotExist:
             raise StudentModelNotFound
+
+class GetFavouriteByIdUseCase(BaseUseCase):
+    def __init__(self,favourite_id):
+        self._favourite = favourite_id
+
+    def execute(self):
+        self._factory()
+        return self._favourite_institute
+
+    def _factory(self):
+        try:
+            self._favourite_institute = FavouriteInstitute.objects.get(pk=self._favourite)
+
+        except FavouriteInstitute.DoesNotExist:
+            raise FavouriteInstituteNotFound
+
 
 class AddStudentAddressUseCase(usecases.CreateUseCase,GetStudentUseCase):
     def __init__(self, serializer,student_id:str):
@@ -238,3 +254,13 @@ class GetFavouriteInstituteUseCase(BaseUseCase):
         self._favourite = FavouriteInstitute.objects.filter(
             student = self._student
         )
+
+class DeleteFavouriteInstitute(BaseUseCase):
+    def __init__(self , favourite):
+        self._favourite = favourite
+
+    def execute(self):
+        self._factory()
+
+    def _factory(self):
+        self._favourite.delete()

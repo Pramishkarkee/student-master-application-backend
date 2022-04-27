@@ -7,7 +7,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-
+from rest_framework.validators import UniqueTogetherValidator
 from apps.core import fields
 
 from apps.academic.models import Academic, PersonalEssay, StudentLor, StudentSop
@@ -24,6 +24,13 @@ class CreateAcademicSerializer(serializers.ModelSerializer):
             'marksheet',
             'certificate'
         )
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Academic.objects.all(),
+                fields=['student','level'],
+                message="One student and level should be unique "
+            )
+        ]
 
 class GetAcademicListSerializer(serializers.ModelSerializer):
     class Meta:

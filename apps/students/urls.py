@@ -53,6 +53,11 @@ urlpatterns = [
         '<student_id>/favourite/get',
         views.GetFavouriteInstitute.as_view(),
         name='get-favourite'
+    ),
+    path(
+        '<favourite_id>/favourite/delete',
+        views.DeleteFavouriteInstitute.as_view(),
+        name="delete-favourite"
     )
 
 ]

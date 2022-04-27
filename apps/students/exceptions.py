@@ -10,3 +10,6 @@ class StudentModelNotFound(NotFound):
 
 class StudentAddressUnique(IntegrityError):
     default_detail = _('address already exist')
+
+class FavouriteInstituteNotFound(NotFound):
+    default_detail = _('this id doesnt exist exist')
