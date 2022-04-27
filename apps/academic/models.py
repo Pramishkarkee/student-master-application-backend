@@ -66,13 +66,17 @@ class StudentLor(BaseModel):
 class PersonalEssay(BaseModel):
     student = models.OneToOneField(StudentModel,on_delete=CASCADE)
     essay = models.FileField(
-        upload_to=upload_academic_doc_to
+        upload_to=upload_academic_doc_to,
+        blank=True,
+        null=True
     )
+    content = models.TextField(blank=True,null=True)
     doc_type = models.CharField(max_length=100,blank=True,null=True)
     def save(self,*args,**kwargs):
-        name ,extension = os.path.splitext(str(self.essay))
-        self.doc_type = extension
-        super(PersonalEssay, self).save(*args, **kwargs)
+        if self.essay != None:
+            name ,extension = os.path.splitext(str(self.essay))
+            self.doc_type = extension
+            super(PersonalEssay, self).save(*args, **kwargs)
 
         
 pre_save.connect(check_score, sender=Academic)
