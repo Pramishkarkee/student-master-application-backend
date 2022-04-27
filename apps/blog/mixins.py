@@ -1,4 +1,4 @@
-from apps.blog.usecases import GetBlogsUseCase, GetInstituteBlogsByIdUseCase, GetRelationUseCase
+from apps.blog.usecases import GetBlogsUseCase, GetInstituteBlogsByIdUseCase, GetPortalBlogByIdUseCase, GetRelationUseCase
 
 
 class BlogsMixin:
@@ -19,3 +19,4 @@ class InstituteBlogMixin:
         return GetInstituteBlogsByIdUseCase(
             institute_blog_id=self.kwargs.get('institute_blog_id')
         ).execute()
+

@@ -1,12 +1,12 @@
 # from django.core.exceptions import ValidationError as DjangoValidationError
 # from rest_framework.exceptions import ValidationError
 #
-# from apps.core import usecases
-# from apps.core.usecases import BaseUseCase
+from apps.core import usecases
+from apps.core.usecases import BaseUseCase
 # from apps.portal import tasks
 # from apps.portal.emails import SendEmailToPortalStaff
-# from apps.portal.exceptions import PortalNotFound
-# from apps.portal.models import PortalStaff
+from apps.portal.exceptions import PortalNotFound
+from apps.portal.models import PortalStaff
 # from apps.settings.models import Settings
 # from apps.staff.models import StaffPosition
 # from apps.user.models import PortalUser
@@ -95,3 +95,19 @@
 #         #         'name': self._portal.name,
 #         #     }
 #         # ).send(to=[portal_user.email])
+
+
+class GetPortalUserByIdUseCase(BaseUseCase):
+    def __init__(self,user_id):
+        self._user = user_id
+
+    def execute(self):
+        self._factory()
+        return self._portal_user
+
+    def _factory(self):
+        try:
+           self._portal_user= PortalStaff.objects.get(pk=self._user)
+        except PortalStaff.DoesNotExist:
+            raise PortalNotFound
+

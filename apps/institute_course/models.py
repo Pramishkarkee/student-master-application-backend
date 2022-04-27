@@ -15,6 +15,8 @@ import datetime
 
 from apps.core import fields
 from apps.core.models import BaseModel
+from apps.utils.currency import RealTimeCurrencyConverter
+
 # Create your models here.
 
 class Faculty(BaseModel):
@@ -34,6 +36,8 @@ class InstituteCourse(BaseModel):
         ('yearly' , 'yearly'),
         ('fall' , 'fall' )
     )
+    converter = RealTimeCurrencyConverter()
+    CURRENCY=converter.CurrencyName()
     institute = models.ForeignKey(Institute, on_delete=models.CASCADE ,related_name = 'course_related')
     program=models.CharField(max_length=200)
     faculty=models.ForeignKey(Faculty,on_delete=models.CASCADE)
@@ -49,7 +53,8 @@ class InstituteCourse(BaseModel):
         validators=[MinValueValidator(1),MaxValueValidator(10)]
     ) 
     total_fee = models.DecimalField(max_digits=10, decimal_places=3)
-    fee_currency = models.CharField(max_length=20)
+    reg_fee = models.DecimalField(max_digits=10, decimal_places=3,blank=True,null=True)
+    fee_currency = models.CharField(choices=CURRENCY,max_length=20)
 
     #this all are form open and close field
 

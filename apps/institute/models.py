@@ -15,6 +15,7 @@ from apps.core.validators import validate_image
 from apps.staff.models import StaffPosition
 from apps.user.models import InstituteUser
 from apps.institute.utils import upload_facility_image_to
+from django.core.validators import MaxValueValidator,MinValueValidator
 # from apps.institute_course.models import InstituteCourse
 
 
@@ -33,6 +34,9 @@ class Institute(BaseModel):
         validators= [past_date]
          )
     institute_email = models.EmailField(blank = True,validators = [validate_email,])
+    rating = models.FloatField(
+        validators=[MinValueValidator(0.0),MaxValueValidator(5.0)], default=0.0
+    )
     # email = models.EmailField(unique = True ,validators = [validate_email,])
     country = models.CharField(max_length=200)
     city = models.CharField(max_length=200)

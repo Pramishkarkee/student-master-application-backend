@@ -1,7 +1,7 @@
 from django.utils.datetime_safe import datetime
 from rest_framework.exceptions import ValidationError
 
-from apps.blog.models import Blogs, InstituteBlog, Relation
+from apps.blog.models import Blogs, InstituteBlog, PortalBlog, Relation
 from apps.core.usecases import BaseUseCase
 
 from django.utils.translation import gettext_lazy as _
@@ -202,3 +202,32 @@ class DeleteInstituteBlogUseCase(BaseUseCase):
     
     def _factory(self):
         self._blog.delete()
+
+class GetPortalBlogByIdUseCase(BaseUseCase):
+    def __init__(self,blog_id):
+        self._blog_id = blog_id
+
+    def execute(self):
+        self._factory()
+        return self._blog
+
+    def _factory(self):
+        try:
+            self._blog = PortalBlog.objects.get(pk=self._blog_id)
+        except PortalBlog.DoesNotExist:
+            raise ValidationError({'error': _('Blogs  does not exist for following id.')})
+
+class AddBlogPortalUseCase(BaseUseCase):
+    def __init__(self,user,serializer):
+        self._user=user
+        self.serializer = serializer
+        self._data = serializer.validated_data
+
+    def execute(self):
+        self._factory()
+
+    def _factory(self):
+        PortalBlog.objects.create(
+            user=self._user,
+            **self._data,
+        )

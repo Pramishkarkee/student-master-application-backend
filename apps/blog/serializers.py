@@ -2,7 +2,7 @@ from django.db import models
 from django.db.models import fields
 from rest_framework import serializers
 
-from apps.blog.models import Blogs, InstituteBlog, Relation
+from apps.blog.models import Blogs, InstituteBlog, Relation,PortalBlog
 
 
 class BlogSerializer(serializers.ModelSerializer):
@@ -95,3 +95,12 @@ class UpdateInstituteBlogSerializer(serializers.ModelSerializer):
             'image',
         )
 
+class CreatePortalUserBlogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PortalBlog
+        fields = (
+            'title',
+            'author_name',
+            'content',
+            'image',
+        )

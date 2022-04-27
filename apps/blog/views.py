@@ -5,7 +5,8 @@ from rest_framework.permissions import AllowAny
 from apps.blog import serializers, usecases
 from apps.blog.mixins import BlogsMixin, InstituteBlogMixin, RelationMixin
 from apps.core import generics
-
+from apps.portal.mixins import PortalStaffUserMixin
+from apps.utils.currency import RealTimeCurrencyConverter
 
 class AddBlogsView(generics.CreateWithMessageAPIView):
     """
@@ -176,4 +177,21 @@ class DeleteInstituteBlogView(generics.DestroyAPIView,InstituteBlogMixin):
     def perform_destroy(self, instance):
         return usecases.DeleteInstituteBlogUseCase(
             blog=self.get_object(),
+        ).execute()
+
+
+class CreatePortalBlogView(generics.CreateWithMessageAPIView,PortalStaffUserMixin):
+    """
+    This endpoint is use to create portal blog
+    """
+    serializer_class = serializers.CreatePortalUserBlogSerializer
+    message = _('Update blog Successfully')
+    permission_classes = (AllowAny,)
+    def get_object(self):
+        return self.get_portal_staff()
+
+    def perform_create(self, serializer):
+        usecases.AddBlogPortalUseCase(
+            user=self.get_object(),
+            serializer=serializer,
         ).execute()

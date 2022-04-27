@@ -70,5 +70,10 @@ urlpatterns = [
         'institute/<str:institute_blog_id>/delete',
         views.DeleteInstituteBlogView.as_view(),
         name = 'delete-institute-blog'
+    ),
+    path(
+        'portal/<str:staff_id>/addblog',
+        views.CreatePortalBlogView.as_view(),
+        name='addblog'
     )
 ]
