@@ -2,7 +2,7 @@ from django.urls import path
 from rest_framework_simplejwt.views import token_verify
 
 from apps.auth.jwt import views
-
+# from rest_framework.urlpatterns import format_suffix_patterns
 urlpatterns = [
     path(
         'consultancy-user/login',
@@ -73,3 +73,4 @@ urlpatterns = [
     ),
 
 ]
+# urlpatterns = format_suffix_patterns (urlpatterns)

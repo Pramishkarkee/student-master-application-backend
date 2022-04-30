@@ -63,4 +63,7 @@ urlpatterns = [
         views.ApplicantDashboard.as_view(),
         name = 'applicant-count'
     ),
+    path('test',
+    views.StudentMarkToSendView.as_view(),
+    name="test")
 ]

@@ -7,6 +7,11 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework.parsers import MultiPartParser, FileUploadParser
 from rest_framework.permissions import AllowAny
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.decorators import permission_classes
+from rest_framework import permissions
+
 from apps.core import generics
 from apps.institute_course.serializers import (
     ApplicationSerializerDashboard,
@@ -21,7 +26,7 @@ from apps.institute_course.serializers import (
     ListApplicationCommentSerializer, 
     ListInstituteCourseSerializer, 
     StudentApplySerializer)
-
+from collections import OrderedDict
 from apps.students.mixins import StudentMixin
 from apps.institute_course import usecases
 # from apps.institute_course.mixins import InstituteCourseMixin
@@ -202,3 +207,26 @@ class ApplicantDashboard(generics.ListAPIView,InstituteMixins):
         return usecases.ApplicationDashboardUsecase(
             institute=self.get_object()
         ).execute()
+
+@permission_classes((permissions.AllowAny,))
+class StudentMarkToSendView(APIView):
+    """
+    {
+        "courseId":"",
+        "citizenship":"",
+        "passport":"",
+        "essay":[],
+        "sop":[],
+        "lor":[]
+}
+    """
+
+    def post(self, request):
+        college = OrderedDict()
+        college.update(request.data)
+
+        # customserializer = CheckCollegeAccountCreateSerializer(data=college)
+        print("jdsfgjdgfdjgfdj",request.data,college)
+        usecases.SendedDocumentByStudent(data=request.data).execute()
+        print(college)
+        return Response({"hello":"how do you do"})

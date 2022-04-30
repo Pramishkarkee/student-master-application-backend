@@ -42,10 +42,11 @@ class AddInstituteCourseSerializer(InstituteCourseSerializer):
             'reg_close'
         )
 
-        # validators = [UniqueTogetherValidator(
-        #     queryset=InstituteCourse.objects.all(),
-        #     fields=['institute','course']
-        # )]
+        validators = [UniqueTogetherValidator(
+            queryset=InstituteCourse.objects.all(),
+            fields=['institute','course'],
+            message="This Course Already Exist"
+        )]
     # def validate(self, attrs):
     #     attrs = super().validate(attrs)
 

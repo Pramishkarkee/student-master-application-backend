@@ -90,5 +90,10 @@ urlpatterns = [
         views.GetFacilityView.as_view(),
         name = 'get-facility-view'
     ),
+    # path(
+    #     '<institute_id>/staff/list',
+    #     views.GetStaffList
+    # )
+    
     # path()
 ]

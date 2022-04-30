@@ -1,4 +1,6 @@
 from apps import consultancy
+from apps.academic.models import Academic, PersonalEssay, StudentLor, StudentSop
+from apps.studentIdentity.models import Citizenship, Passport
 from apps.user.models import InstituteUser
 from apps.consultancy.models import Consultancy, ConsultancyStaff
 from apps.students.models import StudentAddress, StudentModel
@@ -177,3 +179,23 @@ class CommentApplicationConsultancy(BaseModel):
     comment = models.TextField()
 
 
+class AccessOfAcademicDocument(BaseModel):
+    course = models.ForeignKey(InstituteCourse,on_delete=CASCADE)
+    academic = models.ForeignKey(Academic, on_delete=models.CASCADE)
+
+class AccessStudentIdentity(BaseModel):
+    course = models.ForeignKey(InstituteCourse,on_delete=CASCADE)
+    citizenship=models.ForeignKey(Citizenship, on_delete=models.CASCADE,null=True,blank=True)
+    passport = models.ForeignKey(Passport, on_delete=models.CASCADE,null=True,blank=True)
+
+class AccessStudentLor(BaseModel):
+    course = models.ForeignKey(InstituteCourse,on_delete=CASCADE)
+    lor = models.ForeignKey(StudentLor, on_delete=models.CASCADE)
+
+class AccessStudentEssay(BaseModel):
+    course = models.ForeignKey(InstituteCourse,on_delete=CASCADE)
+    essay = models.ForeignKey(PersonalEssay, on_delete=models.CASCADE)
+
+class AccessStudentSop(BaseModel):
+    course = models.ForeignKey(InstituteCourse,on_delete=CASCADE)
+    sop = models.ForeignKey(StudentSop,on_delete=models.CASCADE)

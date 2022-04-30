@@ -1,7 +1,9 @@
 
+from apps.academic.models import PersonalEssay, StudentLor, StudentSop
 from apps.auth.jwt import serializers
 from apps.consultancy.exceptions import ConsultancyNotFound
 from apps.consultancy.models import Consultancy
+from apps.studentIdentity.models import Citizenship, Passport
 from apps.students.exceptions import StudentModelNotFound
 from apps.students.models import StudentModel
 from apps import institute
@@ -283,3 +285,89 @@ class ApplicationDashboardUsecase(BaseUseCase):
             institute=self._institute,
             # created_at__range=["2021-12-01", "2022-01-31"]
             ).values('action').annotate(Count('action'))
+
+
+class SendedDocumentByStudent():
+    def __init__(self,data):
+        self._data = data
+    def execute(self):
+        self._factory()
+    def _factory(self):
+        course = ""
+        citizenship=""
+        passport=""
+        essay =[]
+        sop=[]
+        lor=[]
+
+        if len(self._data["courseId"])>1:
+            try:
+                course = InstituteCourse.objects.get(id=self._data['courseId'])
+            except InstituteCourse.DoesNotExist:
+                raise CourseNotFound
+
+        for k in self._data.keys():  
+            if k== "citizenship":
+                if len(self._data[k])>1:
+                    try:
+                        citizenship = Citizenship.objects.get(pk=self._data[k])
+                    except Citizenship.DoesNotExist:
+                        raise ValidationError({'error': _('Citizenship  does not exist for following id.')})
+
+            elif k == "passport":
+                if len(self._data[k])>1:
+                    try:
+                        passport = Passport.objects.get(pk=self._data[k])
+                    except Passport.DoesNotExist:
+                        raise ValidationError({'error': _('Passport does not exist for following id')})
+
+            elif k == "essay":
+                if len(self._data[k])>0:
+                    for essay_id in self._data[k]:
+                        print("essay id",essay_id)
+                        try:
+                            getessay = PersonalEssay.objects.get(pk=essay_id)
+                            sopobj={
+                                "essay":getessay,
+                                "course":course
+                            }
+                            essay.append(sopobj)
+                        except PersonalEssay.DoesNotExist:
+                            raise ValidationError({'error': _('Essay does not exist for following id')})
+            
+            elif k == "sop":
+                if len(self._data[k])>0:
+                    for sop_id in self._data[k]:
+                        try:
+                            getSop = StudentSop.objects.get(pk=sop_id)
+                            sopObj={
+                                "sop":getSop,
+                                "course":course
+                            }
+                            sop.append(sopObj)
+                        except StudentSop.DoesNotExist:
+                            raise ValidationError({'error': _('Passport does not exist for following id')})
+            
+            elif k == "lor":
+                if len(self._data[k])>0:
+                    for lor_id in self._data[k]:
+                        try:
+                            getLor = StudentLor.objects.get(pk=lor_id)
+                            lorObj={
+                                'lor':getLor,
+                                'course':course
+                            }
+                            lor.append(lorObj)
+                        except StudentLor.DoesNotExist:
+                            raise ValidationError({'error': _('Passport does not exist for following id')})
+
+        def _AddDataIntoTable(self, data):
+            print("87364836")
+
+
+        
+
+
+
+
+

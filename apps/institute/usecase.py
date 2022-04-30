@@ -253,12 +253,12 @@ class CreateInstituteStaffUseCase(BaseUseCase):
         # )
 
         # without celery
-        SendEmailToInstituteStaff(
-            context={
-                'uuid': self.institute_user.id,
-                'name': self._institute.name
-            }
-        ).send(to=[self.institute_user.email])
+        # SendEmailToInstituteStaff(
+        #     context={
+        #         'uuid': self.institute_user.id,
+        #         'name': self._institute.name
+        #     }
+        # ).send(to=[self.institute_user.email])
     
 
 

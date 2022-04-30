@@ -3,8 +3,10 @@ from django.shortcuts import render
 # Create your views here.
 from apps.core import generics
 from apps.gallery import serializers, usecases
-from apps.gallery.mixins import GalleryMixin
+from apps.gallery.mixins import GalleryMixin, InstituteGalleryMixins
 from django.utils.translation import gettext_lazy as _
+
+from apps.institute.mixins import InstituteMixins
 
 
 class AddGalleryView(generics.CreateWithMessageAPIView):
@@ -59,4 +61,95 @@ class UpdateGalleryView(generics.UpdateAPIView, GalleryMixin):
         return usecases.UpdateGalleryUseCase(
             serializer=serializer,
             gallery=self.get_object()
+        ).execute()
+
+class AddInstituteGalleryView(generics.CreateWithMessageAPIView,InstituteMixins):
+    """
+    Institute Gallery added 
+    """
+    serializer_class = serializers.AddInstituteGallerySerializer
+    message ="add institute gallery picture successfully"
+
+    def get_object(self):
+        return self.get_institute()
+
+    def perform_create(self, serializer):
+        return usecases.AddInstituteGalleryUseCase(
+            serializer=serializer,
+            institute=self.get_object()
+            ).execute()
+
+
+class ListInstituteGalleryView(generics.ListAPIView,InstituteMixins):
+    """
+    Listed institute Gallery for institute
+    """
+    serializer_class = serializers.ListInstituteGallerySerializer
+    message = "list institute gallery"
+
+    def get_object(self):
+        return self.get_institute()
+
+    def get_queryset(self):
+        return usecases.ListInstituteGalleryUseCase(
+            institute=self.get_object()
+        ).execute()
+class UpdateInstituteGalleryView(generics.UpdateWithMessageAPIView,InstituteGalleryMixins):
+    """
+    approve institute gallery image
+    """
+    serializer_class = serializers.UpdateInstituteGalleryForStudentSerializer
+    message = "approve institute gallery"
+
+    def get_object(self):
+        return self.get_institute_gallery()
+
+    def perform_update(self,serializer):
+        return usecases.ApprovedInstituteGalleryUsecase(
+            gallery=self.get_object(),
+            serializer = serializer,
+        ).execute()
+
+class DeleteInstituteGalleryView(generics.DestroyAPIView,InstituteGalleryMixins):
+    """
+    delete institute 
+    """
+    message = "delete institute gallery"
+    def get_object(self):
+        return self.get_institute_gallery()
+
+    def perform_destroy(self, instance):
+        return usecases.DeleteInstituteGalleryUseCase(
+            gallery=self.get_object(),
+        ).execute()
+        
+class ApproveInstituteGalleryView(generics.UpdateWithMessageAPIView,InstituteGalleryMixins):
+    """
+    approve institute gallery image
+    """
+    serializer_class = serializers.ApproveInstituteGallerySerializer
+    message = "approve institute gallery"
+
+    def get_object(self):
+        return self.get_institute_gallery()
+
+    def perform_update(self,serializer):
+        return usecases.ApprovedInstituteGalleryUsecase(
+            gallery=self.get_object(),
+            serializer = serializer,
+        ).execute()
+
+class InstituteGalleryListForStudentView(generics.ListAPIView,InstituteMixins):
+    """
+    Listed institute Gallery for student
+    """
+    serializer_class = serializers.ListInstituteGalleryForStudentSerializer
+    message = "list institute gallery"
+
+    def get_object(self):
+        return self.get_institute()
+
+    def get_queryset(self):
+        return usecases.ListInstituteGalleryUseCase(
+            institute=self.get_object()
         ).execute()
