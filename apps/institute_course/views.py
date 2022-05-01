@@ -213,8 +213,7 @@ class StudentMarkToSendView(APIView):
     """
     {
         "courseId":"",
-        "citizenship":"",
-        "passport":"",
+        "student_identity":{"citizenship":"","passport":""},
         "essay":[],
         "sop":[],
         "lor":[]
@@ -226,7 +225,7 @@ class StudentMarkToSendView(APIView):
         college.update(request.data)
 
         # customserializer = CheckCollegeAccountCreateSerializer(data=college)
-        print("jdsfgjdgfdjgfdj",request.data,college)
+        # print("jdsfgjdgfdjgfdj",request.data,college)
         usecases.SendedDocumentByStudent(data=request.data).execute()
         print(college)
         return Response({"hello":"how do you do"})

@@ -70,6 +70,13 @@ class InstituteCourse(BaseModel):
         _("Date"),
         blank=True
     )
+    #required Document
+    academic = models.BooleanField(default=False)
+    citizenship = models.BooleanField(default=False)
+    passport = models.BooleanField(default=False)
+    essay = models.BooleanField(default=False)
+    lor = models.BooleanField(default=False)
+    sop = models.BooleanField(default=False)
     @property
     def get_course_name(self):
         return self.course.name

@@ -1,5 +1,5 @@
 
-from apps.academic.models import PersonalEssay, StudentLor, StudentSop
+from apps.academic.models import Academic, PersonalEssay, StudentLor, StudentSop
 from apps.auth.jwt import serializers
 from apps.consultancy.exceptions import ConsultancyNotFound
 from apps.consultancy.models import Consultancy
@@ -13,7 +13,7 @@ from  django.utils.translation import  gettext_lazy as _
 from django.db.models import Count
 
 from apps.core.usecases import BaseUseCase
-from apps.institute_course.models import CommentApplicationInstitute, InstituteApply, InstituteCourse,Course,Faculty
+from apps.institute_course.models import AccessOfAcademicDocument, AccessStudentEssay, AccessStudentIdentity, AccessStudentLor, AccessStudentSop, CommentApplicationInstitute, InstituteApply, InstituteCourse,Course,Faculty
 from apps.institute.models import Institute, InstituteStaff
 from apps.institute_course.exceptions import CourseNotFound, FacultyNotFound, InstituteApplyNotFound, InstituteNotFound, InstituteStaffNotFound
 
@@ -293,31 +293,32 @@ class SendedDocumentByStudent():
     def execute(self):
         self._factory()
     def _factory(self):
-        course = ""
-        citizenship=""
-        passport=""
-        essay =[]
-        sop=[]
-        lor=[]
-
+        self.course = ""
+        self.academic=[]
+        self.essay =[]
+        self.sop=[]
+        self.lor=[]
+        self.student_identity = {}
         if len(self._data["courseId"])>1:
             try:
-                course = InstituteCourse.objects.get(id=self._data['courseId'])
+                self.course = InstituteCourse.objects.get(id=self._data['courseId'])
             except InstituteCourse.DoesNotExist:
                 raise CourseNotFound
 
         for k in self._data.keys():  
-            if k== "citizenship":
-                if len(self._data[k])>1:
+            if k =="student_identity":
+                print()
+                if len(self._data[k]['citizenship'])>1:
                     try:
-                        citizenship = Citizenship.objects.get(pk=self._data[k])
+                        citizenship = Citizenship.objects.get(pk=self._data[k]['citizenship'])
+                        self.student_identity["citizenship"]=citizenship
                     except Citizenship.DoesNotExist:
                         raise ValidationError({'error': _('Citizenship  does not exist for following id.')})
 
-            elif k == "passport":
-                if len(self._data[k])>1:
+                if len(self._data[k]['passport'])>1:
                     try:
-                        passport = Passport.objects.get(pk=self._data[k])
+                        passport = Passport.objects.get(pk=self._data[k]['passport'])
+                        self.student_identity["passport"]=passport
                     except Passport.DoesNotExist:
                         raise ValidationError({'error': _('Passport does not exist for following id')})
 
@@ -327,11 +328,10 @@ class SendedDocumentByStudent():
                         print("essay id",essay_id)
                         try:
                             getessay = PersonalEssay.objects.get(pk=essay_id)
-                            sopobj={
-                                "essay":getessay,
-                                "course":course
-                            }
-                            essay.append(sopobj)
+                            
+                            self.essay.append(AccessStudentEssay(
+                                essay=getessay,
+                                course=self.course))
                         except PersonalEssay.DoesNotExist:
                             raise ValidationError({'error': _('Essay does not exist for following id')})
             
@@ -340,11 +340,11 @@ class SendedDocumentByStudent():
                     for sop_id in self._data[k]:
                         try:
                             getSop = StudentSop.objects.get(pk=sop_id)
-                            sopObj={
-                                "sop":getSop,
-                                "course":course
-                            }
-                            sop.append(sopObj)
+                    
+                            self.sop.append(AccessStudentSop(
+                                sop=getSop,
+                                course=self.course
+                            ))
                         except StudentSop.DoesNotExist:
                             raise ValidationError({'error': _('Passport does not exist for following id')})
             
@@ -353,16 +353,54 @@ class SendedDocumentByStudent():
                     for lor_id in self._data[k]:
                         try:
                             getLor = StudentLor.objects.get(pk=lor_id)
-                            lorObj={
-                                'lor':getLor,
-                                'course':course
-                            }
-                            lor.append(lorObj)
+                            self.lor.append(AccessStudentLor(
+                                lor=getLor,
+                                course=self.course))
                         except StudentLor.DoesNotExist:
                             raise ValidationError({'error': _('Passport does not exist for following id')})
+            elif k == "academic":
+                if len(self._data[k])>0:
+                    for academic_id in self._data[k]:
+                        try:
+                            getAcademic = Academic.objects.get(pk=academic_id)
+                        
+                            self.academic.append(AccessOfAcademicDocument(
+                                academic=getAcademic,
+                                course=self.course))
+                        except StudentLor.DoesNotExist:
+                            raise ValidationError({'error': _('academic does not exist for following id')})
+        self._AddDataIntoTable()
 
-        def _AddDataIntoTable(self, data):
-            print("87364836")
+    def _AddDataIntoTable(self):
+        if len(self.student_identity) >0:
+            AccessStudentIdentity.objects.create(
+                    course=self.course,
+                    citizenship=self.student_identity['citizenship'],
+                    passport = self.student_identity['passport']
+                )
+        if len(self.lor)>0:
+            AccessStudentLor.objects.bulk_create(
+                    self.lor
+                )
+
+        if len(self.sop)>0:
+            AccessStudentSop.objects.bulk_create(
+                    self.sop
+                )
+            
+        if len(self.essay)>0:
+            AccessStudentEssay.objects.bulk_create(
+                    self.essay
+                )
+
+        if len(self.academic)>0:
+            AccessOfAcademicDocument.objects.bulk_create(
+                    self.academic
+                )
+            
+
+
+            
 
 
         
