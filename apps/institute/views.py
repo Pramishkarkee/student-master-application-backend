@@ -45,6 +45,22 @@ class AddInstituteStaffView(generics.CreateWithMessageAPIView ,InstituteMixins):
             serializer = serializer
         ).execute()
 
+class ListInstituteStaffView(generics.ListAPIView,InstituteMixins):
+    """
+    This endpoint is use to list institute staff
+    """
+    message = 'institute staff list view'
+    serializer_class = serializers.InstituteStaffSerializer
+
+    def get_object(self):
+        return self.get_institute()
+
+    def get_queryset(self):
+        return usecase.ListInstituteStaffUseCase(
+            institute=self.get_object(),
+        ).execute()
+
+
 class UpdateInstituteView(generics.UpdateWithMessageAPIView,InstituteMixins):
     """
     This endpoint is use to update institute

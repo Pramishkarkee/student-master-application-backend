@@ -70,6 +70,7 @@ class InstituteCourse(BaseModel):
         _("Date"),
         blank=True
     )
+    
     #required Document
     academic = models.BooleanField(default=False)
     citizenship = models.BooleanField(default=False)

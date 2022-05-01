@@ -39,9 +39,14 @@ class AddInstituteCourseSerializer(InstituteCourseSerializer):
             'fee_currency',
             'reg_status',
             'reg_open',
-            'reg_close'
+            'reg_close', 
+            'academic',
+            'citizenship',  
+            'passport', 
+            'essay', 
+            'lor', 
+            'sop'
         )
-
         validators = [UniqueTogetherValidator(
             queryset=InstituteCourse.objects.all(),
             fields=['institute','course'],
@@ -101,7 +106,13 @@ class ListInstituteCourseSerializer(InstituteCourseSerializer):
             'fee_currency',
             'reg_status',
             'reg_open',
-            'reg_close'
+            'reg_close',
+            'academic',
+            'citizenship',  
+            'passport', 
+            'essay', 
+            'lor', 
+            'sop'
         )
 
     
