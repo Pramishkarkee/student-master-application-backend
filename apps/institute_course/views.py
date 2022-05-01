@@ -209,7 +209,7 @@ class ApplicantDashboard(generics.ListAPIView,InstituteMixins):
         ).execute()
 
 @permission_classes((permissions.AllowAny,))
-class StudentMarkToSendView(APIView):
+class StudentMarkToSendView(APIView,StudentMixin):
     """
     {
         "courseId":"",
@@ -217,15 +217,10 @@ class StudentMarkToSendView(APIView):
         "essay":[],
         "sop":[],
         "lor":[]
-}
+        }
     """
-
-    def post(self, request):
+    def post(self, request,student_id):
         college = OrderedDict()
         college.update(request.data)
-
-        # customserializer = CheckCollegeAccountCreateSerializer(data=college)
-        # print("jdsfgjdgfdjgfdj",request.data,college)
-        usecases.SendedDocumentByStudent(data=request.data).execute()
-        print(college)
-        return Response({"hello":"how do you do"})
+        usecases.SendedDocumentByStudent(data=request.data,student=self.get_student()).execute()
+        return Response({"message":"Create mark document successfully"})

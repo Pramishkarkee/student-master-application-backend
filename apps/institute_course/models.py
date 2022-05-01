@@ -187,22 +187,27 @@ class CommentApplicationConsultancy(BaseModel):
 
 
 class AccessOfAcademicDocument(BaseModel):
+    student = models.ForeignKey(StudentModel,on_delete=CASCADE,null=True,blank=True)
     course = models.ForeignKey(InstituteCourse,on_delete=CASCADE)
     academic = models.ForeignKey(Academic, on_delete=models.CASCADE)
 
 class AccessStudentIdentity(BaseModel):
+    student = models.ForeignKey(StudentModel,on_delete=CASCADE,null=True,blank=True)
     course = models.ForeignKey(InstituteCourse,on_delete=CASCADE)
     citizenship=models.ForeignKey(Citizenship, on_delete=models.CASCADE,null=True,blank=True)
     passport = models.ForeignKey(Passport, on_delete=models.CASCADE,null=True,blank=True)
 
 class AccessStudentLor(BaseModel):
+    student = models.ForeignKey(StudentModel,on_delete=CASCADE,null=True,blank=True)
     course = models.ForeignKey(InstituteCourse,on_delete=CASCADE)
     lor = models.ForeignKey(StudentLor, on_delete=models.CASCADE)
 
 class AccessStudentEssay(BaseModel):
+    student = models.ForeignKey(StudentModel,on_delete=CASCADE,null=True,blank=True)
     course = models.ForeignKey(InstituteCourse,on_delete=CASCADE)
     essay = models.ForeignKey(PersonalEssay, on_delete=models.CASCADE)
 
 class AccessStudentSop(BaseModel):
+    student = models.ForeignKey(StudentModel,on_delete=CASCADE,null=True,blank=True)
     course = models.ForeignKey(InstituteCourse,on_delete=CASCADE)
     sop = models.ForeignKey(StudentSop,on_delete=models.CASCADE)

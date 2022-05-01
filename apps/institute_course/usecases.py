@@ -288,8 +288,9 @@ class ApplicationDashboardUsecase(BaseUseCase):
 
 
 class SendedDocumentByStudent():
-    def __init__(self,data):
+    def __init__(self,data,student):
         self._data = data
+        self._student = student
     def execute(self):
         self._factory()
     def _factory(self):
@@ -307,7 +308,6 @@ class SendedDocumentByStudent():
 
         for k in self._data.keys():  
             if k =="student_identity":
-                print()
                 if len(self._data[k]['citizenship'])>1:
                     try:
                         citizenship = Citizenship.objects.get(pk=self._data[k]['citizenship'])
@@ -331,6 +331,7 @@ class SendedDocumentByStudent():
                             
                             self.essay.append(AccessStudentEssay(
                                 essay=getessay,
+                                student=self._student,
                                 course=self.course))
                         except PersonalEssay.DoesNotExist:
                             raise ValidationError({'error': _('Essay does not exist for following id')})
@@ -343,6 +344,7 @@ class SendedDocumentByStudent():
                     
                             self.sop.append(AccessStudentSop(
                                 sop=getSop,
+                                student=self._student,
                                 course=self.course
                             ))
                         except StudentSop.DoesNotExist:
@@ -355,6 +357,7 @@ class SendedDocumentByStudent():
                             getLor = StudentLor.objects.get(pk=lor_id)
                             self.lor.append(AccessStudentLor(
                                 lor=getLor,
+                                student=self._student,
                                 course=self.course))
                         except StudentLor.DoesNotExist:
                             raise ValidationError({'error': _('Passport does not exist for following id')})
@@ -366,6 +369,7 @@ class SendedDocumentByStudent():
                         
                             self.academic.append(AccessOfAcademicDocument(
                                 academic=getAcademic,
+                                student=self._student,
                                 course=self.course))
                         except StudentLor.DoesNotExist:
                             raise ValidationError({'error': _('academic does not exist for following id')})
@@ -375,6 +379,7 @@ class SendedDocumentByStudent():
         if len(self.student_identity) >0:
             AccessStudentIdentity.objects.create(
                     course=self.course,
+                    student=self._student,
                     citizenship=self.student_identity['citizenship'],
                     passport = self.student_identity['passport']
                 )
