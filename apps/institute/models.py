@@ -60,6 +60,7 @@ class Institute(BaseModel):
     def __str__(self):
         return self.name
 
+
 class InstituteStaff(BaseModel):
     user = models.OneToOneField(InstituteUser, on_delete=models.CASCADE)
     institute = models.ForeignKey(Institute,on_delete=models.CASCADE)

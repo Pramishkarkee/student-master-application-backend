@@ -179,8 +179,30 @@ class DeleteFavouriteInstitute(generics.DestroyWithMessageAPIView,FavouriteMixin
             favourite = self.get_object(),
         ).execute()
 
-# class CreateInstituteVisitor(generics.CreateWithMessageAPIView):
-#     """
-#     This endpoint is use to create visitor
-#     """
-    
+class CreateInstituteVisitorView(generics.CreateWithMessageAPIView,StudentMixin):
+    """
+    This endpoint is use to create visitor
+    """
+    serializer_class = serilizers.CreateInstituteVisiterSerializer
+    message = _("institute visitor Create Successfully")
+    def get_object(self):
+        return self.get_student()
+
+    def perform_create(self, serializer):
+        return usecases.CreateInstituteViewersUseCase(
+            student=self.get_object(),
+            serializer = serializer
+        ).execute()
+
+class ListVisitorHistryView(generics.ListAPIView,StudentMixin):
+    """
+    This endpoint is use to list histry
+    """
+    serializer_class = serilizers.ListVisitorHistrySerializer
+    def get_object(self):
+        return self.get_student()
+
+    def get_queryset(self):
+        return usecases.GetStudentHistryUseCase(
+            student=self.get_object(),
+        ).execute()

@@ -403,10 +403,7 @@ class SendedDocumentByStudent():
                     self.academic
                 )
             
-
-
-            
-
+# class StudentApplicationUseCase(BaseUseCase):
 
         
 

@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework.exceptions import ValidationError
 
 from apps.notification.mixins import NotificationMixin
-from apps.students.models import FavouriteInstitute, StudentAddress, StudentUser, StudentModel, CompleteProfileTracker
+from apps.students.models import FavouriteInstitute, InstituteViewers, StudentAddress, StudentUser, StudentModel, CompleteProfileTracker
 from apps.core import usecases
 from apps.settings.models import Settings
 from apps.core.usecases import BaseUseCase
@@ -264,3 +264,30 @@ class DeleteFavouriteInstitute(BaseUseCase):
 
     def _factory(self):
         self._favourite.delete()
+
+class CreateInstituteViewersUseCase(BaseUseCase):
+    def __init__(self,student,serializer):
+        self._student = student
+        self._serializer = serializer
+        self._data= self._serializer.validated_data
+
+    def execute(self):
+        self._factory()
+    
+    def _factory(self):
+        InstituteViewers.objects.create(
+            student=self._student,
+            **self._data
+        )
+
+
+class GetStudentHistryUseCase(BaseUseCase):
+    def __init__(self,student):
+        self._student = student
+
+    def execute(self):
+        self._factory()
+        return self._visitor
+
+    def _factory(self):
+        self._visitor = InstituteViewers.objects.filter(student= self._student)

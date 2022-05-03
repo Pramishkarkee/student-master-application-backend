@@ -47,11 +47,11 @@ class AddInstituteCourseSerializer(InstituteCourseSerializer):
             'lor', 
             'sop'
         )
-        validators = [UniqueTogetherValidator(
-            queryset=InstituteCourse.objects.all(),
-            fields=['institute','course'],
-            message="This Course Already Exist"
-        )]
+        # validators = [UniqueTogetherValidator(
+        #     queryset=InstituteCourse.objects.all(),
+        #     fields=['institute','course'],
+        #     message="This Course Already Exist"
+        # )]
     # def validate(self, attrs):
     #     attrs = super().validate(attrs)
 
@@ -191,7 +191,7 @@ class ApplicationInstituteCourseSerializer(InstituteCourseSerializer):
 #             'created_at'
 #         )
 
-class CancleStudentApplicationSerializer(serializers.ModelSerializer):
+class CancelStudentApplicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = InstituteApply
         fields = (
@@ -224,3 +224,23 @@ class ApplicationSerializerDashboard(serializers.Serializer):
     action__count = serializers.IntegerField()
 
 # <BaseModelQuerySet [{'action': 'applied', 'action__count': 1}, {'action': 'verify', 'action__count': 1}]>
+
+class StudentAdmissionApplicationSerializer(serializers.ModelSerializer):
+    """
+    application detail , course detail,application status,comment,sended document
+    """
+    class Meta:
+        model = InstituteApply
+        fields = (
+            'student',
+            'course',
+            "consultancy",
+            'action',
+            'action_data',
+            'institute',
+            'action_institute_user',
+            'action_consultancy_user',
+            'view_date',
+            'forward',
+            'cancel',
+        )

@@ -58,8 +58,17 @@ urlpatterns = [
         '<favourite_id>/favourite/delete',
         views.DeleteFavouriteInstitute.as_view(),
         name="delete-favourite"
+    ),
+    path(
+        '<student_id>/visitor/add',
+        views.CreateInstituteVisitorView.as_view(),
+        name="visitor create"
+    ),
+    path(
+        '<student_id>/visitor/list',
+        views.ListVisitorHistryView.as_view(),
+        name="list-visitor"
     )
-
 ]
 # urlpatterns = format_suffix_patterns (urlpatterns)
 

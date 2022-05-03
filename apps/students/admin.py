@@ -24,3 +24,9 @@ class StudentFavouriteInstitute(BaseModelAdmin):
     )
 
 
+@admin.register(models.InstituteViewers)
+class StudentHistryAdmin(BaseModelAdmin):
+    list_display = BaseModelAdmin.list_display + (
+        'student',
+        'institute',
+    )

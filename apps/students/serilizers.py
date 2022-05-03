@@ -8,7 +8,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.validators import UniqueTogetherValidator
 
-from apps.students.models import CompleteProfileTracker, FavouriteInstitute, StudentAddress, StudentModel
+from apps.students.models import CompleteProfileTracker, FavouriteInstitute, InstituteViewers, StudentAddress, StudentModel
 from apps.core import fields
 User = get_user_model()
 
@@ -142,3 +142,20 @@ class GetFavouriteInstituteSerializer(serializers.ModelSerializer):
     class Meta:
         model = FavouriteInstitute
         fields = '__all__'
+
+class CreateInstituteVisiterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InstituteViewers
+        fields = (
+            'institute', 
+            )
+
+class ListVisitorHistrySerializer(serializers.ModelSerializer): 
+    class Meta:
+        model = InstituteViewers
+        fields = '__all__'
+    # validators = [UniqueTogetherValidator(
+    #         queryset=InstituteViewers.objects.all(),
+    #         fields=['institute','student'],
+    #         message="Student already visit this institute"
+    #     )]

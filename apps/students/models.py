@@ -109,20 +109,9 @@ class FavouriteInstitute(BaseModel):
     class Meta:
         unique_together = ['student','institute']
 
-class VisitorIdCreator(BaseModel):
-    latitude = models.FloatField(blank=True,null=True)
-    longitude = models.FloatField(blank=True,null=True)
 
-class InstituteVisitor(BaseModel):
-    visitor = models.ForeignKey(
-        VisitorIdCreator,
-        on_delete=DO_NOTHING
-    )
-    institute = models.ForeignKey(
-        Institute,
-        on_delete=DO_NOTHING
-    )
-
+class InstituteViewers(BaseModel):
+    student = models.ForeignKey(StudentModel,on_delete=CASCADE)
+    institute = models.ForeignKey(Institute, on_delete=CASCADE)
     class Meta:
-        unique_together = ('visitor','institute')
-    
+        unique_together = ['student','institute']

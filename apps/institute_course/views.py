@@ -15,7 +15,7 @@ from rest_framework import permissions
 from apps.core import generics
 from apps.institute_course.serializers import (
     ApplicationSerializerDashboard,
-    CancleStudentApplicationSerializer,
+    CancelStudentApplicationSerializer,
     CommentApplicationSerializer,
     CourseSerializer, 
     FacultySerializer,
@@ -183,7 +183,7 @@ class CancleStudentApplication(generics.UpdateWithMessageAPIView,ApplyMixin):
     """
     This endpoint is use to cancle application
     """
-    serializer_class = CancleStudentApplicationSerializer
+    serializer_class = CancelStudentApplicationSerializer
     def get_object(self):
         return self.get_apply()
 
@@ -216,11 +216,14 @@ class StudentMarkToSendView(APIView,StudentMixin):
         "student_identity":{"citizenship":"","passport":""},
         "essay":[],
         "sop":[],
-        "lor":[]
+        "lor":[],
+        "academic":[],
         }
     """
     def post(self, request,student_id):
-        college = OrderedDict()
-        college.update(request.data)
+        # college = OrderedDict()
+        # college.update(request.data)
         usecases.SendedDocumentByStudent(data=request.data,student=self.get_student()).execute()
         return Response({"message":"Create mark document successfully"})
+
+

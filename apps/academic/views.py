@@ -153,7 +153,7 @@ class CreatePersonalEssayView(generics.CreateWithMessageAPIView,StudentMixin):
             serializer =serializer
         ).execute()
 
-class GetSopView(generics.RetrieveAPIView,SopMixins):
+class GetSopView(generics.ListAPIView,StudentMixin):
     """
     This endpoint is use to get sop
     """
@@ -161,12 +161,12 @@ class GetSopView(generics.RetrieveAPIView,SopMixins):
     serializer_class = GetSopSerializer
     no_content_error_message = _('no academic detail at that moment')
     def get_object(self):
-        return self.get_sop()
+        return self.get_student()
 
     def get_queryset(self):
         return usecases.GetStudentSopUseCase(
-            sop=self.get_object()
-        )
+            student=self.get_object()
+        ).execute()
 
 
 class GetLorListView(generics.ListAPIView,StudentMixin):
@@ -184,18 +184,18 @@ class GetLorListView(generics.ListAPIView,StudentMixin):
             student=self.get_object()
         ).execute()
 
-class GetEssayView(generics.RetrieveAPIView,EssayMixins):
+class GetEssayView(generics.ListAPIView,StudentMixin):
     """
     This endpoint is use to get student personal essay
     """
     serializer_class = GetPersonalEssay
     def get_object(self):
-        return self.get_essay()
+        return self.get_student()
 
     def get_queryset(self):
         return usecases.GetPersonalEssayUseCase(
-            essay=self.get_object()
-        )
+            student=self.get_object()
+        ).execute()
 
 class UpdateSopView(generics.UpdateWithMessageAPIView,GetSopMixin):
     """

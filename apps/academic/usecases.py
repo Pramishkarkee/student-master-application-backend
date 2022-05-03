@@ -174,9 +174,9 @@ class GetLorListUseCase(BaseUseCase):
         return self._lor
 
 class GetStudentSopUseCase(BaseUseCase):
-    def __init__(self,sop):
+    def __init__(self,student):
         
-        self._sop_id = sop
+        self._student = student
 
     def execute(self):
         
@@ -185,7 +185,7 @@ class GetStudentSopUseCase(BaseUseCase):
 
     def _factory(self):
         try:
-            self._sop=StudentSop.objects.get(pk=self._sop_id)
+            self._sop=StudentSop.objects.filter(student=self._student)
         except StudentSop.DoesNotExist:
             raise SopNotFound
 
@@ -265,8 +265,8 @@ class GetEssayByIdUseCase(BaseUseCase):
         except PersonalEssay.DoesNotExist:
             raise EssayNotFound
 class GetPersonalEssayUseCase(BaseUseCase):
-    def __init__(self,essay):
-        self._essay = essay
+    def __init__(self,student):
+        self._student = student
 
     def execute(self):
         self._factory()
@@ -274,7 +274,7 @@ class GetPersonalEssayUseCase(BaseUseCase):
 
     def _factory(self):
         try:
-            self._personal_essay= PersonalEssay.objects.get(student=self._essay)
+            self._personal_essay= PersonalEssay.objects.filter(student=self._student)
         except PersonalEssay.DoesNotExist:
             raise EssayNotFound
 

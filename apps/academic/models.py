@@ -35,6 +35,7 @@ class Academic(BaseModel):
     marksheet = models.FileField(
         upload_to=upload_academic_doc_to,
     )
+    name =  models.CharField(max_length=100,default="Academic Document")
     certificate = models.FileField(
         upload_to=upload_academic_doc_to,
     )
@@ -44,7 +45,8 @@ class Academic(BaseModel):
         ]
 
 class StudentSop(BaseModel):
-    student= models.OneToOneField(StudentModel, on_delete=CASCADE)
+    name= models.CharField(max_length=100,blank=True,null=True)
+    student= models.ForeignKey(StudentModel, on_delete=CASCADE)
     document = models.FileField(
         upload_to=upload_academic_doc_to
     )
@@ -53,7 +55,9 @@ class StudentSop(BaseModel):
         name ,extension = os.path.splitext(str(self.document))
         self.doc_type = extension
         super(StudentSop, self).save(*args, **kwargs)
+
 class StudentLor(BaseModel):
+    name= models.CharField(max_length=100,blank=True,null=True)
     student = models.ForeignKey(StudentModel,on_delete=CASCADE)
     document = models.FileField(
         upload_to=upload_academic_doc_to
@@ -64,7 +68,8 @@ class StudentLor(BaseModel):
         self.doc_type = extension
         super(StudentLor, self).save(*args, **kwargs)
 class PersonalEssay(BaseModel):
-    student = models.OneToOneField(StudentModel,on_delete=CASCADE)
+    name= models.CharField(max_length=100,blank=True,null=True)
+    student = models.ForeignKey(StudentModel,on_delete=CASCADE)
     essay = models.FileField(
         upload_to=upload_academic_doc_to,
         blank=True,

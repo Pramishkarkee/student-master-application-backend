@@ -73,6 +73,7 @@ class CreateSopSerializer(serializers.ModelSerializer):
         model = StudentSop
         fields = (
             'document',
+            'name',
         )
 
 
@@ -81,6 +82,7 @@ class CreateLorSerializer(serializers.ModelSerializer):
         model = StudentLor
         fields = (
             'document',
+            'name'
         )
 
 class CreateEssaySerializer(serializers.ModelSerializer):
@@ -88,6 +90,8 @@ class CreateEssaySerializer(serializers.ModelSerializer):
         model = PersonalEssay
         fields = (
             'essay',
+            'name',
+            'content'
         )
 
 class GetLorSerializer(serializers.ModelSerializer):
@@ -109,6 +113,7 @@ class UpdateSopSerializer(serializers.ModelSerializer):
         model = StudentSop
         fields = (
             'document',
+            'name',
         )
 
 class UpdateEssaySerializer(serializers.ModelSerializer):
@@ -116,6 +121,7 @@ class UpdateEssaySerializer(serializers.ModelSerializer):
         model = PersonalEssay
         fields = (
             'essay',
-            'content'
+            'name',
+            'content',
         )
 
