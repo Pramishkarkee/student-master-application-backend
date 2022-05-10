@@ -31,7 +31,6 @@ class UserLoginWithOTPUseCase(CreateUseCase, OTPMixin):
             'password': self._data['password']
         }
         self._user = authenticate(self._request, **credentials)
-
         if self._user is not None:
             """
             Sends email confirmation mail to the user's email

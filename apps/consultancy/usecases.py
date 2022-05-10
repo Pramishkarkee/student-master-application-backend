@@ -64,7 +64,6 @@ class GetConsultancyUseCase(BaseUseCase):
     def _factory(self):
         try:
             self._consultancy = Consultancy.objects.get(pk=self._consultancy_id)
-
         except Consultancy.DoesNotExist:
             raise ConsultancyNotFound
 
