@@ -107,6 +107,7 @@ class InstituteScholorship(BaseModel):
     institute = models.ForeignKey(Institute,on_delete=CASCADE)
     topic = models.CharField(max_length=200)
     description = models.TextField()
+    max_scholorship_percentage = models.FloatField(default=0.0)
     def __str__(self):
         return self.topic
 

@@ -208,6 +208,12 @@ class ApplicantDashboard(generics.ListAPIView,InstituteMixins):
             institute=self.get_object()
         ).execute()
 
+class ListStudentApplicationView(generics.ListAPIView,StudentMixin):
+    """
+    list student application view
+    """
+    
+
 @permission_classes((permissions.AllowAny,))
 class StudentMarkToSendView(APIView,StudentMixin):
     """
@@ -227,3 +233,6 @@ class StudentMarkToSendView(APIView,StudentMixin):
         return Response({"message":"Create mark document successfully"})
 
 
+    def get(self,request,student_id):
+        usecases.GetAccessDocument().execute()
+        return Response({"message":"Create mark document successfully"})

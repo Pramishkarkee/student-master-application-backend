@@ -189,12 +189,12 @@ class CommentApplicationConsultancy(BaseModel):
 
 class AccessOfAcademicDocument(BaseModel):
     student = models.ForeignKey(StudentModel,on_delete=CASCADE,null=True,blank=True)
-    course = models.ForeignKey(InstituteCourse,on_delete=CASCADE)
+    course = models.ForeignKey(InstituteCourse,on_delete=CASCADE,related_name='access_student_academic')
     academic = models.ForeignKey(Academic, on_delete=models.CASCADE)
 
 class AccessStudentIdentity(BaseModel):
     student = models.ForeignKey(StudentModel,on_delete=CASCADE,null=True,blank=True)
-    course = models.ForeignKey(InstituteCourse,on_delete=CASCADE)
+    course = models.ForeignKey(InstituteCourse,on_delete=CASCADE,related_name='access_student_identity')
     citizenship=models.ForeignKey(Citizenship, on_delete=models.CASCADE,null=True,blank=True)
     passport = models.ForeignKey(Passport, on_delete=models.CASCADE,null=True,blank=True)
 

@@ -201,7 +201,30 @@ class CancelStudentApplicationSerializer(serializers.ModelSerializer):
 
 class GetStudentApplicationInstituteSerializer(serializers.ModelSerializer):
     student_name = serializers.CharField(source='get_student_user_name')
-    consultancy = serializers.CharField(source='get_consultancy_name')
+    consultancy_name = serializers.CharField(source='get_consultancy_name')
+    course_name = serializers.CharField(source='get_student_course') 
+    address = serializers.CharField(source='student_address')
+    class Meta:
+        model = InstituteApply
+        fields = (
+            'institute'
+            'id',
+            'student',
+            'student_name',
+            'course_name'
+            'course',
+            'consultancy_name'
+            'consultancy',
+            'action',
+            'cancel',
+            'created_at',
+            'address',
+        )
+
+class GetStudentApplicationStudentSerializer(serializers.ModelSerializer):
+    student_name = serializers.CharField(source='get_student_user_name')
+    consultancy_name = serializers.CharField(source='get_consultancy_name')
+
     course = serializers.CharField(source='get_student_course') 
     address = serializers.CharField(source='student_address')
     class Meta:
@@ -212,12 +235,14 @@ class GetStudentApplicationInstituteSerializer(serializers.ModelSerializer):
             'student_name',
             'course',
             'consultancy',
+            'consultancy_name',
+            'institute',
+            'institute_name',
             'action',
             'cancel',
             'created_at',
             'address',
         )
-
 
 class ApplicationSerializerDashboard(serializers.Serializer):
     action = serializers.CharField()
