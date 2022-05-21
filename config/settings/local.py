@@ -34,8 +34,8 @@ EMAIL_USE_TLS = True
 # EMAIL_PORT = 465
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'info.aeonsst@gmail.com'
-EMAIL_HOST_PASSWORD = 'Pr@mish@123'
+EMAIL_HOST_USER = 'tutee.line@gmail.com'
+EMAIL_HOST_PASSWORD = 'Tuteeline@123'
 DEFAULT_FROM_EMAIL = 'info.aeonsst@gmail.com'
 
 

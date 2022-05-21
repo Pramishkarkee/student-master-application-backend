@@ -411,46 +411,17 @@ class GetAccessDocument():
         self._factory()
 
     def _factory(self):
-        studentId=""
-        courseId= ""
+        studentId="a6586b1f-7b2b-433c-be48-1711c4770fae"
+        courseId= "dd26af6f-4ace-4660-9b67-6db5dad5c4bb"
         # student = Student
-        cursor = connection.cursor()
-        cursor.execute('''SELECT * FROM institute_course_institutecourse''')
+        academic_document = AccessOfAcademicDocument.objects.select_related('academic').filter(student=studentId,course=courseId)
+
         joinStudent=AccessStudentIdentity.objects.select_related('course','citizenship','passport').all()
         c=Course.objects.prefetch_related('access_student_identity').all()
-        # print("**********cursor",cursor.fetchall())
-        """
-        select institute_course_institutecourse.id ,
-        public."studentIdentity_citizenship".issue_date,
-        academic_studentlor.document,
-        academic_studentsop.document,
-        academic_personalessay.content
-        from institute_course_institutecourse
-        inner join institute_course_accessstudentidentity on
-        institute_course_institutecourse.id=institute_course_accessstudentidentity.course_id
-        inner join public."studentIdentity_citizenship" on 
-        public."studentIdentity_citizenship".id = institute_course_accessstudentidentity.citizenship_id
-        inner join institute_course_accessstudentlor on
-        institute_course_accessstudentlor.course_id=institute_course_institutecourse.id
-        inner join academic_studentlor on
-        academic_studentlor.id = institute_course_accessstudentlor.lor_id
-        inner join institute_course_accessstudentsop on
-        institute_course_accessstudentsop.course_id=institute_course_institutecourse.id
-        inner join academic_studentsop on
-        academic_studentsop.id =institute_course_accessstudentsop.sop_id
-        inner join institute_course_accessstudentessay on 
-        institute_course_accessstudentessay.course_id=institute_course_institutecourse.id
-        inner join academic_personalessay on
-        academic_personalessay.id = institute_course_accessstudentessay.essay_id
-        left join institute_course_accessofacademicdocument on 
-        institute_course_accessofacademicdocument.course_id = institute_course_institutecourse.id
-        left join academic_academic on 
-        academic_academic.id = institute_course_accessofacademicdocument.academic_id
-        where 
-        institute_course_institutecourse.id = '527f1fd8-b492-45e3-937f-f3f2ac8c1fbd'
-        """
-        people = serializers.serialize("json", joinStudent)
-        print("********** django join",people)
+        for i in academic_document:
+            print("********",i.academic)
+        people = serializers.serialize("json", academic_document)
+        print("********** django join academic %%%%",list(academic_document))
         # for i in cursor.fetchall():
         #     print("************index",i)
         

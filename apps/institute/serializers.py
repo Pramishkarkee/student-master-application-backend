@@ -158,6 +158,7 @@ class ListInstituteSerializer(InstituteSerializer):
             'contact',
             'institute_email',
             'country',
+            'rating',
             'logo',
             'cover_image',
         )
