@@ -1,22 +1,22 @@
 
+from django.db import connection
+from django.db.models import Count
+from django.utils.datetime_safe import datetime
+from django.utils.translation import gettext_lazy as _
+from rest_framework.exceptions import ValidationError
 from apps.academic.models import Academic, PersonalEssay, StudentLor, StudentSop
-from apps.auth.jwt import serializers
-from apps.consultancy.exceptions import ConsultancyNotFound
 from apps.consultancy.models import Consultancy
+from apps.core.usecases import BaseUseCase
+from apps.institute.models import Institute, InstituteStaff
+from apps.institute_course.exceptions import CourseNotFound, FacultyNotFound, InstituteApplyNotFound, InstituteNotFound, \
+    InstituteStaffNotFound
+from apps.institute_course.models import AccessOfAcademicDocument, AccessStudentEssay, AccessStudentIdentity, \
+    AccessStudentLor, AccessStudentSop, CommentApplicationInstitute, InstituteApply, InstituteCourse, Course, Faculty
 from apps.studentIdentity.models import Citizenship, Passport
 from apps.students.exceptions import StudentModelNotFound
 from apps.students.models import StudentModel
-from apps import institute
-from django.utils.datetime_safe import datetime
-from rest_framework.exceptions import ValidationError
-from  django.utils.translation import  gettext_lazy as _
-from django.db.models import Count
-from django.core import serializers
-from apps.core.usecases import BaseUseCase
-from apps.institute_course.models import AccessOfAcademicDocument, AccessStudentEssay, AccessStudentIdentity, AccessStudentLor, AccessStudentSop, CommentApplicationInstitute, InstituteApply, InstituteCourse,Course,Faculty
-from apps.institute.models import Institute, InstituteStaff
-from apps.institute_course.exceptions import CourseNotFound, FacultyNotFound, InstituteApplyNotFound, InstituteNotFound, InstituteStaffNotFound
-from django.db import connection
+from apps.utils.dict_converter import QueryDataSerializer
+
 
 class AddCourseUseCase(BaseUseCase):
 
@@ -308,6 +308,7 @@ class SendedDocumentByStudent():
 
         for k in self._data.keys():  
             if k =="student_identity":
+                c = self._data[k]['citizenship']
                 if len(self._data[k]['citizenship'])>1:
                     try:
                         citizenship = Citizenship.objects.get(pk=self._data[k]['citizenship'])
@@ -377,11 +378,13 @@ class SendedDocumentByStudent():
 
     def _AddDataIntoTable(self):
         if len(self.student_identity) >0:
+            citinzinship = None if self.student_identity.get('citizenship') is None else self.student_identity['citizenship']
+            passport = None if self.student_identity.get('passport') is None else self.student_identity['passport']
             AccessStudentIdentity.objects.create(
                     course=self.course,
                     student=self._student,
-                    citizenship=self.student_identity['citizenship'],
-                    passport = self.student_identity['passport']
+                    citizenship=citinzinship,
+                    passport = passport
                 )
         if len(self.lor)>0:
             AccessStudentLor.objects.bulk_create(
@@ -404,29 +407,157 @@ class SendedDocumentByStudent():
                 )
             
 class GetAccessDocument():
+    # https: // docs.djangoproject.com / en / 4.0 / topics / db / sql /
+    # https: // anthonydebarros.com / 2020 / 0
+    # 9 / 06 / generate - json -
+    # from
+    # -sql - using - python /
     def __init__(self):
         pass
 
     def execute(self):
-        self._factory()
+        return self._factory()
 
     def _factory(self):
-        studentId="a6586b1f-7b2b-433c-be48-1711c4770fae"
-        courseId= "dd26af6f-4ace-4660-9b67-6db5dad5c4bb"
-        # student = Student
-        academic_document = AccessOfAcademicDocument.objects.select_related('academic').filter(student=studentId,course=courseId)
+        self.studentId='a6586b1f-7b2b-433c-be48-1711c4770fae'
+        self.courseId= 'dd26af6f-4ace-4660-9b67-6db5dad5c4bb'
+        self._GetSop()
+        self._GetStudentIdentity()
+        self._GetPersonalEsay()
+        self._GetAcademicDetail()
+        self._GetStudentLor()
+        self._GetStudentDetail()
+        data={
+            "student":self.student,
+            "sop":self.sop,
+            "lor":self.lor,
+            "academic_detail":self.academic,
+            "essay":self.personal_essay,
+            "student_identity":self.identity
+        }
+        return data
+    def _GetStudentDetail(self):
+        get_student ="""
+        select * from public.students_studentmodel left join 
+        public.students_studentaddress on 
+        students_studentmodel.id=students_studentaddress.student_id
+        where students_studentmodel.id='{student_id}'
+        """.format(student_id=self.studentId)
 
-        joinStudent=AccessStudentIdentity.objects.select_related('course','citizenship','passport').all()
-        c=Course.objects.prefetch_related('access_student_identity').all()
-        for i in academic_document:
-            print("********",i.academic)
-        people = serializers.serialize("json", academic_document)
-        print("********** django join academic %%%%",list(academic_document))
-        # for i in cursor.fetchall():
-        #     print("************index",i)
+        self.student=QueryDataSerializer(query_data=get_student).execute()
+    def _GetSop(self):
+        get_sop_query = """
+        select academic_studentsop.document,academic_studentsop.id,academic_studentsop.doc_type,institute_course_accessstudentsop.id
+        as access_id
+        from  public.institute_course_accessstudentsop 
+        inner Join public.academic_studentsop
+        on academic_studentsop.id=institute_course_accessstudentsop.sop_id
+        where institute_course_accessstudentsop.student_id='{student_id}'
+        and institute_course_accessstudentsop.course_id='{course_id}'
+        """.format(course_id=self.courseId,student_id=self.studentId)
+
+        self.sop=QueryDataSerializer(query_data=get_sop_query).execute()
+
+    def _GetStudentIdentity(self):
+        student_identity_query = """
+        select public."studentIdentity_citizenship".front_page,
+        public."studentIdentity_citizenship".back_page,
+        public."studentIdentity_citizenship".citizenship_number,
+        public."studentIdentity_citizenship".issue_date,
+        public."studentIdentity_citizenship".issue_from,
+        institute_course_accessstudentidentity.id ,
+        public."studentIdentity_passport".id as p_id,
+        public."studentIdentity_citizenship".id as c_id,
+        public."studentIdentity_passport".passport_number ,
+        public."studentIdentity_passport".issue_date as passport_issue_data,
+        public."studentIdentity_passport".expire_date as passport_expire_date,
+        public."studentIdentity_passport".issue_from as passport_issue_from,
+        public."studentIdentity_passport".passport_image
+        from  public.institute_course_accessstudentidentity 
+        right Join public."studentIdentity_citizenship"
+        on public."studentIdentity_citizenship".id=
+        institute_course_accessstudentidentity.citizenship_id
+        right join public."studentIdentity_passport" on
+        public."studentIdentity_passport".id=institute_course_accessstudentidentity.passport_id
+        where institute_course_accessstudentidentity.student_id='{student_id}'
+        and institute_course_accessstudentidentity.course_id='{course_id}' ;
+        """.format(student_id=self.studentId,course_id=self.courseId)
+        self.identity = QueryDataSerializer(query_data=student_identity_query).execute()
+
+    def _GetStudentLor(self):
+        lor_query = """
+            select academic_studentlor.document,
+            academic_studentlor.doc_type,
+            academic_studentlor.name from  public.institute_course_accessstudentlor
+            inner join public.academic_studentlor on
+            public.institute_course_accessstudentlor.lor_id=academic_studentlor.id
+            where institute_course_accessstudentlor.student_id='{student_id}' and
+            institute_course_accessstudentlor.course_id='{course_id}';
+
+        """.format(student_id=self.studentId,course_id=self.courseId)
+        self.lor = QueryDataSerializer(query_data=lor_query).execute()
+
+    def _GetPersonalEsay(self):
+        essay_query = """
+        select academic_personalessay.name,
+        academic_personalessay.content,
+        academic_personalessay.doc_type,
+        academic_personalessay.essay,
+        institute_course_accessstudentessay.essay_id from public.institute_course_accessstudentessay
+        inner join public.academic_personalessay on
+        academic_personalessay.id=institute_course_accessstudentessay.essay_id
+        where institute_course_accessstudentessay.course_id='{course_id}'
+        and
+        institute_course_accessstudentessay.student_id='{student_id}'
+        """.format(course_id=self.courseId,student_id=self.studentId)
+        self.personal_essay = QueryDataSerializer(query_data=essay_query).execute()
+
+    def _GetAcademicDetail(self):
+        academic_query = """
+        select * from  institute_course_accessofacademicdocument
+        inner join academic_academic on 
+        academic_academic.id=institute_course_accessofacademicdocument.academic_id
+        where institute_course_accessofacademicdocument.course_id='{course_id}' and
+        institute_course_accessofacademicdocument.student_id='{student_id}'
+        """.format(course_id=self.courseId,student_id=self.studentId)
+        self.academic = QueryDataSerializer(query_data=academic_query).execute()
+
         
 
 
 
 
+
+
+# query = """
+#             select * from public.students_studentmodel
+#             FULL OUTER JOIN public.institute_course_accessstudentsop
+#             ON institute_course_accessstudentsop.student_id=students_studentmodel.id AND
+#             institute_course_accessstudentsop.course_id='{course_id}'
+#             FULL OUTER Join public.academic_studentsop
+#             on academic_studentsop.id=institute_course_accessstudentsop.sop_id
+#             FULL OUTER join public.institute_course_accessstudentessay
+#             on institute_course_accessstudentessay.course_id='{course_id}'
+#             And institute_course_accessstudentessay.student_id=students_studentmodel.id
+#             FULL OUTER join public.academic_personalessay
+#             on academic_personalessay.id=institute_course_accessstudentessay.essay_id
+#             FULL OUTER join public.institute_course_accessstudentidentity
+#             on institute_course_accessstudentidentity.student_id=students_studentmodel.id and
+#             institute_course_accessstudentidentity.course_id='{course_id}'
+#             FULL OUTER join public."studentIdentity_citizenship" on
+#             public."studentIdentity_citizenship".id=institute_course_accessstudentidentity.citizenship_id
+#             FULL OUTER join public."studentIdentity_passport" on
+#             public."studentIdentity_passport".id=institute_course_accessstudentidentity.passport_id
+#             FULL OUTER join public.institute_course_accessstudentlor on
+#             institute_course_accessstudentlor.student_id=students_studentmodel.id and
+#             institute_course_accessstudentlor.course_id='{course_id}'
+#             FULL OUTER join public.academic_studentlor on
+#             academic_studentlor.id = institute_course_accessstudentlor.lor_id
+#             FULL OUTER join public.institute_course_accessofacademicdocument on
+#             institute_course_accessofacademicdocument.student_id=students_studentmodel.id and
+#             institute_course_accessofacademicdocument.course_id='{course_id}'
+#             FULL OUTER join public.academic_academic on
+#             academic_academic.id=institute_course_accessofacademicdocument.academic_id
+#             where students_studentmodel.id='{student_id}'
+#         """.format(course_id=courseId,student_id=studentId)
 

@@ -192,23 +192,35 @@ class AccessOfAcademicDocument(BaseModel):
     course = models.ForeignKey(InstituteCourse,on_delete=CASCADE,related_name='access_student_academic')
     academic = models.ForeignKey(Academic, on_delete=models.CASCADE)
 
+    class Meta:
+        unique_together = ('course','academic')
+
 class AccessStudentIdentity(BaseModel):
     student = models.ForeignKey(StudentModel,on_delete=CASCADE,null=True,blank=True)
     course = models.ForeignKey(InstituteCourse,on_delete=CASCADE,related_name='access_student_identity')
     citizenship=models.ForeignKey(Citizenship, on_delete=models.CASCADE,null=True,blank=True)
     passport = models.ForeignKey(Passport, on_delete=models.CASCADE,null=True,blank=True)
+    class Meta:
+        unique_together = ('course','student')
 
 class AccessStudentLor(BaseModel):
     student = models.ForeignKey(StudentModel,on_delete=CASCADE,null=True,blank=True)
     course = models.ForeignKey(InstituteCourse,on_delete=CASCADE)
     lor = models.ForeignKey(StudentLor, on_delete=models.CASCADE)
 
+    class Meta:
+        unique_together = ('course','lor')
+
 class AccessStudentEssay(BaseModel):
     student = models.ForeignKey(StudentModel,on_delete=CASCADE,null=True,blank=True)
     course = models.ForeignKey(InstituteCourse,on_delete=CASCADE)
     essay = models.ForeignKey(PersonalEssay, on_delete=models.CASCADE)
+    class Meta:
+        unique_together = ('course','essay')
 
 class AccessStudentSop(BaseModel):
     student = models.ForeignKey(StudentModel,on_delete=CASCADE,null=True,blank=True)
     course = models.ForeignKey(InstituteCourse,on_delete=CASCADE)
     sop = models.ForeignKey(StudentSop,on_delete=models.CASCADE)
+    class Meta:
+        unique_together = ('course','sop')

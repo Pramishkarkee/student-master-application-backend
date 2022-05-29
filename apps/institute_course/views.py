@@ -234,5 +234,5 @@ class StudentMarkToSendView(APIView,StudentMixin):
 
 
     def get(self,request,student_id):
-        usecases.GetAccessDocument().execute()
-        return Response({"message":"Create mark document successfully"})
+        data =usecases.GetAccessDocument().execute()
+        return Response({"data":data})
