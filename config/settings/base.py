@@ -99,6 +99,7 @@ LOCAL_APPS = [
     "apps.language.apps.LanguageConfig",
     "apps.activity.apps.ActivityConfig",
     "apps.review.apps.ReviewConfig",
+    "apps.counselling.apps.CounsellingConfig"
 
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

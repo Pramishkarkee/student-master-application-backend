@@ -288,23 +288,24 @@ class ApplicationDashboardUsecase(BaseUseCase):
 
 
 class SendedDocumentByStudent():
-    def __init__(self,data,student):
+    def __init__(self,data,student,course):
         self._data = data
         self._student = student
+        self.course= course
     def execute(self):
         self._factory()
     def _factory(self):
-        self.course = ""
+        # self.course = ""
         self.academic=[]
         self.essay =[]
         self.sop=[]
         self.lor=[]
         self.student_identity = {}
-        if len(self._data["courseId"])>1:
-            try:
-                self.course = InstituteCourse.objects.get(id=self._data['courseId'])
-            except InstituteCourse.DoesNotExist:
-                raise CourseNotFound
+        # if len(self._data["courseId"])>1:
+        #     try:
+        #         self.course = InstituteCourse.objects.get(id=self._data['courseId'])
+        #     except InstituteCourse.DoesNotExist:
+        #         raise CourseNotFound
 
         for k in self._data.keys():  
             if k =="student_identity":
@@ -412,15 +413,16 @@ class GetAccessDocument():
     # 9 / 06 / generate - json -
     # from
     # -sql - using - python /
-    def __init__(self):
-        pass
+    def __init__(self,student,course):
+        self.studentId=student
+        self.courseId=course
 
     def execute(self):
         return self._factory()
 
     def _factory(self):
-        self.studentId='a6586b1f-7b2b-433c-be48-1711c4770fae'
-        self.courseId= 'dd26af6f-4ace-4660-9b67-6db5dad5c4bb'
+        # self.studentId='a6586b1f-7b2b-433c-be48-1711c4770fae'
+        # self.courseId= 'dd26af6f-4ace-4660-9b67-6db5dad5c4bb'
         self._GetSop()
         self._GetStudentIdentity()
         self._GetPersonalEsay()

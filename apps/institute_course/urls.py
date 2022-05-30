@@ -64,7 +64,7 @@ urlpatterns = [
         name = 'applicant-count'
     ),
     path(
-        '<student_id>/document_tracker',
+        '<student_id>/<institute_course_id>/document_tracker',
         views.StudentMarkToSendView.as_view(),
         name="document_tracker")
 ]

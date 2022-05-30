@@ -215,7 +215,7 @@ class ListStudentApplicationView(generics.ListAPIView,StudentMixin):
     
 
 @permission_classes((permissions.AllowAny,))
-class StudentMarkToSendView(APIView,StudentMixin):
+class StudentMarkToSendView(APIView,StudentMixin,CourseMixin):
     """
     {
         "courseId":"",
@@ -226,13 +226,11 @@ class StudentMarkToSendView(APIView,StudentMixin):
         "academic":[],
         }
     """
-    def post(self, request,student_id):
-        # college = OrderedDict()
-        # college.update(request.data)
-        usecases.SendedDocumentByStudent(data=request.data,student=self.get_student()).execute()
+    def post(self, request,student_id,institute_course_id):
+        usecases.SendedDocumentByStudent(data=request.data,student=self.get_student(),course=self.get_institutecourse()).execute()
         return Response({"message":"Create mark document successfully"})
 
 
-    def get(self,request,student_id):
-        data =usecases.GetAccessDocument().execute()
+    def get(self,request,student_id,institute_course_id):
+        data =usecases.GetAccessDocument(student=student_id,course=institute_course_id).execute()
         return Response({"data":data})
